@@ -54,6 +54,8 @@ $ curseddelta --email me@example.com --password H4rdPassw0rd
 
 - You can tweak the app keymap editing `~/.curseddelta/keymap.json`
 
+- If you like to use the mouse, you can use the mouse to select chats in the chat list, select the draft area or scroll in the message history.
+
 
 #### Default Shortcuts
 
