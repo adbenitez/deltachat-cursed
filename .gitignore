@@ -1,0 +1,15 @@
+.pytest_cache
+*.pyc
+__pycache__
+.mypy_cache
+muacrypt.egg-info
+doc/_build
+.cache
+*.swp
+.tox
+build
+dist
+*.egg-info
+*~
+.#*
+*#
