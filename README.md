@@ -38,6 +38,13 @@ The first time you run `curseddelta` you need to specify an email and password:
 $ curseddelta --email me@example.com --password H4rdPassw0rd
 ```
 
+To use an already existent account:
+
+```
+$ curseddelta --db /path/to/your/account.db
+```
+
+
 #### Tips
 
 - Messages will be dispalyed in red if someone mentions you.
