@@ -47,15 +47,15 @@ $ curseddelta --db /path/to/your/account.db
 
 #### Tips
 
-- Messages will be dispalyed in red if someone mentions you.
+- Messages will be displayed in red if someone mentions you.
 
 - You will get a notification if someone mentions you in a group. (needs libnotify)
 
-- The message marker '>' will be gray if the message is encrypted, if it is red that means message is not encrypted.
+- The message marker `>` will be gray if the message is encrypted, or red if message is not encrypted.
 
 - Message will be gray until it is sent.
 
-- You will get `✓` when the message is sent, `✓✓` when the message was noticed, or `✖` if message failed to send.
+- You will see `✓` at the end of the message if it was send, `✓✓` when the message was noticed, or `✖` if message failed to send.
 
 - You can tweak the app colors editing `~/.curseddelta/theme.json`
 
@@ -98,7 +98,7 @@ This are some temporal commands to do things that are not implemented yet using 
 
 - Send `/names` in a group to get the member list in the buffer, use `ctrl+u` to clear.
 
-- Use `/join GroupName` to create a group with named `GroupName`
+- Use `/join GroupName` to create a group named `GroupName`
 
 - Use `/accept n` to accept contact request number `n` (starting from 1)
 
