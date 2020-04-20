@@ -184,19 +184,21 @@ def get_keymap():
 
 
 def get_configuration():
-    file_name = 'CursedDelta.conf'
+    file_name = 'curseddelta.conf'
     home_config = '{}/.{}'.format(os.path.expanduser("~"), file_name)
     confPriorityList = [
         file_name,
         home_config,
         '/etc/' + file_name]
 
+    cfg = configparser.ConfigParser()
+
     for conffile in confPriorityList:
         if os.path.isfile(conffile):
+            cfg.read(conffile)
             break
-
-    cfg = configparser.ConfigParser()
-    cfg.read(conffile)
+    else:
+        cfg.add_section('general')
 
     cfg_full = {}
     cfg_full['general'] = {}
