@@ -98,6 +98,13 @@ default_theme = {
         "bold, light red",
         "g11"
     ],
+    "self_msg": [
+        "",
+        "",
+        "",
+        "dark green",
+        "g11"
+    ],
     "self_color": [
         "bold, #6d0",
         "g11"

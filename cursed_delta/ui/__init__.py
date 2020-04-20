@@ -37,7 +37,8 @@ class CursedDelta(ChatListMonitor):
             ('cur_chat', *theme['cur_chat']),
             ('reversed', *theme['reversed']),
             ('quote', *theme['quote']),
-            ('mention', *theme['mention'])
+            ('mention', *theme['mention']),
+            ('self_msg', *theme['self_msg']),
         ]
 
         # Notification

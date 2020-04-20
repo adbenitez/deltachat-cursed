@@ -102,8 +102,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         if msg.is_out_pending() or msg.is_out_failed():
             message_text = urwid.Text(('pending', text))
         else:
-            me = self.model.account.get_config('displayname')
-            mention = '@'+me in text
+            me = self.model.account.get_self_contact()
+            display_name = self.model.account.get_config('displayname')
+            mention = '@'+display_name in text
             lines = []
             for line in text.splitlines(keepends=True):
                 if line.startswith('>'):
@@ -119,6 +120,8 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
                         else:
                             quoting = False
                     line = ('quote', quote+line)
+                elif sender == me:
+                    line = ('self_msg', line)
                 elif mention:
                     line = ('mention', line)
                 lines.append(line)
