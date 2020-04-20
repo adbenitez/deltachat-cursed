@@ -75,6 +75,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         hour = local_date.strftime(' %H:%M ')
 
         size_name = len(name)
+        if size_name > 9:
+            name = name[0:9] + '...'
+            size_name = len(name)
 
         status = 'encrypted' if msg.is_encrypted() else 'unencrypted'
         message_meta = urwid.Text(
