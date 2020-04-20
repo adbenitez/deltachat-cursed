@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 from deltachat import account_hookimpl
 
-def print(msg):
-    with open('/home/adbenitez/curseddelta.log', 'a') as log:
-        log.write(msg)
-        log.write('\n')
-
 
 class ChatListMonitor:
     def chatlist_changed(self, current_chat_index, chats):
@@ -108,5 +103,3 @@ class AccountPlugin:
             self.chatlist_changed()
         # if ffi_event.name == 'DC_EVENT_CONTACTS_CHANGED':
         #     self.chatlist_changed()
-
-        print('{}, {}, {}'.format(ffi_event.name, ffi_event.data1, ffi_event.data2))
