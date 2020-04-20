@@ -18,7 +18,7 @@ default_theme = {
         "",
         "",
         "",
-        "white",
+        "",
         "g11"
     ],
     "status_bar": [
