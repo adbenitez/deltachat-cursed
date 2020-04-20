@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 
 MODULE_NAME = 'cursed_delta'
-with open(os.path.join(MODULE_NAME, '__init__.py')) as fd:
+with open(os.path.join('src', MODULE_NAME, '__init__.py')) as fd:
     version = re.search(
         r'__version__ = \'(.*?)\'', fd.read(), re.M).group(1)
 
