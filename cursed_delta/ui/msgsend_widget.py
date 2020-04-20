@@ -4,6 +4,14 @@ import deltachat as dc
 import urwid
 
 
+def get_subtitle(chat):
+    members = chat.get_contacts()
+    if not chat.is_group() and members:
+        return members[0].addr
+    else:
+        return "{} member(s)".format(len(members))
+
+
 class MessageSendWidget(urwid.Filler, ChatListMonitor):
     def __init__(self, keymap, account):
         self.text_caption = " >> "
@@ -58,7 +66,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             if chat.is_verified():
                 verified = '✓ '
             text = ' {}[ {} ] -- {}'.format(
-                verified, chat.get_name(), chat.get_subtitle())
+                verified, chat.get_name(), get_subtitle(chat))
 
         self.status_bar.set_text(text)
 
