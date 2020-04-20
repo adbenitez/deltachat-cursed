@@ -133,7 +133,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
 
     def get_name_color(self, id):
         if id == self.model.account.get_self_contact().id:
-            return self.theme['user_color']
+            return self.theme['self_color']
 
         users_color = self.theme['users_color']
         color = id % len(users_color)

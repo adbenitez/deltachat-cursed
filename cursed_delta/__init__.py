@@ -98,7 +98,7 @@ default_theme = {
         "bold, light red",
         "g11"
     ],
-    "user_color": [
+    "self_color": [
         "bold, #6d0",
         "g11"
     ],
