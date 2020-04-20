@@ -92,7 +92,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
                 msg.set_text(text)
                 self.current_chat.set_draft(msg)
         # save draft on first type
-        if not key and not self.typing:
+        if not key and not self.typing and self.current_chat:
             text = self.widgetEdit.get_edit_text()
             draft = self.current_chat.get_draft()
             if not draft or draft.text != text:
