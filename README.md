@@ -16,6 +16,12 @@ A ncurses Delta Chat client developed in Python with the urwid library.
 
 ## Installation
 
+Install the latest `Delta Chat python bindings` using this command:
+
+```
+$ sudo pip3 install --pre -i https://m.devpi.net/dc/master deltachat
+```
+
 Install Cursed Delta through pip:
 
 ```
