@@ -143,12 +143,13 @@ class CursedDelta(ChatListMonitor):
             if current_chat:
                 msgs = current_chat.get_messages()
                 if msgs:
-                    path = msgs[-1].filename
-                    if path:
-                        subprocess.Popen(
-                            ['xdg-open', path],
-                            stderr=subprocess.DEVNULL,
-                            stdout=subprocess.DEVNULL)
+                    for msg in reversed(msgs[-20:]):
+                        if msg.filename:
+                            subprocess.Popen(
+                                ['xdg-open', msg.filename],
+                                stderr=subprocess.DEVNULL,
+                                stdout=subprocess.DEVNULL)
+                            break
 
     def chatlist_changed(self, current_chat_index, chats):
         new_messages = 0
