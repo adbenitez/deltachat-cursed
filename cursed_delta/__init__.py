@@ -268,7 +268,6 @@ def main():
         )
         ac.set_config("addr", args.email)
         ac.set_config("mail_pw", args.password)
-        # ac.set_config("mvbox_move", "0")
         ac.set_config("mvbox_watch", "0")
         ac.set_config("sentbox_watch", "0")
 
