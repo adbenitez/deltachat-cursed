@@ -2,7 +2,7 @@
 import re
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 MODULE_NAME = 'cursed_delta'
@@ -22,7 +22,8 @@ setup(
     author='The Cursed Delta Contributors',
     author_email='adbenitez@nauta.cu',
     url='https://github.com/adbenitez/cursed_delta',
-    packages=[MODULE_NAME],
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
     classifiers=['Development Status :: 4 - Beta',
                  'Intended Audience :: Users',
                  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
