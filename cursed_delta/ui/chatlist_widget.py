@@ -57,6 +57,8 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
                 self.chat_list.insert(pos, button)
                 self.focus_position = pos
             else:
+                if new_messages > 0:
+                    label = ('unread_chat', label)
                 button = ListItem(label, self.chat_change, i)
                 self.chat_list.insert(pos, button)
 

@@ -74,6 +74,13 @@ default_theme = {
         "",
         "",
         "",
+        "light blue",
+        "g11"
+    ],
+    "unread_chat": [
+        "",
+        "",
+        "",
         "#6f0",
         "g11"
     ],

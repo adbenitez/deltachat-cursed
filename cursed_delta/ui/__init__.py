@@ -39,6 +39,7 @@ class CursedDelta(ChatListMonitor):
             ('quote', *theme['quote']),
             ('mention', *theme['mention']),
             ('self_msg', *theme['self_msg']),
+            ('unread_chat', *theme['unread_chat']),
         ]
 
         # Notification
