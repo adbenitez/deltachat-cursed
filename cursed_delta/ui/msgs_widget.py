@@ -107,7 +107,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         else:
             me = self.model.account.get_self_contact()
             display_name = self.model.account.get_config('displayname')
-            mention = '@'+display_name in text
+            mention = display_name and '@'+display_name in text
             lines = []
             for line in text.splitlines(keepends=True):
                 if line.startswith('>'):
