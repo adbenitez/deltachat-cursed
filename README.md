@@ -76,6 +76,8 @@ $ curseddelta --db /path/to/your/account.db
 
 - Press `q` to quit the Cursed Delta.
 
+- Press `ctrl+b` to toggle the chat list.
+
 - Use `alt+enter` to insert a linebreak.
 
 - Use `ctrl+r` to reply last message in chat.
