@@ -34,7 +34,8 @@ setup(
         curseddelta={}:main
     '''.format(MODULE_NAME),
     python_requires='>=3.5',
-    install_requires=['deltachat', 'urwid'],
+    dependency_links=['https://m.devpi.net/dc/master'],
+    install_requires=['deltachat>=0.800.1.dev238', 'urwid', 'urwid_readline'],
     include_package_data=True,
     zip_safe=False,
 )
