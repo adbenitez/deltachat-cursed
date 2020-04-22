@@ -34,7 +34,7 @@ setup(
         curseddelta={}:main
     '''.format(MODULE_NAME),
     python_requires='>=3.5',
-    install_requires=['deltachat', 'urwid'],
+    install_requires=['deltachat', 'urwid', 'urwid_readline'],
     include_package_data=True,
     zip_safe=False,
 )
