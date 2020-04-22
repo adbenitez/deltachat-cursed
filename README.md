@@ -94,6 +94,7 @@ This are some temporal commands to do things that are not implemented yet using 
   <kbd>Ctrl</kbd> + <kbd>l</kbd> to clear.
 - Use `/join GroupName` to create a group named `GroupName`
 - Use `/accept n` to accept contact request number `n` (starting from 1)
+- To send a message starting with `/` use `//`
 
 
 ## Credits
