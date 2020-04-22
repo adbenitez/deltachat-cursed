@@ -11,6 +11,7 @@ A ncurses Delta Chat client developed in Python with the urwid library.
 
 * [deltachat python bindings](https://github.com/deltachat/deltachat-core-rust/tree/master/python)
 * [urwid](http://urwid.org)
+* [urwid_readline](https://github.com/rr-/urwid_readline)
 * libnotify (optional)
 
 
@@ -72,24 +73,26 @@ $ curseddelta --db /path/to/your/account.db
 
 #### Default Shortcuts
 
-- Press `esc` to leave the text area.
+- Press <kbd>Esc</kbd> to leave the draft/editing area.
 
-- Press `q` to quit the Cursed Delta.
+- Press <kbd>q</kbd> to quit the Cursed Delta.
 
-- Press `ctrl+b` to toggle the chat list.
+- Press <kbd>Ctrl</kbd> + <kbd>x</kbd> to toggle the chat list.
 
-- Use `alt+enter` to insert a linebreak.
+- Use <kbd>Meta</kbd> + <kbd>Enter</kbd> to send the message.
 
-- Use `ctrl+r` to reply last message in chat.
+- Use <kbd>Ctrl</kbd> + <kbd>r</kbd> to reply last message in chat.
 
-- Use `ctrl+o` to open attachemnt in the last message in chat.
+- Use <kbd>Ctrl</kbd> + <kbd>o</kbd> to open attachemnt in the last message in chat.
 
-- You can navigate the chat list with `ctrl+p` and `ctrl+n`.
+- You can navigate the chat list with <kbd>Meta</kbd> + <kbd>↑</kbd> and
+  <kbd>Meta</kbd> + <kbd>↓</kbd>.
 
-- Vim-like key bindings are also available, use `hjkl` to navigate
-  between lists, use `i` to select the text area and `esc` to leave it.
+- Vim-like key bindings are also available, use <kbd>h</kbd> <kbd>j</kbd>
+  <kbd>k</kbd> <kbd>l</kbd> to navigate between lists, use <kbd>i</kbd>
+  to select the draft area and <kbd>Esc</kbd> to leave it.
 
-- You can also use `ctrl+u` to clear the draft area.
+- For shortcuts in the draft/editing area see: [urwid_readline](https://github.com/rr-/urwid_readline)
 
 
 ### Commands

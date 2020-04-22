@@ -113,7 +113,7 @@ class CursedDelta(ChatListMonitor):
     def unhandle_key(self, key):
         if key == self.keymap['quit']:
             self.exit()
-        elif key == self.keymap['hide_chatlist']:
+        elif key == self.keymap['toggle_chatlist']:
             # check if already hidden
             if 1 == self.main_columns.contents[0][1][1]:
                 cols_contents = self.main_columns.contents

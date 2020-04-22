@@ -148,10 +148,10 @@ default_keymap = {
     'insert_text': 'i',
     'reply': 'ctrl r',
     'open_file': 'ctrl o',
-    'line_break': 'meta enter',
-    'next_chat': 'ctrl n',
-    'prev_chat': 'ctrl p',
-    'hide_chatlist': 'ctrl b'
+    'send_msg': 'meta enter',
+    'next_chat': 'meta up',
+    'prev_chat': 'meta down',
+    'toggle_chatlist': 'ctrl x'
 }
 
 

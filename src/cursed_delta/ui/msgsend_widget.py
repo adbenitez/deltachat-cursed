@@ -2,6 +2,7 @@
 from ..event import ChatListMonitor
 import deltachat as dc
 import urwid
+import urwid_readline
 
 
 def get_subtitle(chat):
@@ -18,8 +19,8 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.status_bar = urwid.Text(('status_bar', ' '), align='left')
         self.attr = urwid.AttrMap(self.status_bar, 'status_bar')
 
-        self.widgetEdit = urwid.Edit(
-            self.text_caption, "", multiline=False)
+        self.widgetEdit = urwid_readline.ReadlineEdit(
+            self.text_caption, "", multiline=True)
 
         self.pile = urwid.Pile([self.attr, self.widgetEdit])
         super().__init__(self.pile)
@@ -72,16 +73,8 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
 
     def keypress(self, size, key):
         key = super().keypress(size, key)
-        # linebreaks
-        if key == self.keymap['line_break']:
-            self.widgetEdit.insert_text('\n')
-            key = None
-        # clear buffer
-        elif key == 'ctrl u':
-            self.widgetEdit.set_edit_text('')
-            key = None
         # save draft on exit
-        elif key == self.keymap['quit']:
+        if key == self.keymap['quit']:
             if not self.current_chat:
                 return
             text = self.widgetEdit.get_edit_text()
@@ -92,7 +85,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
                 msg.set_text(text)
                 self.current_chat.set_draft(msg)
         # save draft on first type
-        if not key and not self.typing and self.current_chat:
+        elif not key and not self.typing and self.current_chat:
             text = self.widgetEdit.get_edit_text()
             draft = self.current_chat.get_draft()
             if not draft or draft.text != text:

@@ -12,7 +12,7 @@ class ChatListContainer(urwid.WidgetPlaceholder):
         if key == self.keymap['right']:
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
-        if key == self.keymap['hide_chatlist']:
+        if key == self.keymap['toggle_chatlist']:
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
             return super().keypress(size, key)
@@ -43,7 +43,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
     def keypress(self, size, key):
         key = super().keypress(size, key)
         # send message
-        if key == 'enter':
+        if key == self.keymap['send_msg']:
             edit = self.msg_send_widget.widgetEdit
             text = edit.get_edit_text().strip()
             if not text:
