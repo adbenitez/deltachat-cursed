@@ -107,7 +107,8 @@ This are some temporal commands to do things that are not implemented yet using 
 
 - Send `/part` in a group to leave it.
 
-- Send `/names` in a group to get the member list in the buffer, use `ctrl+u` to clear.
+- Send `/names` in a group to get the member list in the buffer, use
+  <kbd>Ctrl</kbd> + <kbd>l</kbd> to clear.
 
 - Use `/join GroupName` to create a group named `GroupName`
 
