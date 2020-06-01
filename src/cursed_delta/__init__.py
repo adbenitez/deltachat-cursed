@@ -6,9 +6,11 @@ import os
 import sys
 
 from .event import AccountPlugin
+from .oauth2 import is_oauth2, get_authz_code
 from .ui import CursedDelta
 
-from deltachat import Account, eventlogger
+from deltachat import Account, events
+import deltachat.const
 
 
 __version__ = '0.1.0'
@@ -262,6 +264,9 @@ def main():
         "--set-conf", action="store", help="set config option", nargs=2)
     parser.add_argument(
         "--get-conf", action="store", help="get config option")
+    parser.add_argument(
+        "--port", action="store", help="port to listen for oauth2 callback",
+        type=int, default='8383')
 
     args = parser.parse_args(argv[1:])
 
@@ -272,18 +277,35 @@ def main():
         return
 
     if args.show_ffi:
-        log = eventlogger.FFIEventLogger(ac, "CursedDelta")
+        log = events.FFIEventLogger(ac, "CursedDelta")
         ac.add_account_plugin(log)
 
     if not ac.is_configured():
-        assert args.email and args.password, (
-            "you must specify --email and --password once to"
-            " configure this database/account"
+        assert args.email, (
+            "you must specify --email once"
+            " to configure this database/account"
         )
         ac.set_config("addr", args.email)
-        ac.set_config("mail_pw", args.password)
-        ac.set_config("mvbox_watch", "0")
-        ac.set_config("sentbox_watch", "0")
+
+        if is_oauth2(ac, args.email):
+            authz_code = get_authz_code(ac, args.email, args.port)
+
+            ac.set_config("mail_pw", authz_code)
+
+            flags = ac.get_config('server_flags')
+            flags = int(flags) if flags else 0
+            flags |= deltachat.const.DC_LP_AUTH_OAUTH2
+            ac.set_config('server_flags', str(flags))
+        else:
+            assert args.password, (
+                "you must specify --password once"
+                " to configure this database/account"
+            )
+            ac.set_config("mail_pw", args.email)
+            ac.set_config("mvbox_watch", "0")
+            ac.set_config("sentbox_watch", "0")
+
+        ac.configure()
 
     if args.set_conf:
         ac.set_config(*args.set_conf)
@@ -291,7 +313,7 @@ def main():
     account = AccountPlugin(ac)
     ac.add_account_plugin(account)
 
-    ac.start()
+    ac.start_io()
 
     keymap = get_keymap()
     theme = get_theme()
