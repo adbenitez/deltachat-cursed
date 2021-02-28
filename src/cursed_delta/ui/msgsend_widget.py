@@ -64,7 +64,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         else:
             chat = chats[current_chat_index]
             verified = ''
-            if chat.is_verified():
+            if chat.is_protected():
                 verified = '✓ '
             text = ' {}[ {} ] -- {}'.format(
                 verified, chat.get_name(), get_subtitle(chat))
