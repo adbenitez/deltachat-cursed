@@ -201,7 +201,7 @@ def main():
         )
         ac.set_config("addr", args.email)
 
-        if is_oauth2(ac, args.email):
+        if not args.password and is_oauth2(ac, args.email):
             authz_code = get_authz_code(ac, args.email, args.port)
 
             ac.set_config("mail_pw", authz_code)
