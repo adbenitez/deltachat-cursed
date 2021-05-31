@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 if __name__ == "__main__":
     MODULE_NAME = "cursed_delta"
     with open(os.path.join("src", MODULE_NAME, "__init__.py")) as fd:
-        version = re.search(r"__version__ = \'(.*?)\'", fd.read(), re.M).group(1)
+        version = re.search(r"__version__ = \"(.*?)\"", fd.read(), re.M).group(1)
 
     with open("README.md") as f:
         long_desc = f.read()
