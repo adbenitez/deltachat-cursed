@@ -7,29 +7,15 @@ A ncurses Delta Chat client developed in Python with the urwid library.
 </p>
 
 
-## Dependencies
-
-* [deltachat python bindings](https://github.com/deltachat/deltachat-core-rust/tree/master/python)
-* [urwid](http://urwid.org)
-* [urwid_readline](https://github.com/rr-/urwid_readline)
-* libnotify (optional)
-
-
 ## Installation
 
-Install the latest `Delta Chat python bindings` using this command:
+Install Cursed Delta with pip:
 
 ```
-$ sudo pip3 install --pre -i https://m.devpi.net/dc/master deltachat
+$ sudo pip3 install -U https://github.com/adbenitez/deltachat-cursed/archive/master.tar.gz
 ```
 
-Install Cursed Delta through pip:
-
-```
-$ sudo pip3 install --upgrade https://github.com/adbenitez/deltachat-cursed/archive/master.tar.gz
-```
-
-If you want notifications (Debian example):
+Optionally, if you want notifications install libnotify (Debian example):
 
 ```
 $ sudo apt-get install libnotify-bin
