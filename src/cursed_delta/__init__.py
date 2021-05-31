@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import argparse
 import configparser
 import json
@@ -7,6 +6,7 @@ import sys
 
 import deltachat.const
 from deltachat import Account, events
+from deltachat.tracker import ConfigureTracker
 
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
@@ -214,11 +214,13 @@ def main():
             assert args.password, (
                 "you must specify --password once" " to configure this database/account"
             )
-            ac.set_config("mail_pw", args.email)
+            ac.set_config("mail_pw", args.password)
             ac.set_config("mvbox_watch", "0")
             ac.set_config("sentbox_watch", "0")
 
-        ac.configure()
+        with ac.temp_plugin(ConfigureTracker(ac)) as tracker:
+            ac.configure()
+            tracker.wait_finish()
 
     if args.set_conf:
         ac.set_config(*args.set_conf)
