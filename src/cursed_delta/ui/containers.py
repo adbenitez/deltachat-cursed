@@ -9,10 +9,10 @@ class ChatListContainer(urwid.WidgetPlaceholder):
         super().__init__(chatlist_widget)
 
     def keypress(self, size, key):
-        if key == self.keymap['right']:
+        if key == self.keymap["right"]:
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
-        if key == self.keymap['toggle_chatlist']:
+        if key == self.keymap["toggle_chatlist"]:
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
             return super().keypress(size, key)
@@ -27,7 +27,7 @@ class MessagesContainer(urwid.WidgetPlaceholder):
         super().__init__(msgs_widget)
 
     def keypress(self, size, key):
-        if key == self.keymap['left']:
+        if key == self.keymap["left"]:
             self.root.main_columns.focus_position = 0
         else:
             return super().keypress(size, key)
@@ -43,28 +43,28 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
     def keypress(self, size, key):
         key = super().keypress(size, key)
         # send message
-        if key == self.keymap['send_msg']:
+        if key == self.keymap["send_msg"]:
             edit = self.msg_send_widget.widgetEdit
             text = edit.get_edit_text().strip()
             if not text:
                 return
-            if text.startswith('//'):
+            if text.startswith("//"):
                 text = text[1:]
-            elif text.startswith('/'):
+            elif text.startswith("/"):
                 edit.set_edit_text(self.process_command(text))
                 self.resize_zone(size)
                 return
             current_chat = self.root.account.current_chat
             current_chat.send_text(text)
-            edit.set_edit_text('')
+            edit.set_edit_text("")
             self.resize_zone(size)
         # give the focus to the chat list
-        elif key == self.keymap['left']:
+        elif key == self.keymap["left"]:
             self.root.main_columns.focus_position = 0
         # give the focus to the message list
-        elif key == 'up' or key == 'page up' or key == 'esc':
+        elif key == "up" or key == "page up" or key == "esc":
             self.root.right_side.focus_position = 0
-        elif key == self.keymap['reply']:
+        elif key == self.keymap["reply"]:
             current_chat = self.root.account.current_chat
             if not current_chat:
                 return
@@ -75,11 +75,11 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             sender = msgs[-1].get_sender_contact().display_name
             text = msgs[-1].text.strip()
             if not msgs[-1].is_text():
-                text = '[File]\n' + text
-            reply = '\n> @{}:\n'.format(sender)
+                text = "[File]\n" + text
+            reply = "\n> @{}:\n".format(sender)
             for line in text.splitlines(keepends=True):
-                reply += '> ' + line
-            edit.set_edit_text(reply+'\n\n')
+                reply += "> " + line
+            edit.set_edit_text(reply + "\n\n")
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
             self.resize_zone(size)
@@ -91,43 +91,41 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         text_caption = self.msg_send_widget.text_caption
         text = self.msg_send_widget.widgetEdit.get_edit_text()
         rows_needed = 1
-        for line in text.split('\n'):
-            rows_needed += int(
-                (len(line) + len(text_caption))/size[0]) + 1
+        for line in text.split("\n"):
+            rows_needed += int((len(line) + len(text_caption)) / size[0]) + 1
         if rows_needed > 10:
             rows_needed = 10
         contents = self.root.right_side.contents
         if rows_needed != size[1]:
-            contents[1] = (contents[1][0], ('given', rows_needed))
+            contents[1] = (contents[1][0], ("given", rows_needed))
 
     def process_command(self, cmd):
         model = self.root.account
         acc = model.account
         args = cmd.split(maxsplit=1)
-        if args[0] == '/query':
+        if args[0] == "/query":
             c = acc.create_contact(args[1].strip())
             acc.create_chat_by_contact(c)
-        if args[0] == '/add':
-            for addr in args[1].split(','):
+        if args[0] == "/add":
+            for addr in args[1].split(","):
                 c = acc.create_contact(addr.strip())
                 model.current_chat.add_contact(c)
-        if args[0] == '/kick':
-            for addr in args[1].split(','):
+        if args[0] == "/kick":
+            for addr in args[1].split(","):
                 c = acc.create_contact(addr.strip())
                 model.current_chat.remove_contact(c)
-        if args[0] == '/part':
+        if args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
-        if args[0] == '/names':
-            return '\n'.join(
-                c.addr for c in model.current_chat.get_contacts())
-        if args[0] == '/join':
+        if args[0] == "/names":
+            return "\n".join(c.addr for c in model.current_chat.get_contacts())
+        if args[0] == "/join":
             model.current_chat = acc.create_group_chat(args[1].strip())
             msg = model.current_chat.get_draft()
             if msg:
                 return msg.text
-        if args[0] == '/accept':
+        if args[0] == "/accept":
             i = int(args[1].strip()) - 1
             msg = acc.get_deaddrop_chat().get_messages()[i]
             acc.create_chat_by_message(msg)
 
-        return ''
+        return ""

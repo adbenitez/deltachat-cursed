@@ -22,10 +22,9 @@ class AccountPlugin:
             self.current_chat = None
 
     def add_chatlist_monitor(self, monitor):
-        assert monitor not in self.chatlist_monitors, 'Monitor already added'
+        assert monitor not in self.chatlist_monitors, "Monitor already added"
         self.chatlist_monitors.append(monitor)
-        monitor.chatlist_changed(
-            self.get_current_index(), self.account.get_chats())
+        monitor.chatlist_changed(self.get_current_index(), self.account.get_chats())
 
     def remove_monitor(self, monitor):
         self.chatlist_monitors.remove(monitor)
@@ -99,7 +98,7 @@ class AccountPlugin:
 
     @account_hookimpl
     def ac_process_ffi_event(self, ffi_event):
-        if ffi_event.name == 'DC_EVENT_MSGS_CHANGED':
+        if ffi_event.name == "DC_EVENT_MSGS_CHANGED":
             self.chatlist_changed()
         # if ffi_event.name == 'DC_EVENT_CONTACTS_CHANGED':
         #     self.chatlist_changed()
