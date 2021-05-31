@@ -215,8 +215,6 @@ def main():
                 "you must specify --password once" " to configure this database/account"
             )
             ac.set_config("mail_pw", args.password)
-            ac.set_config("mvbox_watch", "0")
-            ac.set_config("sentbox_watch", "0")
 
         with ac.temp_plugin(ConfigureTracker(ac)) as tracker:
             ac.configure()
