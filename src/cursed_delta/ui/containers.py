@@ -104,16 +104,13 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         acc = model.account
         args = cmd.split(maxsplit=1)
         if args[0] == "/query":
-            c = acc.create_contact(args[1].strip())
-            acc.create_chat_by_contact(c)
+            acc.create_chat(args[1].strip())
         if args[0] == "/add":
             for addr in args[1].split(","):
-                c = acc.create_contact(addr.strip())
-                model.current_chat.add_contact(c)
+                model.current_chat.add_contact(addr.strip())
         if args[0] == "/kick":
             for addr in args[1].split(","):
-                c = acc.create_contact(addr.strip())
-                model.current_chat.remove_contact(c)
+                model.current_chat.remove_contact(addr.strip())
         if args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
         if args[0] == "/names":
@@ -126,6 +123,6 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         if args[0] == "/accept":
             i = int(args[1].strip()) - 1
             msg = acc.get_deaddrop_chat().get_messages()[i]
-            acc.create_chat_by_message(msg)
+            acc._create_chat_by_message_id(msg.id)
 
         return ""
