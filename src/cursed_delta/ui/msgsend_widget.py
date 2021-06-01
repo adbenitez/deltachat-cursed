@@ -41,7 +41,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             self.update_status_bar(current_chat_index, chats)
 
     def chat_selected(self, index, chats):
-        if index is None or self.current_chat == chats[index]:
+        if index is not None and self.current_chat == chats[index]:
             return
         self.typing = False
         # save draft
@@ -52,6 +52,9 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
                 msg = dc.Message.new_empty(self.current_chat.account, "text")
                 msg.set_text(text)
                 self.current_chat.set_draft(msg)
+        if index is None:
+            self.current_chat = None
+            return
         self.current_chat = chats[index]
         # load draft
         msg = self.current_chat.get_draft()
