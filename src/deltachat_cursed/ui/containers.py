@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-
+from typing import Optional
+
 import urwid
 
 
 class ChatListContainer(urwid.WidgetPlaceholder):
-    def __init__(self, root, chatlist_widget):
+    def __init__(self, root, chatlist_widget) -> None:
         self.root = root
         self.keymap = root.keymap
         super().__init__(chatlist_widget)
 
-    def keypress(self, size, key):
+    def keypress(self, size, key: str) -> Optional[str]:
         if key == self.keymap["right"]:
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
@@ -21,33 +22,34 @@ class ChatListContainer(urwid.WidgetPlaceholder):
 
 
 class MessagesContainer(urwid.WidgetPlaceholder):
-    def __init__(self, root, msgs_widget):
+    def __init__(self, root, msgs_widget) -> None:
         self.root = root
         self.keymap = root.keymap
         super().__init__(msgs_widget)
 
-    def keypress(self, size, key):
+    def keypress(self, size, key: str) -> Optional[str]:
         if key == self.keymap["left"]:
             self.root.main_columns.focus_position = 0
         else:
             return super().keypress(size, key)
+        return None
 
 
 class MessageSendContainer(urwid.WidgetPlaceholder):
-    def __init__(self, root, msg_send_widget):
+    def __init__(self, root, msg_send_widget) -> None:
         self.root = root
         self.keymap = root.keymap
         self.msg_send_widget = msg_send_widget
         super().__init__(msg_send_widget)
 
-    def keypress(self, size, key):
+    def keypress(self, size, key: str) -> Optional[str]:
         key = super().keypress(size, key)
         # send message
         if key == self.keymap["send_msg"]:
             edit = self.msg_send_widget.widgetEdit
             text = edit.get_edit_text().strip()
             if not text:
-                return
+                return None
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
@@ -55,7 +57,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 if text is not None:
                     edit.set_edit_text(text)
                 self.resize_zone(size)
-                return
+                return None
             current_chat = self.root.account.current_chat
             current_chat.send_text(text)
             edit.set_edit_text("")
@@ -69,10 +71,10 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         elif key == self.keymap["reply"]:
             current_chat = self.root.account.current_chat
             if not current_chat:
-                return
+                return None
             msgs = current_chat.get_messages()
             if not msgs:
-                return
+                return None
             edit = self.msg_send_widget.widgetEdit
             sender = msgs[-1].get_sender_contact().display_name
             text = msgs[-1].text.strip()
@@ -88,8 +90,9 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         else:
             self.resize_zone(size)
             return key
+        return None
 
-    def resize_zone(self, size):
+    def resize_zone(self, size) -> None:
         text_caption = self.msg_send_widget.text_caption
         text = self.msg_send_widget.widgetEdit.get_edit_text()
         rows_needed = 1
@@ -101,7 +104,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         if rows_needed != size[1]:
             contents[1] = (contents[1][0], ("given", rows_needed))
 
-    def process_command(self, cmd):
+    def process_command(self, cmd) -> Optional[str]:
         model = self.root.account
         acc = model.account
         args = cmd.split(maxsplit=1)

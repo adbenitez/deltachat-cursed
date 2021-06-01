@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 from datetime import timezone
+from typing import Optional
 
 import urwid
 
@@ -9,7 +9,7 @@ from ..event import ChatListMonitor
 class MessagesWidget(urwid.ListBox, ChatListMonitor):
     """Widget used to print the message list"""
 
-    def __init__(self, date_format, keymap, theme, account):
+    def __init__(self, date_format: str, keymap: dict, theme: dict, account) -> None:
         self.DATE_FORMAT = date_format
         self.theme = theme
         self.keymap = keymap
@@ -17,15 +17,15 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         self.updating = False
         self.model.add_chatlist_monitor(self)
 
-    def chatlist_changed(self, current_chat_index, chats):
+    def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         self.update(current_chat_index, chats)
         if current_chat_index is not None:
             chats[current_chat_index].mark_noticed()
 
-    def chat_selected(self, index, chats):
+    def chat_selected(self, index: Optional[int], chats: list) -> None:
         self.update(index, chats)
 
-    def update(self, current_chat_index, chats):
+    def update(self, current_chat_index: Optional[int], chats: list) -> None:
         if self.updating:
             return
         self.updating = True
@@ -53,7 +53,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
 
         self.updating = False
 
-    def print_msg(self, msg, prev_date):
+    def print_msg(self, msg, prev_date) -> None:
         local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         sender = msg.get_sender_contact()
         name = sender.display_name
@@ -135,7 +135,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         self.msg_list.insert(self.pos, message_to_display)
         self.focus_position = self.pos
 
-    def get_name_color(self, id):
+    def get_name_color(self, id: int) -> list:
         if id == self.model.account.get_self_contact().id:
             return self.theme["self_color"]
 
@@ -143,7 +143,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         color = id % len(users_color)
         return users_color[color]
 
-    def keypress(self, size, key):
+    def keypress(self, size, key: str) -> Optional[str]:
         key = super().keypress(size, key)
         if key == self.keymap["down"]:
             self.keypress(size, "down")
@@ -151,8 +151,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
             self.keypress(size, "up")
         else:
             return key
+        return None
 
-    def mouse_event(self, size, event, button, col, row, focus):
+    def mouse_event(self, size, event, button, col, row, focus) -> None:
         if button == 4:
             self.keypress(size, "up")
             self.keypress(size, "up")

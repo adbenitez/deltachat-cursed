@@ -68,7 +68,7 @@ default_keymap = {
 }
 
 
-def get_theme():
+def get_theme() -> dict:
     file_name = "theme.json"
     themes = [
         "curseddelta-" + file_name,
@@ -76,9 +76,9 @@ def get_theme():
         "/etc/curseddelta/" + file_name,
     ]
 
-    for theme in themes:
-        if os.path.isfile(theme):
-            with open(theme) as fd:
+    for path in themes:
+        if os.path.isfile(path):
+            with open(path) as fd:
                 theme = json.load(fd)
             break
     else:
@@ -89,7 +89,7 @@ def get_theme():
     return theme
 
 
-def get_keymap():
+def get_keymap() -> dict:
     file_name = "keymap.json"
     keymaps = [
         "curseddelta-" + file_name,
@@ -97,9 +97,9 @@ def get_keymap():
         "/etc/curseddelta/" + file_name,
     ]
 
-    for keymap in keymaps:
-        if os.path.isfile(keymap):
-            with open(keymap) as fd:
+    for path in keymaps:
+        if os.path.isfile(path):
+            with open(path) as fd:
                 keymap = json.load(fd)
             break
     else:
@@ -110,7 +110,7 @@ def get_keymap():
     return keymap
 
 
-def get_configuration():
+def get_configuration() -> dict:
     file_name = "curseddelta.conf"
     home_config = "{}/.{}".format(os.path.expanduser("~"), file_name)
     confPriorityList = [file_name, home_config, "/etc/" + file_name]
@@ -124,8 +124,8 @@ def get_configuration():
     else:
         cfg.add_section("general")
 
-    cfg_full = {}
-    cfg_full["general"] = {}
+    cfg_full = dict()
+    cfg_full["general"] = dict()
 
     home = os.path.expanduser("~")
     cfg_gen = cfg_full["general"]
@@ -141,7 +141,7 @@ def get_configuration():
     return cfg_full
 
 
-def main():
+def main() -> None:
     sys.argv[0] = "curseddelta"
     argv = sys.argv
     app_path = os.path.join(os.path.expanduser("~"), ".curseddelta")

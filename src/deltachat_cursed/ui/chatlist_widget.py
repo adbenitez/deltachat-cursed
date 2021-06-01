@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
+from typing import Optional
+
 import urwid
 
 from ..event import ChatListMonitor
 
 
 class ListItem(urwid.Button):
-    def __init__(self, caption, callback, arg=None):
+    def __init__(self, caption: tuple, callback, arg=None) -> None:
         super().__init__("")
         urwid.connect_signal(self, "click", callback, arg)
         self._w = urwid.AttrMap(
@@ -14,19 +15,19 @@ class ListItem(urwid.Button):
 
 
 class ChatListWidget(urwid.ListBox, ChatListMonitor):
-    def __init__(self, keymap, account):
+    def __init__(self, keymap: dict, account) -> None:
         self.keymap = keymap
         self.model = account
         self.updating = False
         self.model.add_chatlist_monitor(self)
 
-    def chatlist_changed(self, current_chat_index, chats):
+    def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         self.update(current_chat_index, chats)
 
     def chat_selected(self, index, chats):
         self.update(index, chats)
 
-    def update(self, current_chat_index, chats):
+    def update(self, current_chat_index: Optional[int], chats: list) -> None:
         if self.updating:
             return
         self.updating = True
@@ -84,10 +85,10 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
         # self.chat_list.insert(pos, urwid.AttrMap(urwid.Divider('─'), 'separator'))
         self.updating = False
 
-    def chat_change(self, button, index):
+    def chat_change(self, button, index: int) -> None:
         self.model.select_chat(index)
 
-    def keypress(self, size, key):
+    def keypress(self, size, key: str) -> Optional[str]:
         key = super().keypress(size, key)
         if key == self.keymap["down"]:
             self.keypress(size, "down")
@@ -95,3 +96,4 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
             self.keypress(size, "up")
         else:
             return key
+        return None

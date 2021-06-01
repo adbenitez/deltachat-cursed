@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 import os
 import subprocess
 import sys
+from typing import Optional
 
 import urwid
 from deltachat import account_hookimpl
@@ -15,7 +15,9 @@ from .notifications import notify_msg
 
 
 class CursedDelta(ChatListMonitor):
-    def __init__(self, conf, keymap, theme, app_name, account):
+    def __init__(
+        self, conf: dict, keymap: dict, theme: dict, app_name: str, account
+    ) -> None:
         self.conf = conf
         self.keymap = keymap
         self.app_name = app_name
@@ -82,18 +84,18 @@ class CursedDelta(ChatListMonitor):
         self.main_loop.screen.set_terminal_properties(colors=256)
         self.main_loop.run()
 
-    def print_title(self, messages_count):
+    def print_title(self, messages_count: int) -> None:
         if messages_count > 0:
             text = "\x1b]2;{} ({})\x07".format(self.app_name, messages_count)
         else:
             text = "\x1b]2;{}\x07".format(self.app_name)
         sys.stdout.write(text)
 
-    def exit(self):
+    def exit(self) -> None:
         sys.stdout.write("\x1b]2;\x07")
         raise urwid.ExitMainLoop
 
-    def unhandle_key(self, key):
+    def unhandle_key(self, key: str) -> None:
         if key == self.keymap["quit"]:
             self.exit()
         elif key == self.keymap["toggle_chatlist"]:
@@ -136,7 +138,7 @@ class CursedDelta(ChatListMonitor):
                             )
                             break
 
-    def chatlist_changed(self, current_chat_index, chats):
+    def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         new_messages = 0
         for chat in chats:
             new_messages += chat.count_fresh_messages()
@@ -145,12 +147,12 @@ class CursedDelta(ChatListMonitor):
         if hasattr(self, "main_loop"):
             self.main_loop.draw_screen()
 
-    def chat_selected(self, index, chats):
+    def chat_selected(self, index: Optional[int], chats: list) -> None:
         self.main_columns.focus_position = 2
         self.right_side.focus_position = 1
 
     @account_hookimpl
-    def ac_incoming_message(self, message):
+    def ac_incoming_message(self, message) -> None:
         if not self.conf["general"]["notification"]:
             return
         sender = message.get_sender_contact()
