@@ -25,11 +25,17 @@ if __name__ == "__main__":
             for line in req.read().split("\n")
             if line and not line.startswith(("#", "-"))
         ]
+    with open("requirements-notify.txt", encoding="utf-8") as req:
+        notify_deps = [
+            line.replace("==", ">=")
+            for line in req.read().split("\n")
+            if line and not line.startswith(("#", "-"))
+        ]
 
     setup(
         name=MODULE_NAME,
         version=version,
-        description="A ncurses Delta Chat client",
+        description="Delta Chat client for the command line",
         long_description=long_desc,
         long_description_content_type="text/markdown",
         author="The Cursed Delta Contributors",
@@ -37,7 +43,7 @@ if __name__ == "__main__":
         url="https://github.com/adbenitez/deltachat-cursed",
         package_dir={"": "src"},
         packages=find_packages("src"),
-        keywords="deltachat tui client",
+        keywords="deltachat tui client ncurses",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: End Users/Desktop",
@@ -53,7 +59,7 @@ if __name__ == "__main__":
         ),
         python_requires=">=3.5",
         install_requires=install_requires,
-        extras_require={"test": test_deps},
+        extras_require={"test": test_deps, "notify": notify_deps},
         include_package_data=True,
         zip_safe=False,
     )
