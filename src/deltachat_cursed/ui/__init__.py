@@ -11,14 +11,7 @@ from .chatlist_widget import ChatListWidget
 from .containers import ChatListContainer, MessagesContainer, MessageSendContainer
 from .msgs_widget import MessagesWidget
 from .msgsend_widget import MessageSendWidget
-
-try:
-    import gi
-
-    gi.require_version("Notify", "0.7")
-    from gi.repository import Notify
-except:
-    pass
+from .notifications import notify_msg
 
 
 class CursedDelta(ChatListMonitor):
@@ -44,11 +37,6 @@ class CursedDelta(ChatListMonitor):
             ("self_msg", *theme["self_msg"]),
             ("unread_chat", *theme["unread_chat"]),
         ]
-
-        # Notification
-        if self.conf["general"]["notification"]:
-            Notify.init("Cursed Delta")
-            self.image = os.path.join(os.path.dirname(__file__), "logo.png")
 
         self.chatlist_container = ChatListContainer(
             self, ChatListWidget(keymap, self.account)
@@ -94,18 +82,6 @@ class CursedDelta(ChatListMonitor):
         self.main_loop.screen.set_terminal_properties(colors=256)
         self.main_loop.run()
 
-    def display_notif(self, msg):
-        if self.conf["general"]["notification"]:
-            if msg.chat.is_group():
-                sender = "{}: {}".format(
-                    msg.chat.get_name(), msg.get_sender_contact().display_name
-                )
-            else:
-                sender = msg.get_sender_contact().display_name
-            Notify.Notification.new(
-                "", "<b>{}</b>\n{}".format(sender, msg.text), self.image
-            ).show()
-
     def print_title(self, messages_count):
         if messages_count > 0:
             text = "\x1b]2;{} ({})\x07".format(self.app_name, messages_count)
@@ -114,8 +90,6 @@ class CursedDelta(ChatListMonitor):
         sys.stdout.write(text)
 
     def exit(self):
-        if self.conf["general"]["notification"]:
-            Notify.uninit()
         sys.stdout.write("\x1b]2;\x07")
         raise urwid.ExitMainLoop
 
@@ -177,10 +151,13 @@ class CursedDelta(ChatListMonitor):
 
     @account_hookimpl
     def ac_incoming_message(self, message):
-        acc = self.account.account
+        if not self.conf["general"]["notification"]:
+            return
         sender = message.get_sender_contact()
+        acc = self.account.account
         me = acc.get_self_contact()
-        name = acc.get_config("displayname")
-        if sender != me:
-            if not message.chat.is_group() or (name and "@" + name in message.text):
-                self.display_notif(message)
+        if sender == me:
+            return
+        name = acc.get_config("displayname") or me.addr
+        if not message.chat.is_group() or ("@" + name in message.text):
+            notify_msg(message)

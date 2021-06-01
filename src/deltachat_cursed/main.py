@@ -8,11 +8,11 @@ import deltachat.const
 from deltachat import Account, events
 from deltachat.tracker import ConfigureTracker
 
+from . import APP_NAME
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .ui import CursedDelta
 
-app_name = "Cursed Delta"
 default_theme = {
     "background": ["", "", "", "", "g11"],
     "status_bar": ["", "", "", "white", "g23"],
@@ -133,21 +133,10 @@ def get_configuration():
         "account_path", home + "/.curseddelta/account/account.db"
     )
     cfg_gen["notification"] = cfg["general"].getboolean("notification", True)
-    cfg_gen["open_file"] = cfg["general"].getboolean("open_file", True)
+    cfg_gen["open_file"] = (
+        cfg["general"].getboolean("open_file", True) and "DISPLAY" in os.environ
+    )
     cfg_gen["date_format"] = cfg["general"].get("date_format", "%x", raw=True)
-
-    if "DISPLAY" not in os.environ:
-        cfg_gen["notification"] = False
-        cfg_gen["open_file"] = False
-
-    if cfg_gen["notification"]:
-        try:
-            import gi
-
-            gi.require_version("Notify", "0.7")
-            from gi.repository import Notify
-        except:
-            cfg_gen["notification"] = False
 
     return cfg_full
 
@@ -229,5 +218,5 @@ def main():
 
     keymap = get_keymap()
     theme = get_theme()
-    CursedDelta(cfg, keymap, theme, app_name, account)
+    CursedDelta(cfg, keymap, theme, APP_NAME, account)
     ac.shutdown()
