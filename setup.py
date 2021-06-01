@@ -39,7 +39,7 @@ if __name__ == "__main__":
         packages=find_packages("src"),
         classifiers=[
             "Development Status :: 4 - Beta",
-            "Intended Audience :: Users",
+            "Intended Audience :: End Users/Desktop",
             "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
             "Operating System :: POSIX",
             "Programming Language :: Python :: 3",
