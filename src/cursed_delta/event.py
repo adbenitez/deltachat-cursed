@@ -46,9 +46,9 @@ class AccountPlugin:
 
     def select_chat(self, index):
         chats = self.account.get_chats()
-        self.current_chat = chats[index]
         for m in self.chatlist_monitors:
             m.chat_selected(index, chats)
+        self.current_chat = None if index is None else chats[index]
 
     def select_next_chat(self):
         chats = self.account.get_chats()
