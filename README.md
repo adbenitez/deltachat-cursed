@@ -21,12 +21,6 @@ Install Cursed Delta with pip:
 $ pip install -U deltachat-cursed
 ```
 
-Optionally, if you want notifications (it might be not necessary in GNU/Linux if notify-send is available):
-
-```
-$ pip install -U 'deltachat-cursed[notify]'
-```
-
 
 ## Usage
 

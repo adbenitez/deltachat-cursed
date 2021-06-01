@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-- improved notifications: use notify-send if available, show chat avatar in notifications in GNU/Linux, added support Windows notifications.
+- improved notifications, added support for notifications in Windows and MacOS platforms.
 
 ## 0.2.0
 
