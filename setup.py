@@ -46,7 +46,7 @@ if __name__ == "__main__":
         ],
         entry_points="""
             [console_scripts]
-            curseddelta={}:main
+            curseddelta={}.main:main
         """.format(
             MODULE_NAME
         ),
