@@ -31,6 +31,7 @@ if __name__ == "__main__":
         version=version,
         description="A ncurses Delta Chat client",
         long_description=long_desc,
+        long_description_content_type="text/markdown",
         author="The Cursed Delta Contributors",
         author_email="adbenitez@nauta.cu",
         url="https://github.com/adbenitez/cursed_delta",
