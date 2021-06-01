@@ -37,6 +37,7 @@ if __name__ == "__main__":
         url="https://github.com/adbenitez/deltachat-cursed",
         package_dir={"": "src"},
         packages=find_packages("src"),
+        keywords="deltachat tui client",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: End Users/Desktop",
