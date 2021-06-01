@@ -8,10 +8,10 @@ import deltachat.const
 from deltachat import Account, events
 from deltachat.tracker import ConfigureTracker
 
+from . import APP_NAME
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .ui import CursedDelta
-from . import APP_NAME
 
 default_theme = {
     "background": ["", "", "", "", "g11"],
@@ -133,7 +133,9 @@ def get_configuration():
         "account_path", home + "/.curseddelta/account/account.db"
     )
     cfg_gen["notification"] = cfg["general"].getboolean("notification", True)
-    cfg_gen["open_file"] = cfg["general"].getboolean("open_file", True) and "DISPLAY" in os.environ
+    cfg_gen["open_file"] = (
+        cfg["general"].getboolean("open_file", True) and "DISPLAY" in os.environ
+    )
     cfg_gen["date_format"] = cfg["general"].get("date_format", "%x", raw=True)
 
     return cfg_full

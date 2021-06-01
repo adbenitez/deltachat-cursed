@@ -1,7 +1,7 @@
 import os
 import sys
-from .. import APP_NAME
 
+from .. import APP_NAME
 
 __all__ = ["notify", "notify_msg"]
 app_logo = os.path.join(os.path.abspath(os.path.dirname(__file__)), "logo.png")
@@ -40,10 +40,12 @@ def notify_msg(msg) -> None:
 
 try:
     from notify import notification
+
     notify = _notify
 except:
     try:
         import subprocess
+
         subprocess.check_output(["notify-send", "--help"])
         notify = _notify_send
     except:
