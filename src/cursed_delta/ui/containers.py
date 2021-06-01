@@ -51,7 +51,9 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
-                edit.set_edit_text(self.process_command(text))
+                text = self.process_command(text)
+                if text is not None:
+                    edit.set_edit_text(text)
                 self.resize_zone(size)
                 return
             current_chat = self.root.account.current_chat
@@ -104,15 +106,10 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         acc = model.account
         args = cmd.split(maxsplit=1)
         if args[0] == "/query":
-            acc.create_chat(args[1].strip())
-        if args[0] == "/add":
-            for addr in args[1].split(","):
-                model.current_chat.add_contact(addr.strip())
-        if args[0] == "/kick":
-            for addr in args[1].split(","):
-                model.current_chat.remove_contact(addr.strip())
-        if args[0] == "/part":
-            model.current_chat.remove_contact(acc.get_self_contact())
+            self.msg_send_widget.widgetEdit.set_edit_text("")
+            chat = acc.create_chat(args[1].strip())
+            model.select_chat_by_id(chat.id)
+            return None
         if args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
         if args[0] == "/join":
@@ -120,7 +117,15 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             msg = model.current_chat.get_draft()
             if msg:
                 return msg.text
-        if args[0] == "/accept":
+        if args[0] == "/add":
+            for addr in args[1].split(","):
+                model.current_chat.add_contact(addr.strip())
+        elif args[0] == "/kick":
+            for addr in args[1].split(","):
+                model.current_chat.remove_contact(addr.strip())
+        elif args[0] == "/part":
+            model.current_chat.remove_contact(acc.get_self_contact())
+        elif args[0] == "/accept":
             i = int(args[1].strip()) - 1
             msg = acc.get_deaddrop_chat().get_messages()[i]
             acc._create_chat_by_message_id(msg.id)
