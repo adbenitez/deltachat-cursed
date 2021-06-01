@@ -6,6 +6,12 @@ A ncurses Delta Chat client developed in Python with the urwid library.
   <img src="screenshots/e1.png" alt="screenshot of Cursed Delta"/>
 </p>
 
+[![Latest Release](https://img.shields.io/pypi/v/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
+[![Supported Versions](https://img.shields.io/pypi/pyversions/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
+[![Downloads](https://pepy.tech/badge/deltachat-cursed)](https://pepy.tech/project/deltachat-cursed)
+[![License](https://img.shields.io/pypi/l/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
+[![CI](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml/badge.svg)](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Installation
 
@@ -24,7 +30,7 @@ $ sudo apt-get install libnotify-bin
 
 ## Usage
 
-After installation the command `curseddelta` should be available, or you can use `python3 -m cursed_delta`.
+After installation the command `curseddelta` should be available, or you can use `python3 -m deltachat-cursed`.
 The first time you run `curseddelta` you need to specify an email and password:
 
 ```

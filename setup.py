@@ -6,7 +6,7 @@ import re
 from setuptools import find_packages, setup
 
 if __name__ == "__main__":
-    MODULE_NAME = "cursed_delta"
+    MODULE_NAME = "deltachat_cursed"
     with open(os.path.join("src", MODULE_NAME, "__init__.py")) as fd:
         version = re.search(r"__version__ = \"(.*?)\"", fd.read(), re.M).group(1)
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         author="The Cursed Delta Contributors",
         author_email="adbenitez@nauta.cu",
-        url="https://github.com/adbenitez/cursed_delta",
+        url="https://github.com/adbenitez/deltachat-cursed",
         package_dir={"": "src"},
         packages=find_packages("src"),
         classifiers=[
