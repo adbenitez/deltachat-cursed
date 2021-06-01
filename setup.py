@@ -19,6 +19,12 @@ if __name__ == "__main__":
             for line in file.read().split("\n")
             if line and not line.startswith(("#", "-"))
         ]
+    with open("requirements-test.txt", encoding="utf-8") as req:
+        test_deps = [
+            line.replace("==", ">=")
+            for line in req.read().split("\n")
+            if line and not line.startswith(("#", "-"))
+        ]
 
     setup(
         name=MODULE_NAME,
@@ -45,6 +51,7 @@ if __name__ == "__main__":
         ),
         python_requires=">=3.5",
         install_requires=install_requires,
+        extras_require={"test": test_deps},
         include_package_data=True,
         zip_safe=False,
     )
