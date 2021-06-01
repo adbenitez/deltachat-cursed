@@ -18,7 +18,7 @@ A ncurses Delta Chat client developed in Python with the urwid library.
 Install Cursed Delta with pip:
 
 ```
-$ sudo pip3 install -U https://github.com/adbenitez/deltachat-cursed/archive/master.tar.gz
+$ sudo pip3 install -U deltachat-cursed
 ```
 
 Optionally, if you want notifications install libnotify (Debian example):
