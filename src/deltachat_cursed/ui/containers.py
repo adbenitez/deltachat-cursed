@@ -113,6 +113,18 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             chat = acc.create_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
             return None
+        if args[0] == "/accept":
+            self.msg_send_widget.widgetEdit.set_edit_text("")
+            i = int(args[1].strip()) - 1
+            msg = acc.get_deaddrop_chat().get_messages()[i]
+            chat = acc._create_chat_by_message_id(msg.id)
+            model.select_chat_by_id(chat.id)
+            return None
+        if args[0] == "/join":
+            self.msg_send_widget.widgetEdit.set_edit_text("")
+            chat = acc.create_group_chat(args[1].strip())
+            model.select_chat_by_id(chat.id)
+            return None
         if args[0] == "/delete":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             model.current_chat.delete()
@@ -120,11 +132,6 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             return None
         if args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
-        if args[0] == "/join":
-            model.current_chat = acc.create_group_chat(args[1].strip())
-            msg = model.current_chat.get_draft()
-            if msg:
-                return msg.text
         if args[0] == "/add":
             for addr in args[1].split(","):
                 model.current_chat.add_contact(addr.strip())
@@ -133,9 +140,4 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 model.current_chat.remove_contact(addr.strip())
         elif args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
-        elif args[0] == "/accept":
-            i = int(args[1].strip()) - 1
-            msg = acc.get_deaddrop_chat().get_messages()[i]
-            acc._create_chat_by_message_id(msg.id)
-
-        return ""
+        return f"ERROR: Unknown command {args[0]}"
