@@ -46,23 +46,21 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         if index is not None and self.current_chat == chats[index]:
             return
         self.typing = False
-        # save draft
         if self.current_chat:
-            text = self.widgetEdit.get_edit_text()
-            prev_draft = self.current_chat.get_draft()
-            if not prev_draft or prev_draft.text != text:
-                msg = dc.Message.new_empty(self.current_chat.account, "text")
-                msg.set_text(text)
-                self.current_chat.set_draft(msg)
+            self.save_draft(self.current_chat)
         if index is None:
             self.current_chat = None
             return
         self.current_chat = chats[index]
-        # load draft
         msg = self.current_chat.get_draft()
         self.widgetEdit.set_edit_text(msg.text if msg else "")
-        # update status bar
         self.update_status_bar(index, chats)
+
+    def save_draft(self, chat: Chat) -> None:
+        text = self.widgetEdit.get_edit_text()
+        msg = dc.Message.new_empty(chat.account, "text")
+        msg.set_text(text)
+        chat.set_draft(msg)
 
     def update_status_bar(self, current_chat_index: Optional[int], chats: list) -> None:
         if current_chat_index is None:
