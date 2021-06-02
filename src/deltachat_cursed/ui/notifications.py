@@ -28,7 +28,7 @@ def _notify(title: str, body: str, image: str = None) -> None:
     notification = Notify()
     notification.title = title
     notification.message = body
-    notification.icon = image or app_icon
+    notification.icon = image if image and os.path.exists(image) else app_icon
     notification.application_name = APP_NAME
     notification.send(block=False)
 
