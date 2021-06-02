@@ -6,6 +6,7 @@
 - removed chat list item separators.
 - code quality: added type hints.
 - bugfix: save draft on exit.
+- added `/delete` command to delete chat.
 
 ## 0.2.0
 

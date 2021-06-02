@@ -113,6 +113,11 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             chat = acc.create_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
             return None
+        if args[0] == "/delete":
+            self.msg_send_widget.widgetEdit.set_edit_text("")
+            model.current_chat.delete()
+            model.select_chat(None)
+            return None
         if args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
         if args[0] == "/join":
