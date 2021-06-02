@@ -50,9 +50,8 @@ class CursedDelta(ChatListMonitor):
         )
 
         # message writing + status bar widget
-        self.msg_send_container = MessageSendContainer(
-            self, MessageSendWidget(keymap, self.account)
-        )
+        self.msg_send_widget = MessageSendWidget(keymap, self.account)
+        self.msg_send_container = MessageSendContainer(self, self.msg_send_widget)
 
         # Right pannel
         self.right_side = urwid.Pile(
@@ -91,6 +90,8 @@ class CursedDelta(ChatListMonitor):
         sys.stdout.write(text)
 
     def exit(self) -> None:
+        if self.account.current_chat:
+            self.msg_send_widget.save_draft(self.account.current_chat)
         sys.stdout.write("\x1b]2;\x07")
         raise urwid.ExitMainLoop
 

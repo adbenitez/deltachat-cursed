@@ -5,6 +5,7 @@
 - improved notifications, added support for notifications in Windows and MacOS platforms.
 - removed chat list item separators.
 - code quality: added type hints.
+- bugfix: save draft on exit.
 
 ## 0.2.0
 
