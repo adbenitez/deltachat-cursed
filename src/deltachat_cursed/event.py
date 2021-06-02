@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, Set
 
 from deltachat import Account, account_hookimpl
 
@@ -14,7 +14,7 @@ class ChatListMonitor:
 class AccountPlugin:
     def __init__(self, account: Account) -> None:
         self.account = account
-        self.chatlist_monitors: List[ChatListMonitor] = []
+        self.chatlist_monitors: Set[ChatListMonitor] = set()
         self.current_chat = self.get_chats()[0]
 
     def get_chats(self) -> list:
@@ -25,12 +25,11 @@ class AccountPlugin:
         return chats
 
     def add_chatlist_monitor(self, monitor: ChatListMonitor) -> None:
-        assert monitor not in self.chatlist_monitors, "Monitor already added"
-        self.chatlist_monitors.append(monitor)
+        self.chatlist_monitors.add(monitor)
         monitor.chatlist_changed(self.get_current_index(), self.get_chats())
 
     def remove_monitor(self, monitor: ChatListMonitor) -> None:
-        self.chatlist_monitors.remove(monitor)
+        self.chatlist_monitors.discard(monitor)
 
     def chatlist_changed(self) -> None:
         chats = self.get_chats()
