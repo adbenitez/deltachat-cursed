@@ -48,9 +48,6 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
         # build the chat list
         for i, chat in enumerate(chats):
             pos += 1
-            self.chat_list.insert(pos, urwid.AttrMap(urwid.Divider("─"), "hour"))
-
-            pos += 1
             label = "➜ " + chat.get_name()
             new_messages = chat.count_fresh_messages()
             if chat.is_deaddrop():
@@ -67,10 +64,6 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
                     label = ("unread_chat", label)
                 button = ListItem(label, self.chat_change, i)
                 self.chat_list.insert(pos, button)
-
-        if chats:
-            pos += 1
-            self.chat_list.insert(pos, urwid.AttrMap(urwid.Divider("─"), "hour"))
 
         # pos += 1
         # self.chat_list.insert(

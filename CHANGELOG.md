@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - improved notifications, added support for notifications in Windows and MacOS platforms.
+- removed chat list item separators.
 
 ## 0.2.0
 
