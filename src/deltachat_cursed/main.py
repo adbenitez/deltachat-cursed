@@ -184,9 +184,9 @@ def main() -> None:
         ac.add_account_plugin(log)
 
     if not ac.is_configured():
-        assert args.email, (
-            "you must specify --email once" " to configure this database/account"
-        )
+        assert (
+            args.email
+        ), "you must specify --email once to configure this database/account"
         ac.set_config("addr", args.email)
 
         if not args.password and is_oauth2(ac, args.email):
@@ -199,9 +199,9 @@ def main() -> None:
             flags |= deltachat.const.DC_LP_AUTH_OAUTH2
             ac.set_config("server_flags", str(flags))
         else:
-            assert args.password, (
-                "you must specify --password once" " to configure this database/account"
-            )
+            assert (
+                args.password
+            ), "you must specify --password once to configure this database/account"
             ac.set_config("mail_pw", args.password)
 
         with ac.temp_plugin(ConfigureTracker(ac)) as tracker:
