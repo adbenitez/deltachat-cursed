@@ -24,6 +24,8 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
 
     def chat_selected(self, index: Optional[int], chats: list) -> None:
         self.update(index, chats)
+        if index is not None:
+            chats[index].mark_noticed()
 
     def update(self, current_chat_index: Optional[int], chats: list) -> None:
         if self.updating:

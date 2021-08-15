@@ -8,6 +8,7 @@
 - removed chat list item separators.
 - code quality: added type hints, and improved CI to check code quality.
 - added `/delete` command to delete chat and other command improvements.
+- bugfix: mark chat as noticed when it is open, so the unread counter disappears.
 
 ## 0.2.0
 
