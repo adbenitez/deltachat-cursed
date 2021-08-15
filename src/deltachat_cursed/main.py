@@ -3,6 +3,7 @@ import configparser
 import json
 import os
 import sys
+from typing import Dict
 
 import deltachat.const
 from deltachat import Account, events
@@ -124,7 +125,7 @@ def get_configuration() -> dict:
     else:
         cfg.add_section("general")
 
-    cfg_full = dict()
+    cfg_full: Dict[str, dict] = dict()
     cfg_full["general"] = dict()
 
     home = os.path.expanduser("~")
@@ -180,7 +181,7 @@ def main() -> None:
         return
 
     if args.show_ffi:
-        log = events.FFIEventLogger(ac, "CursedDelta")
+        log = events.FFIEventLogger(ac)
         ac.add_account_plugin(log)
 
     if not ac.is_configured():
@@ -196,7 +197,7 @@ def main() -> None:
 
             flags = ac.get_config("server_flags")
             flags = int(flags) if flags else 0
-            flags |= deltachat.const.DC_LP_AUTH_OAUTH2
+            flags |= deltachat.const.DC_LP_AUTH_OAUTH2  # noqa
             ac.set_config("server_flags", str(flags))
         else:
             assert (

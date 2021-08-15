@@ -17,8 +17,7 @@ class ChatListContainer(urwid.WidgetPlaceholder):
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
             return super().keypress(size, key)
-        else:
-            return super().keypress(size, key)
+        return super().keypress(size, key)
 
 
 class MessagesContainer(urwid.WidgetPlaceholder):
@@ -69,7 +68,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         elif key == self.keymap["left"]:
             self.root.main_columns.focus_position = 0
         # give the focus to the message list
-        elif key == "up" or key == "page up" or key == "esc":
+        elif key in ("up", "page up", "esc"):
             self.root.right_side.focus_position = 0
         elif key == self.keymap["reply"]:
             current_chat = self.root.account.current_chat
@@ -101,8 +100,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         rows_needed = 1
         for line in text.split("\n"):
             rows_needed += int((len(line) + len(text_caption)) / size[0]) + 1
-        if rows_needed > 10:
-            rows_needed = 10
+        rows_needed = min(rows_needed, 10)
         contents = self.root.right_side.contents
         if rows_needed != size[1]:
             contents[1] = (contents[1][0], ("given", rows_needed))

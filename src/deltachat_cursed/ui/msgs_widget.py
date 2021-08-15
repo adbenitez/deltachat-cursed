@@ -9,7 +9,9 @@ from ..event import ChatListMonitor
 class MessagesWidget(urwid.ListBox, ChatListMonitor):
     """Widget used to print the message list"""
 
-    def __init__(self, date_format: str, keymap: dict, theme: dict, account) -> None:
+    def __init__(
+        self, date_format: str, keymap: dict, theme: dict, account
+    ) -> None:  # noqa
         self.DATE_FORMAT = date_format
         self.theme = theme
         self.keymap = keymap
@@ -37,12 +39,12 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         else:
             msgs = chats[current_chat_index].get_messages()
 
-        self.msg_list = urwid.SimpleFocusListWalker(
+        self.msg_list = urwid.SimpleFocusListWalker(  # noqa
             [urwid.Text(("top", ""), align="left")]
         )
         super().__init__(self.msg_list)
 
-        self.pos = 0
+        self.pos = 0  # noqa
 
         prev_date = None
         for msg in msgs:
@@ -98,8 +100,6 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
             text = text + "  ✓"
         elif msg.is_out_failed():
             text = text + "  ✖"
-        else:
-            text = text
 
         if msg.is_out_pending() or msg.is_out_failed():
             message_text = urwid.Text(("pending", text))
@@ -137,12 +137,12 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         self.msg_list.insert(self.pos, message_to_display)
         self.focus_position = self.pos
 
-    def get_name_color(self, id: int) -> list:
-        if id == self.model.account.get_self_contact().id:
+    def get_name_color(self, id_: int) -> list:
+        if id_ == self.model.account.get_self_contact().id:
             return self.theme["self_color"]
 
         users_color = self.theme["users_color"]
-        color = id % len(users_color)
+        color = id_ % len(users_color)
         return users_color[color]
 
     def keypress(self, size, key: str) -> Optional[str]:

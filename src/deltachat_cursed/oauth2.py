@@ -14,7 +14,7 @@ def is_oauth2(ac: Account, addr: str) -> bool:
 
 def get_oauth2_url(ac: Account, addr: str, redirect_uri: str) -> Optional[str]:
     buf = ffi.dlopen(None).dc_get_oauth2_url(
-        ac._dc_context, addr.encode("utf-8"), redirect_uri.encode("utf-8")
+        ac._dc_context, addr.encode("utf-8"), redirect_uri.encode("utf-8")  # noqa
     )
 
     if buf == ffi.NULL:
@@ -51,6 +51,7 @@ def get_authz_code(
         )
 
     auth_url = get_oauth2_url(ac, addr, f"http://127.0.0.1:{port}/")
+    assert auth_url
 
     wsgi_app = _RedirectWSGIApp(success_message)
     local_server = wsgiref.simple_server.make_server("127.0.0.1", port, wsgi_app)
@@ -64,12 +65,12 @@ def get_authz_code(
 
     authorization_response = wsgi_app.last_request_uri
 
-    res_params = parse_qs(urlparse(authorization_response).query)
+    res_params = parse_qs(urlparse(authorization_response).query)  # type: ignore
     assert (
         "code" in res_params and res_params["code"]
     ), "authorization code not found in url"
 
-    return res_params["code"][0]
+    return res_params["code"][0]  # type: ignore
 
 
 class _RedirectWSGIApp:

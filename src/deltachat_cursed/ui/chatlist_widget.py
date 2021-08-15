@@ -15,11 +15,12 @@ class ListItem(urwid.Button):
 
 
 class ChatListWidget(urwid.ListBox, ChatListMonitor):
-    def __init__(self, keymap: dict, account) -> None:
+    def __init__(self, keymap: dict, account) -> None:  # noqa
         self.keymap = keymap
         self.model = account
         self.updating = False
         self.model.add_chatlist_monitor(self)
+        self.focus_position = -1
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         self.update(current_chat_index, chats)
@@ -33,12 +34,12 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
         self.updating = True
 
         # refresh chat list
-        self.chat_list = urwid.SimpleFocusListWalker(
+        self.chat_list = urwid.SimpleFocusListWalker(  # noqa
             [urwid.AttrMap(urwid.Text("Chat list:"), "status_bar")]
         )
         super().__init__(self.chat_list)
 
-        pos = self.focus_position
+        pos = self.focus_position  # noqa
 
         if current_chat_index is None:
             current_id = None

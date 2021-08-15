@@ -100,7 +100,7 @@ class CursedDelta(ChatListMonitor):
             self.exit()
         elif key == self.keymap["toggle_chatlist"]:
             # check if already hidden
-            if 1 == self.main_columns.contents[0][1][1]:
+            if self.main_columns.contents[0][1][1] == 1:
                 cols_contents = self.main_columns.contents
                 # hidding
                 cols_contents[0] = (cols_contents[0][0], ("given", 0, False))
@@ -131,7 +131,7 @@ class CursedDelta(ChatListMonitor):
                 if msgs:
                     for msg in reversed(msgs[-20:]):
                         if msg.filename:
-                            subprocess.Popen(
+                            subprocess.Popen(  # noqa
                                 ["xdg-open", msg.filename],
                                 stderr=subprocess.DEVNULL,
                                 stdout=subprocess.DEVNULL,

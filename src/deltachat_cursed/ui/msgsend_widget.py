@@ -12,8 +12,7 @@ def get_subtitle(chat) -> str:
     members = chat.get_contacts()
     if not chat.is_group() and members:
         return members[0].addr
-    else:
-        return "{} member(s)".format(len(members))
+    return "{} member(s)".format(len(members))
 
 
 class MessageSendWidget(urwid.Filler, ChatListMonitor):
