@@ -55,7 +55,8 @@ if __name__ == "__main__":
         python_requires=">=3.7",
         install_requires=load_requirements("requirements/requirements.txt"),
         extras_require={
-            "test": load_requirements("requirements/requirements-test.txt")
+            "test": load_requirements("requirements/requirements-test.txt"),
+            "dev": load_requirements("requirements/requirements-dev.txt"),
         },
         include_package_data=True,
         zip_safe=False,
