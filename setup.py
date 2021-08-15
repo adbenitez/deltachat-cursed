@@ -7,8 +7,6 @@ from setuptools import find_packages, setup
 
 if __name__ == "__main__":
     MODULE_NAME = "deltachat_cursed"
-    with open(os.path.join("src", MODULE_NAME, "__init__.py")) as fd:
-        version = re.search(r"__version__ = \"(.*?)\"", fd.read(), re.M).group(1)
 
     with open("README.md") as f:
         long_desc = f.read()
@@ -28,7 +26,13 @@ if __name__ == "__main__":
 
     setup(
         name=MODULE_NAME,
-        version=version,
+        setup_requires=["setuptools_scm"],
+        use_scm_version={
+            "root": ".",
+            "relative_to": __file__,
+            "tag_regex": r"^(?P<prefix>v)?(?P<version>[^\+]+)(?P<suffix>.*)?$",
+            "git_describe_command": "git describe --dirty --tags --long --match v*.*.*",
+        },
         description="Delta Chat client for the command line",
         long_description=long_desc,
         long_description_content_type="text/markdown",
