@@ -1,4 +1,4 @@
-deltachat==1.51.0
+deltachat==1.58.0
 urwid==2.1.2
 urwid-readline==0.13
 notify-py==0.3.3

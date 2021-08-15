@@ -50,8 +50,6 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
             pos += 1
             label = "➜ " + chat.get_name()
             new_messages = chat.count_fresh_messages()
-            if chat.is_deaddrop():
-                new_messages = len(chat.get_messages())
             if new_messages > 0:
                 label += " ({})".format(new_messages)
 

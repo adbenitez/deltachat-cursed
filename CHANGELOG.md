@@ -2,12 +2,12 @@
 
 ## [Unreleased]
 
+- Updated code to work with the new `deltachat-1.58.0` API, "Contact Requests" chat was removed.
 - improved notifications, added support for notifications in Windows and MacOS platforms.
-- removed chat list item separators.
-- code quality: added type hints.
 - bugfix: save draft on exit.
+- removed chat list item separators.
+- code quality: added type hints, and improved CI to check code quality.
 - added `/delete` command to delete chat and other command improvements.
-- now `Contact Requests` chat is always shown in the chat list.
 
 ## 0.2.0
 

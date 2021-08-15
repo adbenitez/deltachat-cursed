@@ -59,6 +59,9 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 self.resize_zone(size)
                 return None
             current_chat = self.root.account.current_chat
+            if current_chat.is_contact_request():
+                # accept contact requests automatically until UI allows to accept/block
+                current_chat.accept()
             current_chat.send_text(text)
             edit.set_edit_text("")
             self.resize_zone(size)
@@ -111,13 +114,6 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         if args[0] == "/query":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_chat(args[1].strip())
-            model.select_chat_by_id(chat.id)
-            return None
-        if args[0] == "/accept":
-            self.msg_send_widget.widgetEdit.set_edit_text("")
-            i = int(args[1].strip()) - 1
-            msg = acc.get_deaddrop_chat().get_messages()[i]
-            chat = acc._create_chat_by_message_id(msg.id)
             model.select_chat_by_id(chat.id)
             return None
         if args[0] == "/join":
