@@ -1,31 +1,30 @@
 """Setup module installation."""
 
 import os
-import re
 
 from setuptools import find_packages, setup
 
-if __name__ == "__main__":
-    MODULE_NAME = "deltachat_cursed"
 
+def load_requirements(path: str) -> list:
+    """Load requirements from the given relative path."""
+    with open(path, encoding="utf-8") as file:
+        requirements = []
+        for line in file.read().split("\n"):
+            if line.startswith("-r"):
+                dirname = os.path.dirname(path)
+                filename = line.split(maxsplit=1)[1]
+                requirements.extend(load_requirements(os.path.join(dirname, filename)))
+            elif line and not line.startswith("#"):
+                requirements.append(line.replace("==", ">="))
+        return requirements
+
+
+if __name__ == "__main__":
     with open("README.md") as f:
         long_desc = f.read()
 
-    with open("requirements.txt", encoding="utf-8") as file:
-        install_requires = [
-            line.replace("==", ">=")
-            for line in file.read().split("\n")
-            if line and not line.startswith(("#", "-"))
-        ]
-    with open("requirements-test.txt", encoding="utf-8") as req:
-        test_deps = [
-            line.replace("==", ">=")
-            for line in req.read().split("\n")
-            if line and not line.startswith(("#", "-"))
-        ]
-
     setup(
-        name=MODULE_NAME,
+        name="deltachat_cursed",
         setup_requires=["setuptools_scm"],
         use_scm_version={
             "root": ".",
@@ -51,13 +50,13 @@ if __name__ == "__main__":
         ],
         entry_points="""
             [console_scripts]
-            curseddelta={}.main:main
-        """.format(
-            MODULE_NAME
-        ),
-        python_requires=">=3.5",
-        install_requires=install_requires,
-        extras_require={"test": test_deps},
+            curseddelta=deltachat_cursed.main:main
+        """,
+        python_requires=">=3.7",
+        install_requires=load_requirements("requirements/requirements.txt"),
+        extras_require={
+            "test": load_requirements("requirements/requirements-test.txt")
+        },
         include_package_data=True,
         zip_safe=False,
     )
