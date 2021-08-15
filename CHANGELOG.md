@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.3.0]
 
 - Updated code to work with the new `deltachat-1.58.0` API, "Contact Requests" chat was removed.
 - improved notifications, added support for notifications in Windows and MacOS platforms.
@@ -15,4 +15,5 @@
 - Initial release
 
 
-[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.2.0...v0.3.0
