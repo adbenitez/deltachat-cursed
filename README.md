@@ -41,7 +41,7 @@ $ curseddelta --db /path/to/your/account.db
 #### Tips
 
 - Messages will be displayed in red if someone mentions you.
-- You will get a notification if someone mentions you in a group. (needs libnotify)
+- You will get a notification if someone mentions you in a group.
 - The message marker `>` will be gray if the message is encrypted, or red if message is not encrypted.
 - Message will be gray until it is sent.
 - You will see `✓` at the end of the message if it was send, `✓✓` when the message was noticed, or `✖` if message failed to send.
