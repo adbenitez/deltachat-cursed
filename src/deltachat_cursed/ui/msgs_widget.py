@@ -9,9 +9,9 @@ from ..event import ChatListMonitor
 class MessagesWidget(urwid.ListBox, ChatListMonitor):
     """Widget used to print the message list"""
 
-    def __init__(
+    def __init__(  # noqa
         self, date_format: str, keymap: dict, theme: dict, account
-    ) -> None:  # noqa
+    ) -> None:
         self.DATE_FORMAT = date_format
         self.theme = theme
         self.keymap = keymap
