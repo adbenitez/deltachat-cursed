@@ -50,7 +50,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         for msg in msgs:
             self.print_msg(msg, prev_date)
             local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
-            prev_date = local_date.strftime("│ {} │".format(self.DATE_FORMAT))
+            prev_date = local_date.strftime(f"│ {self.DATE_FORMAT} │")
 
         self.pos += 1
         self.msg_list.insert(self.pos, urwid.Text(("bottom", "")))
@@ -63,7 +63,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         name = sender.display_name
         color = self.get_name_color(sender.id)
 
-        cur_date = local_date.strftime("│ {} │".format(self.DATE_FORMAT))
+        cur_date = local_date.strftime(f"│ {self.DATE_FORMAT} │")
 
         if cur_date != prev_date:
             fill = "─" * (len(cur_date) - 2)

@@ -84,9 +84,9 @@ class CursedDelta(ChatListMonitor):
 
     def print_title(self, messages_count: int) -> None:
         if messages_count > 0:
-            text = "\x1b]2;{} ({})\x07".format(self.app_name, messages_count)
+            text = f"\x1b]2;{self.app_name} ({messages_count})\x07"
         else:
-            text = "\x1b]2;{}\x07".format(self.app_name)
+            text = f"\x1b]2;{self.app_name}\x07"
         sys.stdout.write(text)
 
     def exit(self) -> None:

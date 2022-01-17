@@ -82,7 +82,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             text = msgs[-1].text.strip()
             if not msgs[-1].is_text():
                 text = "[File]\n" + text
-            reply = "\n> @{}:\n".format(sender)
+            reply = f"\n> @{sender}:\n"
             for line in text.splitlines(keepends=True):
                 reply += "> " + line
             edit.set_edit_text(reply + "\n\n")

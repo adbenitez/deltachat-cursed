@@ -52,7 +52,7 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
             label = "➜ " + chat.get_name()
             new_messages = chat.count_fresh_messages()
             if new_messages > 0:
-                label += " ({})".format(new_messages)
+                label += f" ({new_messages})"
 
             if chat.id == current_id:
                 button = ListItem(("cur_chat", label), self.chat_change, i)

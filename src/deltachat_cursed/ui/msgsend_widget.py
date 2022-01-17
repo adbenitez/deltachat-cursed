@@ -12,7 +12,7 @@ def get_subtitle(chat) -> str:
     members = chat.get_contacts()
     if not chat.is_group() and members:
         return members[0].addr
-    return "{} member(s)".format(len(members))
+    return f"{len(members)} member(s)"
 
 
 class MessageSendWidget(urwid.Filler, ChatListMonitor):
@@ -69,9 +69,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             verified = ""
             if chat.is_protected():
                 verified = "✓ "
-            text = " {}[ {} ] -- {}".format(
-                verified, chat.get_name(), get_subtitle(chat)
-            )
+            text = f" {verified}[ {chat.get_name()} ] -- {get_subtitle(chat)}"
 
         self.status_bar.set_text(text)
 

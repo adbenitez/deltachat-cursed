@@ -16,9 +16,7 @@ def _fake_notify(title: str, body: str, image: str) -> None:
 def notify_msg(msg) -> None:
     image = msg.chat.get_profile_image()
     if msg.chat.is_group():
-        title = "{}: {}".format(
-            msg.chat.get_name(), msg.get_sender_contact().display_name
-        )
+        title = f"{msg.chat.get_name()}: {msg.get_sender_contact().display_name}"
     else:
         title = msg.get_sender_contact().display_name
     notify(body=msg.text, title=title, image=image)

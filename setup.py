@@ -20,8 +20,8 @@ def load_requirements(path: str) -> list:
 
 
 if __name__ == "__main__":
-    with open("README.md") as f:
-        long_desc = f.read()
+    with open("README.md", encoding="utf-8") as readme:
+        long_desc = readme.read()
 
     setup(
         name="deltachat_cursed",

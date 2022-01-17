@@ -73,18 +73,18 @@ def get_theme() -> dict:
     file_name = "theme.json"
     themes = [
         "curseddelta-" + file_name,
-        "{}/.curseddelta/{}".format(os.path.expanduser("~"), file_name),
+        f"{os.path.expanduser('~')}/.curseddelta/{file_name}",
         "/etc/curseddelta/" + file_name,
     ]
 
     for path in themes:
         if os.path.isfile(path):
-            with open(path) as fd:
+            with open(path, encoding="utf-8") as fd:
                 theme = json.load(fd)
             break
     else:
         theme = default_theme
-        with open(themes[1], "w") as fd:
+        with open(themes[1], "w", encoding="utf-8") as fd:
             json.dump(theme, fd, indent=2)
 
     return theme
@@ -94,18 +94,18 @@ def get_keymap() -> dict:
     file_name = "keymap.json"
     keymaps = [
         "curseddelta-" + file_name,
-        "{}/.curseddelta/{}".format(os.path.expanduser("~"), file_name),
+        f"{os.path.expanduser('~')}/.curseddelta/{file_name}",
         "/etc/curseddelta/" + file_name,
     ]
 
     for path in keymaps:
         if os.path.isfile(path):
-            with open(path) as fd:
+            with open(path, encoding="utf-8") as fd:
                 keymap = json.load(fd)
             break
     else:
         keymap = default_keymap
-        with open(keymaps[1], "w") as fd:
+        with open(keymaps[1], "w", encoding="utf-8") as fd:
             json.dump(keymap, fd, indent=1)
 
     return keymap
@@ -113,7 +113,7 @@ def get_keymap() -> dict:
 
 def get_configuration() -> dict:
     file_name = "curseddelta.conf"
-    home_config = "{}/.{}".format(os.path.expanduser("~"), file_name)
+    home_config = f"{os.path.expanduser('~')}/.{file_name}"
     confPriorityList = [file_name, home_config, "/etc/" + file_name]
 
     cfg = configparser.ConfigParser()
@@ -125,8 +125,8 @@ def get_configuration() -> dict:
     else:
         cfg.add_section("general")
 
-    cfg_full: Dict[str, dict] = dict()
-    cfg_full["general"] = dict()
+    cfg_full: Dict[str, dict] = {}
+    cfg_full["general"] = {}
 
     home = os.path.expanduser("~")
     cfg_gen = cfg_full["general"]
