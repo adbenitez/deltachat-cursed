@@ -91,4 +91,4 @@ The user interface is based on [ncTelegram](https://github.com/Nanoseb/ncTelegra
 
 Licensed GPLv3+, see the LICENSE file for details.
 
-Copyright © 2020 Cursed Delta contributors.
+Copyright © 2020-2022 Cursed Delta contributors.
