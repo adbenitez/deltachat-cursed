@@ -20,7 +20,6 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
         self.model = account
         self.updating = False
         self.model.add_chatlist_monitor(self)
-        self.focus_position = -1
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         self.update(current_chat_index, chats)
