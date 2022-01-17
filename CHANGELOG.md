@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1]
+
+- fix `IndexError` in `ui/chatlist_widget.py`
+
 ## [0.3.0]
 
 - Updated code to work with the new `deltachat-1.58.0` API, "Contact Requests" chat was removed.
