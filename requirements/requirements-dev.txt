@@ -1,7 +1,7 @@
 -r requirements.txt
 -r requirements-test.txt
 black==21.12b0
-mypy==0.931
+mypy==0.942
 isort==5.10.1
 pylint==2.12.2
 pylama==8.3.7
