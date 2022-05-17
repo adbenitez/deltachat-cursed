@@ -1,6 +1,6 @@
 # Cursed Delta
 
-A ncurses Delta Chat client developed in Python with the urwid library.
+ncurses Delta Chat client developed in Python with the urwid library.
 
 <p align="center">
   <img src="screenshots/e1.png" alt="screenshot of Cursed Delta"/>
