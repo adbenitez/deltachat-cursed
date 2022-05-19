@@ -4,7 +4,8 @@
 
 ### Added
 
-- added `delta` command as a shorter alias for `curseddelta` command.
+- `delta` command as a shorter alias for `curseddelta` command
+- `send` subcommand to send a message from CLI
 
 ### Changed
 

@@ -3,6 +3,7 @@ import configparser
 import json
 import os
 import sys
+import time
 from typing import Dict
 
 import deltachat.const
@@ -142,15 +143,13 @@ def get_configuration() -> dict:
     return cfg_full
 
 
-def main() -> None:
-    sys.argv[0] = "curseddelta"
-    argv = sys.argv
-    app_path = os.path.join(os.path.expanduser("~"), ".curseddelta")
-    if not os.path.exists(app_path):
-        os.makedirs(app_path)
-    cfg = get_configuration()
+def fail(*args, **kwargs) -> None:
+    print(*args, **kwargs)
+    sys.exit(1)
 
-    parser = argparse.ArgumentParser(prog=argv[0])
+
+def get_parser(cfg) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="curseddelta")
     parser.add_argument(
         "--db",
         action="store",
@@ -172,52 +171,100 @@ def main() -> None:
         default="8383",
     )
 
-    args = parser.parse_args(argv[1:])
+    subparsers = parser.add_subparsers(title="subcommands")
 
-    ac = Account(os.path.expanduser(args.db))
+    send_parser = subparsers.add_parser("send", help="send message")
+    send_parser.add_argument(
+        "--chat",
+        metavar="id",
+        help="contact address or chat id where the message should be sent",
+        required=True,
+    )
+    # send_parser.add_argument("-a", metavar="file", help="attach file to the message")
+    send_parser.add_argument("text", help="text message to send", nargs="?")
+    send_parser.set_defaults(cmd=send_cmd)
 
-    if args.get_conf:
-        print(ac.get_config(args.get_conf))
-        return
+    return parser
+
+
+def send_cmd(args) -> None:
+    args.acct.start_io()
+
+    try:
+        chat = args.acct.get_chat_by_id(int(args.chat))
+    except ValueError:
+        chat = args.acct.create_chat(args.chat)
+
+    if not args.text:
+        fail("Empty message text")
+
+    print(f"Sending message to {chat.get_name()!r}")
+    msg = chat.send_text(args.text)
+    while not msg.is_out_delivered():
+        time.sleep(0.1)
+    print("Message sent")
+
+    args.acct.shutdown()
+
+
+def main() -> None:
+    app_path = os.path.join(os.path.expanduser("~"), ".curseddelta")
+    if not os.path.exists(app_path):
+        os.makedirs(app_path)
+    cfg = get_configuration()
+    args = get_parser(cfg).parse_args(sys.argv[1:])
+
+    args.cfg = cfg
+    args.acct = Account(os.path.expanduser(args.db))
 
     if args.show_ffi:
-        log = events.FFIEventLogger(ac)
-        ac.add_account_plugin(log)
+        log = events.FFIEventLogger(args.acct)
+        args.acct.add_account_plugin(log)
 
-    if not ac.is_configured():
-        if not args.email:
-            print("Error: You must specify --email once to configure the account")
-            sys.exit(1)
-        ac.set_config("addr", args.email)
-
-        if not args.password and is_oauth2(ac, args.email):
-            authz_code = get_authz_code(ac, args.email, args.port)
-
-            ac.set_config("mail_pw", authz_code)
-
-            flags = ac.get_config("server_flags")
-            flags = int(flags) if flags else 0
-            flags |= deltachat.const.DC_LP_AUTH_OAUTH2  # noqa
-            ac.set_config("server_flags", str(flags))
-        else:
-            if not args.password:
-                print("Error: You must specify --password once to configure the account")
-                sys.exit(1)
-            ac.set_config("mail_pw", args.password)
-
-        with ac.temp_plugin(ConfigureTracker(ac)) as tracker:
-            ac.configure()
-            tracker.wait_finish()
+    if args.get_conf:
+        print(args.acct.get_config(args.get_conf))
+        return
 
     if args.set_conf:
-        ac.set_config(*args.set_conf)
+        args.acct.set_config(*args.set_conf)
 
-    account = AccountPlugin(ac)
-    ac.add_account_plugin(account)
+    if not args.acct.is_configured():
+        if not args.email:
+            fail("Error: You must specify --email once to configure the account")
+        args.acct.set_config("addr", args.email)
 
-    ac.start_io()
+        if not args.password and is_oauth2(args.acct, args.email):
+            authz_code = get_authz_code(args.acct, args.email, args.port)
+
+            args.acct.set_config("mail_pw", authz_code)
+
+            flags = args.acct.get_config("server_flags")
+            flags = int(flags) if flags else 0
+            flags |= deltachat.const.DC_LP_AUTH_OAUTH2  # noqa
+            args.acct.set_config("server_flags", str(flags))
+        else:
+            if not args.password:
+                fail("Error: You must specify --password once to configure the account")
+            args.acct.set_config("mail_pw", args.password)
+
+        with args.acct.temp_plugin(ConfigureTracker(args.acct)) as tracker:
+            args.acct.configure()
+            tracker.wait_finish()
+
+    if "cmd" in args:
+        args.cmd(args)
+    else:
+        start_ui(args)
+
+
+def start_ui(args) -> None:
+    account = AccountPlugin(args.acct)
+    args.acct.add_account_plugin(account)
+
+    args.acct.start_io()
 
     keymap = get_keymap()
     theme = get_theme()
-    CursedDelta(cfg, keymap, theme, APP_NAME, account)
-    ac.shutdown()
+    CursedDelta(args.cfg, keymap, theme, APP_NAME, account)
+
+    args.acct.shutdown()
