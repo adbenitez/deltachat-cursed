@@ -161,8 +161,6 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     )
     parser.add_argument("--email", action="store", help="email address")
     parser.add_argument("--password", action="store", help="password")
-    parser.add_argument("--set-conf", action="store", help="set config option", nargs=2)
-    parser.add_argument("--get-conf", action="store", help="get config option")
     parser.add_argument(
         "--port",
         action="store",
@@ -184,7 +182,36 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     send_parser.add_argument("text", help="text message to send", nargs="?")
     send_parser.set_defaults(cmd=send_cmd)
 
+    config_parser = subparsers.add_parser(
+        "config", help="set or get account configuration options"
+    )
+    config_parser.add_argument(
+        "option",
+        help="option name",
+        nargs="?",
+    )
+    config_parser.add_argument(
+        "value",
+        help="option value to set",
+        nargs="?",
+    )
+    config_parser.set_defaults(cmd=config_cmd)
+
     return parser
+
+
+def config_cmd(args) -> None:
+    if args.value:
+        args.acct.set_config(args.option, args.value)
+
+    if args.option:
+        try:
+            print(f"{args.option}={args.acct.get_config(args.option)!r}")
+        except KeyError as err:
+            fail("Error:", err.args[0])
+    else:
+        for key in args.acct.get_config("sys.config_keys").split():
+            print(f"{key}={args.acct.get_config(key)!r}")
 
 
 def send_cmd(args) -> None:
@@ -220,13 +247,6 @@ def main() -> None:
     if args.show_ffi:
         log = events.FFIEventLogger(args.acct)
         args.acct.add_account_plugin(log)
-
-    if args.get_conf:
-        print(args.acct.get_config(args.get_conf))
-        return
-
-    if args.set_conf:
-        args.acct.set_config(*args.set_conf)
 
     if not args.acct.is_configured():
         if not args.email:

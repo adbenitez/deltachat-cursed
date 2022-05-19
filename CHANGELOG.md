@@ -10,6 +10,7 @@
 ### Changed
 
 - improved error messages when trying to use an account that is not configured
+- replaced `--set-conf` and `--get-conf` options with a `config` subcommand
 
 ## [0.3.1]
 
