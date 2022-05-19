@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- added `delta` command as a shorter alias for `curseddelta` command.
+
 ## [0.3.1]
 
 - fix `IndexError` in `ui/chatlist_widget.py`

@@ -51,6 +51,7 @@ if __name__ == "__main__":
         entry_points="""
             [console_scripts]
             curseddelta=deltachat_cursed.main:main
+            delta=deltachat_cursed.main:main
         """,
         python_requires=">=3.7",
         install_requires=load_requirements("requirements/requirements.txt"),
