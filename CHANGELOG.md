@@ -6,6 +6,10 @@
 
 - added `delta` command as a shorter alias for `curseddelta` command.
 
+### Changed
+
+- improved error messages when trying to use an account that is not configured
+
 ## [0.3.1]
 
 - fix `IndexError` in `ui/chatlist_widget.py`
