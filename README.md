@@ -55,7 +55,7 @@ $ delta --db ~/.config/DeltaChat/accounts/XXXXXXXXX/dc.db
 #### Default Shortcuts
 
 - Press <kbd>Esc</kbd> to leave the draft/editing area.
-- Press <kbd>q</kbd> to quit the Cursed Delta.
+- Press <kbd>q</kbd> to quit Cursed Delta.
 - Press <kbd>Ctrl</kbd> + <kbd>x</kbd> to toggle the chat list.
 - Use <kbd>Meta</kbd> + <kbd>Enter</kbd> to send the message.
 - Use <kbd>Ctrl</kbd> + <kbd>r</kbd> to reply last message in chat.
