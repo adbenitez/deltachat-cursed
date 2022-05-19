@@ -171,17 +171,6 @@ def get_parser(cfg) -> argparse.ArgumentParser:
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    send_parser = subparsers.add_parser("send", help="send message")
-    send_parser.add_argument(
-        "--chat",
-        metavar="id",
-        help="contact address or chat id where the message should be sent",
-        required=True,
-    )
-    # send_parser.add_argument("-a", metavar="file", help="attach file to the message")
-    send_parser.add_argument("text", help="text message to send", nargs="?")
-    send_parser.set_defaults(cmd=send_cmd)
-
     config_parser = subparsers.add_parser(
         "config", help="set or get account configuration options"
     )
@@ -196,6 +185,17 @@ def get_parser(cfg) -> argparse.ArgumentParser:
         nargs="?",
     )
     config_parser.set_defaults(cmd=config_cmd)
+
+    send_parser = subparsers.add_parser("send", help="send message")
+    send_parser.add_argument(
+        "--chat",
+        metavar="id",
+        help="contact address or chat id where the message should be sent",
+        required=True,
+    )
+    # send_parser.add_argument("-a", metavar="file", help="attach file to the message")
+    send_parser.add_argument("text", help="text message to send", nargs="?")
+    send_parser.set_defaults(cmd=send_cmd)
 
     return parser
 
