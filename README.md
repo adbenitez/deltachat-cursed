@@ -24,17 +24,17 @@ $ pip install -U deltachat-cursed
 
 ## Usage
 
-After installation the command `curseddelta` should be available, or you can use `python3 -m deltachat-cursed`.
-The first time you run `curseddelta` you need to specify an email and password:
+After installation the command `delta` should be available, or you can use `python3 -m deltachat-cursed`.
+The first time you run `delta` you need to specify an email and password:
 
 ```
-$ curseddelta --email me@example.com --password H4rdPassw0rd
+$ delta --email me@example.com --password H4rdPassw0rd
 ```
 
-Or if you want to use an already existent account:
+Or if you want to use an already existent account, for example to open an account created with the official Delta Chat client:
 
 ```
-$ curseddelta --db /path/to/your/account.db
+$ delta --db ~/.config/DeltaChat/accounts/XXXXXXXXX/dc.db
 ```
 
 

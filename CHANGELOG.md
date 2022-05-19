@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `delta` command as a shorter alias for `curseddelta` command
+- `send` subcommand to send a message from CLI
+
+### Changed
+
+- improved error messages when trying to use an account that is not configured
+
 ## [0.3.1]
 
 - fix `IndexError` in `ui/chatlist_widget.py`
@@ -19,5 +30,6 @@
 - Initial release
 
 
-[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.2.0...v0.3.0
