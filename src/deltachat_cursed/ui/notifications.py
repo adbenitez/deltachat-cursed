@@ -3,7 +3,7 @@ import sys
 
 from notifypy import Notify
 
-from .. import APP_NAME
+from ..util import APP_NAME
 
 __all__ = ["notify", "notify_msg"]
 app_icon = os.path.join(os.path.abspath(os.path.dirname(__file__)), "logo.png")
