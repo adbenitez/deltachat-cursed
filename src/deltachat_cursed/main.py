@@ -11,7 +11,14 @@ from deltachat.tracker import ConfigureTracker
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .ui import CursedDelta
-from .util import APP_NAME, fail, get_configuration, get_keymap, get_theme
+from .util import (
+    APP_NAME,
+    fail,
+    get_configuration,
+    get_keymap,
+    get_theme,
+    online_account,
+)
 
 
 def main() -> None:
@@ -31,11 +38,6 @@ def main() -> None:
         args.cmd(args)
     else:
         start_ui(args)
-
-
-def check_is_configured(acct) -> None:
-    if not acct.is_configured():
-        fail("Error: Account not configured yet, use the init subcommand")
 
 
 def get_parser(cfg) -> argparse.ArgumentParser:
@@ -145,33 +147,25 @@ def config_cmd(args) -> None:
 
 
 def send_cmd(args) -> None:
-    check_is_configured(args.acct)
-    args.acct.start_io()
+    with online_account(args.acct) as acct:
+        try:
+            chat = acct.get_chat_by_id(int(args.chat))
+        except ValueError:
+            chat = acct.create_chat(args.chat)
 
-    try:
-        chat = args.acct.get_chat_by_id(int(args.chat))
-    except ValueError:
-        chat = args.acct.create_chat(args.chat)
+        if not args.text:
+            fail("Empty message text")
 
-    if not args.text:
-        fail("Empty message text")
-
-    print(f"Sending message to {chat.get_name()!r}")
-    msg = chat.send_text(args.text)
-    while not msg.is_out_delivered():
-        time.sleep(0.1)
-    print("Message sent")
-
-    args.acct.shutdown()
+        print(f"Sending message to {chat.get_name()!r}")
+        msg = chat.send_text(args.text)
+        while not msg.is_out_delivered():
+            time.sleep(0.1)
+        print("Message sent")
 
 
 def start_ui(args) -> None:
-    check_is_configured(args.acct)
-    account = AccountPlugin(args.acct)
-    args.acct.add_account_plugin(account)
+    plugin = AccountPlugin(args.acct)
+    args.acct.add_account_plugin(plugin)
 
-    args.acct.start_io()
-
-    CursedDelta(args.cfg, get_keymap(), get_theme(), APP_NAME, account)
-
-    args.acct.shutdown()
+    with online_account(args.acct):
+        CursedDelta(args.cfg, get_keymap(), get_theme(), APP_NAME, plugin)

@@ -2,7 +2,10 @@ import configparser
 import json
 import os
 import sys
+from contextlib import contextmanager
 from typing import Dict
+
+from deltachat import Account
 
 APP_NAME = "Cursed Delta"
 default_theme = {
@@ -58,6 +61,15 @@ default_keymap = {
     "prev_chat": "meta down",
     "toggle_chatlist": "ctrl x",
 }
+
+
+@contextmanager
+def online_account(acct: Account) -> Account:
+    if not acct.is_configured():
+        fail("Error: Account not configured yet")
+    acct.start_io()
+    yield acct
+    acct.shutdown()
 
 
 def get_theme() -> dict:
