@@ -1,7 +1,7 @@
-import argparse
 import os
 import sys
 import time
+from argparse import ArgumentParser, Namespace
 
 import deltachat.const
 from deltachat import Account
@@ -40,8 +40,8 @@ def main() -> None:
         start_ui(args)
 
 
-def get_parser(cfg) -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="curseddelta")
+def get_parser(cfg: dict) -> ArgumentParser:
+    parser = ArgumentParser(prog="curseddelta")
     parser.add_argument(
         "--db",
         action="store",
@@ -99,7 +99,7 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     return parser
 
 
-def init_cmd(args) -> None:
+def init_cmd(args: Namespace) -> None:
     if args.acct.is_configured():
         fail("Error: account already configured")
 
@@ -132,7 +132,7 @@ def init_cmd(args) -> None:
             print(f"Successfully configured {args.addr}")
 
 
-def config_cmd(args) -> None:
+def config_cmd(args: Namespace) -> None:
     if args.value:
         args.acct.set_config(args.option, args.value)
 
@@ -146,7 +146,7 @@ def config_cmd(args) -> None:
             print(f"{key}={args.acct.get_config(key)!r}")
 
 
-def send_cmd(args) -> None:
+def send_cmd(args: Namespace) -> None:
     with online_account(args.acct) as acct:
         try:
             chat = acct.get_chat_by_id(int(args.chat))
@@ -163,7 +163,7 @@ def send_cmd(args) -> None:
         print("Message sent")
 
 
-def start_ui(args) -> None:
+def start_ui(args: Namespace) -> None:
     plugin = AccountPlugin(args.acct)
     args.acct.add_account_plugin(plugin)
 
