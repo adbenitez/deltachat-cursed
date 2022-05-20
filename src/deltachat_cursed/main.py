@@ -148,6 +148,11 @@ def fail(*args, **kwargs) -> None:
     sys.exit(1)
 
 
+def check_is_configured(acct) -> None:
+    if not acct.is_configured():
+        fail("Error: Account not configured yet, use the init subcommand")
+
+
 def get_parser(cfg) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="curseddelta")
     parser.add_argument(
@@ -159,8 +164,6 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     parser.add_argument(
         "--show-ffi", action="store_true", help="show low level ffi events"
     )
-    parser.add_argument("--email", action="store", help="email address")
-    parser.add_argument("--password", action="store", help="password")
     parser.add_argument(
         "--port",
         action="store",
@@ -170,6 +173,15 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
+
+    init_parser = subparsers.add_parser("init", help="initialize your account")
+    init_parser.add_argument("addr", help="your e-mail address")
+    init_parser.add_argument(
+        "password",
+        help="your password, if not provided OAuth2 will be used",
+        nargs="?",
+    )
+    init_parser.set_defaults(cmd=init_cmd)
 
     config_parser = subparsers.add_parser(
         "config", help="set or get account configuration options"
@@ -200,6 +212,39 @@ def get_parser(cfg) -> argparse.ArgumentParser:
     return parser
 
 
+def init_cmd(args) -> None:
+    if args.acct.is_configured():
+        fail("Error: account already configured")
+
+    args.acct.set_config("addr", args.addr)
+
+    if args.password:
+        args.acct.set_config("mail_pw", args.password)
+    else:
+        if is_oauth2(args.acct, args.addr):
+            authz_code = get_authz_code(args.acct, args.addr, args.port)
+
+            args.acct.set_config("mail_pw", authz_code)
+
+            flags = args.acct.get_config("server_flags")
+            flags = int(flags) if flags else 0
+            flags |= deltachat.const.DC_LP_AUTH_OAUTH2  # noqa
+            args.acct.set_config("server_flags", str(flags))
+        else:
+            fail(
+                "Error: OAuth2 not supported for your provider, you must provide a password"
+            )
+
+    with args.acct.temp_plugin(ConfigureTracker(args.acct)) as tracker:
+        args.acct.configure()
+        try:
+            tracker.wait_finish()
+        except tracker.ConfigureFailed as ex:
+            fail(f"Failed to configure: {ex}")
+        else:
+            print(f"Successfully configured {args.addr}")
+
+
 def config_cmd(args) -> None:
     if args.value:
         args.acct.set_config(args.option, args.value)
@@ -215,6 +260,7 @@ def config_cmd(args) -> None:
 
 
 def send_cmd(args) -> None:
+    check_is_configured(args.acct)
     args.acct.start_io()
 
     try:
@@ -248,29 +294,6 @@ def main() -> None:
         log = events.FFIEventLogger(args.acct)
         args.acct.add_account_plugin(log)
 
-    if not args.acct.is_configured():
-        if not args.email:
-            fail("Error: You must specify --email once to configure the account")
-        args.acct.set_config("addr", args.email)
-
-        if not args.password and is_oauth2(args.acct, args.email):
-            authz_code = get_authz_code(args.acct, args.email, args.port)
-
-            args.acct.set_config("mail_pw", authz_code)
-
-            flags = args.acct.get_config("server_flags")
-            flags = int(flags) if flags else 0
-            flags |= deltachat.const.DC_LP_AUTH_OAUTH2  # noqa
-            args.acct.set_config("server_flags", str(flags))
-        else:
-            if not args.password:
-                fail("Error: You must specify --password once to configure the account")
-            args.acct.set_config("mail_pw", args.password)
-
-        with args.acct.temp_plugin(ConfigureTracker(args.acct)) as tracker:
-            args.acct.configure()
-            tracker.wait_finish()
-
     if "cmd" in args:
         args.cmd(args)
     else:
@@ -278,6 +301,7 @@ def main() -> None:
 
 
 def start_ui(args) -> None:
+    check_is_configured(args.acct)
     account = AccountPlugin(args.acct)
     args.acct.add_account_plugin(account)
 

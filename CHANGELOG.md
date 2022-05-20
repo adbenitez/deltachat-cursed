@@ -11,6 +11,7 @@
 
 - improved error messages when trying to use an account that is not configured
 - replaced `--set-conf` and `--get-conf` options with a `config` subcommand
+- replaced `--email` and `--password` options with an `init` subcommand
 
 ## [0.3.1]
 
