@@ -98,6 +98,9 @@ def get_parser(cfg: dict) -> ArgumentParser:
     send_parser.add_argument("text", help="text message to send", nargs="?")
     send_parser.set_defaults(cmd=send_cmd)
 
+    list_parser = subparsers.add_parser("list", help="print chat list")
+    list_parser.set_defaults(cmd=list_cmd)
+
     return parser
 
 
@@ -163,6 +166,15 @@ def send_cmd(args: Namespace) -> None:
         while not msg.is_out_delivered():
             time.sleep(0.1)
         print("Message sent")
+
+
+def list_cmd(args: Namespace) -> None:
+    if not args.acct.is_configured():
+        fail("Error: Account not configured yet")
+
+    for chat in args.acct.get_chats():
+        if chat.id >= 10:
+            print(f"#{chat.id} - {chat.get_name()}")
 
 
 def start_ui(args: Namespace) -> None:
