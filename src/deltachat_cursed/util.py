@@ -3,7 +3,7 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Dict
+from typing import Any, Callable, Dict
 
 from deltachat import Account
 
@@ -70,6 +70,17 @@ def online_account(acct: Account) -> Account:
     acct.start_io()
     yield acct
     acct.shutdown()
+
+
+def capture_keyboard_interrupt(func: Callable) -> Any:
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except KeyboardInterrupt:
+            print("Closing, operation canceled by user")
+            sys.exit(0)
+
+    return wrapper
 
 
 def get_theme() -> dict:

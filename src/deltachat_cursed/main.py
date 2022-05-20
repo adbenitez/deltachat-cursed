@@ -13,6 +13,7 @@ from .oauth2 import get_authz_code, is_oauth2
 from .ui import CursedDelta
 from .util import (
     APP_NAME,
+    capture_keyboard_interrupt,
     fail,
     get_configuration,
     get_keymap,
@@ -21,6 +22,7 @@ from .util import (
 )
 
 
+@capture_keyboard_interrupt
 def main() -> None:
     app_path = os.path.join(os.path.expanduser("~"), ".curseddelta")
     if not os.path.exists(app_path):

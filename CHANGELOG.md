@@ -13,6 +13,10 @@
 - replaced `--set-conf` and `--get-conf` options with a `config` subcommand
 - replaced `--email` and `--password` options with an `init` subcommand
 
+### Fixed
+
+- end UI gracefully when `ctrl + C` is pressed.
+
 ## [0.3.1]
 
 - fix `IndexError` in `ui/chatlist_widget.py`
