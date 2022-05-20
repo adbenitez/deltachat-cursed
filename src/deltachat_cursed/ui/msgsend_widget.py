@@ -24,6 +24,10 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.widgetEdit = urwid_readline.ReadlineEdit(
             self.text_caption, "", multiline=True
         )
+        del self.widgetEdit.keymap["enter"]
+        self.widgetEdit.keymap[
+            keymap["insert_new_line"]
+        ] = self.widgetEdit.insert_new_line
 
         self.pile = urwid.Pile([self.attr, self.widgetEdit])
         super().__init__(self.pile)

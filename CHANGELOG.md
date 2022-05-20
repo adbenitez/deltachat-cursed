@@ -12,6 +12,7 @@
 - improved error messages when trying to use an account that is not configured
 - replaced `--set-conf` and `--get-conf` options with a `config` subcommand
 - replaced `--email` and `--password` options with an `init` subcommand
+- pressing `enter` now sends message and `meta enter` now inserts new line
 
 ### Fixed
 

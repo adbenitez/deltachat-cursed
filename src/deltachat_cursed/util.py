@@ -56,7 +56,8 @@ default_keymap = {
     "insert_text": "i",
     "reply": "ctrl r",
     "open_file": "ctrl o",
-    "send_msg": "meta enter",
+    "send_msg": "enter",
+    "insert_new_line": "meta enter",
     "next_chat": "meta up",
     "prev_chat": "meta down",
     "toggle_chatlist": "ctrl x",
@@ -115,7 +116,12 @@ def get_keymap() -> dict:
     for path in keymaps:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
-                keymap = json.load(fd)
+                keymap = {**default_keymap, **json.load(fd)}
+                # hack to fix keymap for users of v0.3.1:
+                if keymap["send_msg"] == keymap["insert_new_line"]:
+                    keymap["send_msg"] = "enter"
+                    with open(path, "w", encoding="utf-8") as fd:
+                        json.dump(keymap, fd, indent=1)
             break
     else:
         keymap = default_keymap
