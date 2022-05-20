@@ -134,4 +134,6 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 model.current_chat.remove_contact(addr.strip())
         elif args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
+        if args[0] == "/id":
+            return str(model.current_chat.id)
         return f"ERROR: Unknown command {args[0]}"

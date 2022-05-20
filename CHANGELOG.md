@@ -7,6 +7,7 @@
 - `delta` command as a shorter alias for `curseddelta` command
 - `send` subcommand to send a message from CLI
 - `list` subcommand to print chat list and see chat IDs that can be used with `send` subcommand
+- `/id` command in the input field to get chat ID of the chat where the command is sent
 
 ### Changed
 
