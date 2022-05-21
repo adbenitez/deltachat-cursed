@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- moved `--port` option to `init` subcommand
+
 ## [0.4.0]
 
 ### Added

@@ -54,17 +54,17 @@ def get_parser(cfg: dict) -> ArgumentParser:
     parser.add_argument(
         "--show-ffi", action="store_true", help="show low level ffi events"
     )
-    parser.add_argument(
-        "--port",
-        action="store",
-        help="port to listen for oauth2 callback",
-        type=int,
-        default="8383",
-    )
 
     subparsers = parser.add_subparsers(title="subcommands")
 
     init_parser = subparsers.add_parser("init", help="initialize your account")
+    init_parser.add_argument(
+        "--port",
+        action="store",
+        help="port to listen for oauth2 callback (default: %(default)s)",
+        type=int,
+        default="8383",
+    )
     init_parser.add_argument("addr", help="your e-mail address")
     init_parser.add_argument(
         "password",
