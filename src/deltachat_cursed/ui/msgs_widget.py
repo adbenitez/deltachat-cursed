@@ -122,6 +122,8 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
                     lines.append(("self_msg", line))
                 elif mention:
                     lines.append(("mention", line))
+                else:
+                    lines.append(line)
             message_text = urwid.Text(lines or "")
 
         message_to_display = urwid.Columns(
