@@ -62,8 +62,13 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             if current_chat.is_contact_request():
                 # accept contact requests automatically until UI allows to accept/block
                 current_chat.accept()
-            current_chat.send_text(text)
-            edit.set_edit_text("")
+            try:
+                current_chat.send_text(text)
+                edit.set_edit_text("")
+            except ValueError:
+                edit.set_edit_text(
+                    "Error: message could not be sent, are you a member of the chat?"
+                )
             self.resize_zone(size)
         # give the focus to the chat list
         elif key == self.keymap["left"]:

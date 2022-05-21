@@ -23,6 +23,7 @@
 - clear draft if command doesn't print any text
 - don't print "unknown command" for `/add`, `/kick` and `/part` commands
 - capture errors in commands and display message in the draft area
+- avoid crash if user tries to send message in a chat where it is not possible to send messages (ex. user is not member, or it is the "Device Messages" chat)
 
 ## [0.3.1]
 
