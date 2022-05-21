@@ -48,6 +48,8 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
 
         # build the chat list
         for i, chat in enumerate(chats):
+            if chat.id < 10:
+                continue
             pos += 1
             chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
             label = f"{chat_type} {chat.get_name()}"
