@@ -52,9 +52,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
-                text = self.process_command(text)
-                if text is not None:
-                    edit.set_edit_text(text)
+                edit.set_edit_text(self.process_command(text) or "")
                 self.resize_zone(size)
                 return None
             current_chat = self.root.account.current_chat

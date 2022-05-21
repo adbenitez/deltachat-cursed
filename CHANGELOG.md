@@ -18,7 +18,8 @@
 
 ### Fixed
 
-- end UI gracefully when `ctrl + C` is pressed.
+- end UI gracefully when `ctrl + C` is pressed
+- clear draft if command doesn't print any text
 
 ## [0.3.1]
 
