@@ -1,6 +1,7 @@
 from typing import Optional
 
 import urwid
+from deltachat import const
 
 from ..event import ChatListMonitor
 
@@ -48,7 +49,8 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
         # build the chat list
         for i, chat in enumerate(chats):
             pos += 1
-            label = "➜ " + chat.get_name()
+            chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
+            label = f"{chat_type} {chat.get_name()}"
             new_messages = chat.count_fresh_messages()
             if new_messages > 0:
                 label += f" ({new_messages})"

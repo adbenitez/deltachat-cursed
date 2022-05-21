@@ -17,6 +17,7 @@
 - replaced `--email` and `--password` options with an `init` subcommand
 - pressing `enter` now sends message and `meta enter` now inserts new line
 - show file path URI instead of `[File]` token in messages with file attachments, this allows to open files with clicks in some Terminals
+- replaced `➜` from chat list items with `@` (for direct chats) or `#` (for groups) indicators
 
 ### Fixed
 
