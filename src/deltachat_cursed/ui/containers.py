@@ -1,6 +1,9 @@
 from typing import Optional
 
 import urwid
+from deltachat import Chat
+
+from ..util import create_message
 
 
 class ChatListContainer(urwid.WidgetPlaceholder):
@@ -49,13 +52,13 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             text = edit.get_edit_text().strip()
             if not text:
                 return None
+            current_chat = self.root.account.current_chat
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
-                edit.set_edit_text(self.process_command(text) or "")
+                edit.set_edit_text(self.process_command(current_chat, text) or "")
                 self.resize_zone(size)
                 return None
-            current_chat = self.root.account.current_chat
             if current_chat.is_contact_request():
                 # accept contact requests automatically until UI allows to accept/block
                 current_chat.accept()
@@ -103,7 +106,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         if rows_needed != size[1]:
             contents[1] = (contents[1][0], ("given", rows_needed))
 
-    def process_command(self, cmd) -> Optional[str]:
+    def process_command(self, chat: Chat, cmd: str) -> Optional[str]:
         model = self.root.account
         acc = model.account
         args = cmd.split(maxsplit=1)
@@ -145,5 +148,12 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
 
         if args[0] == "/id":
             return str(model.current_chat.id)
+
+        if args[0] == "/send":
+            try:
+                chat.send_msg(create_message(chat.account, filename=args[1].strip()))
+                return None
+            except ValueError as ex:
+                return f"Error: {ex}"
 
         return f"ERROR: Unknown command {args[0]}"
