@@ -14,6 +14,7 @@ from .ui import CursedDelta
 from .util import (
     APP_NAME,
     capture_keyboard_interrupt,
+    create_message,
     fail,
     get_configuration,
     get_keymap,
@@ -94,7 +95,9 @@ def get_parser(cfg: dict) -> ArgumentParser:
         help="contact address or chat id where the message should be sent",
         required=True,
     )
-    # send_parser.add_argument("-a", metavar="file", help="attach file to the message")
+    send_parser.add_argument(
+        "-a", metavar="file", dest="filename", help="attach file to the message"
+    )
     send_parser.add_argument("text", help="text message to send", nargs="?")
     send_parser.set_defaults(cmd=send_cmd)
 
@@ -158,11 +161,13 @@ def send_cmd(args: Namespace) -> None:
         except ValueError:
             chat = acct.create_chat(args.chat)
 
-        if not args.text:
-            fail("Empty message text")
+        if not args.text and not args.filename:
+            fail("Error: Empty message")
 
         print(f"Sending message to {chat.get_name()!r}")
-        msg = chat.send_text(args.text)
+        msg = chat.send_msg(
+            create_message(args.acct, text=args.text, filename=args.filename)
+        )
         while not msg.is_out_delivered():
             time.sleep(0.1)
         print("Message sent")
