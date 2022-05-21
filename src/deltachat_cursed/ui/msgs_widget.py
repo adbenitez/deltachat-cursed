@@ -120,12 +120,11 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
                             line = line[2:]
                         else:
                             quoting = False
-                    line = ("quote", quote + line)
+                    lines.append(("quote", quote + line))
                 elif sender == me:
-                    line = ("self_msg", line)
+                    lines.append(("self_msg", line))
                 elif mention:
-                    line = ("mention", line)
-                lines.append(line)
+                    lines.append(("mention", line))
             message_text = urwid.Text(lines or "")
 
         message_to_display = urwid.Columns(

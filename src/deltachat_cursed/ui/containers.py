@@ -56,7 +56,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
-                edit.set_edit_text(self.process_command(current_chat, text) or "")
+                edit.set_edit_text(self.process_command(current_chat, text))
                 self.resize_zone(size)
                 return None
             if current_chat.is_contact_request():
@@ -111,20 +111,21 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         if rows_needed != size[1]:
             contents[1] = (contents[1][0], ("given", rows_needed))
 
-    def process_command(self, chat: Chat, cmd: str) -> Optional[str]:
+    def process_command(self, chat: Chat, cmd: str) -> str:
         model = self.root.account
         acc = model.account
         args = cmd.split(maxsplit=1)
 
+        text = ""
         if args[0] == "/query":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             try:
                 chat = acc.create_chat(args[1].strip())
                 model.select_chat_by_id(chat.id)
             except AssertionError:
-                return "Error: invalid email address"
+                text = "Error: invalid email address"
             except ValueError as ex:
-                return f"Error: {ex}"
+                text = f"Error: {ex}"
         elif args[0] == "/join":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_group_chat(args[1].strip())
@@ -134,33 +135,34 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             model.current_chat.delete()
             model.select_chat(None)
         elif args[0] == "/names":
-            return "\n".join(c.addr for c in model.current_chat.get_contacts())
+            text = "\n".join(c.addr for c in model.current_chat.get_contacts())
         elif args[0] == "/add":
             try:
                 for addr in args[1].split(","):
                     model.current_chat.add_contact(addr.strip())
             except ValueError as ex:
-                return f"Error: {ex}"
+                text = f"Error: {ex}"
         elif args[0] == "/kick":
             try:
                 for addr in args[1].split(","):
                     model.current_chat.remove_contact(addr.strip())
             except AttributeError:
-                return "Error: invalid email address"
+                text = "Error: invalid email address"
             except ValueError as ex:
-                return f"Error: {ex}"
+                text = f"Error: {ex}"
         elif args[0] == "/part":
             try:
                 model.current_chat.remove_contact(acc.get_self_contact())
             except ValueError as ex:
-                return f"Error: {ex}"
+                text = f"Error: {ex}"
         elif args[0] == "/id":
-            return str(model.current_chat.id)
+            text = str(model.current_chat.id)
         elif args[0] == "/send":
             try:
                 chat.send_msg(create_message(chat.account, filename=args[1].strip()))
             except ValueError as ex:
-                return f"Error: {ex}"
+                text = f"Error: {ex}"
         else:
-            return f"ERROR: Unknown command {args[0]}"
-        return None
+            text = f"ERROR: Unknown command {args[0]}"
+
+        return text
