@@ -86,12 +86,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
             [("hour", hour), (urwid.AttrSpec(*color), name), (status, " > ")]
         )
 
-        if not msg.is_text():
-            text = f"[file://{msg.filename}]"
-            if msg.text:
-                text += f" – {msg.text}"
-        else:
-            text = msg.text
+        text = msg.text
+        if msg.filename:
+            text = f"[file://{msg.filename}]{' – ' if text else ''}{text}"
 
         if msg.is_out_mdn_received():
             text = text + "  ✓✓"
