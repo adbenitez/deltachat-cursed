@@ -87,10 +87,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         )
 
         if not msg.is_text():
+            text = f"[file://{msg.filename}]"
             if msg.text:
-                text = "[File] – " + msg.text
-            else:
-                text = "[File]"
+                text += f" – {msg.text}"
         else:
             text = msg.text
 
