@@ -81,6 +81,8 @@ This are some temporal commands to do things that are not implemented yet using 
 - Send `/names` in a group to get the member list in the buffer, use
   <kbd>Ctrl</kbd> + <kbd>l</kbd> to clear.
 - Use `/join GroupName` to create a group named `GroupName`
+- Send `/id` in a chat to get the chat's ID
+- Use `/send /path/to/file.txt` to send a file attachment
 - To send a message starting with `/` use `//`
 
 
