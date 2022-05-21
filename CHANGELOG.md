@@ -6,6 +6,10 @@
 
 - moved `--port` option to `init` subcommand
 
+### Fixed
+
+- expand user home (`~`) in paths given to `/send` command
+
 ## [0.4.0]
 
 ### Added

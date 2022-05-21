@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 import urwid
@@ -159,7 +160,8 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             text = str(model.current_chat.id)
         elif args[0] == "/send":
             try:
-                chat.send_msg(create_message(chat.account, filename=args[1].strip()))
+                path = os.path.expanduser(args[1].strip())
+                chat.send_msg(create_message(chat.account, filename=path))
             except ValueError as ex:
                 text = f"Error: {ex}"
         else:
