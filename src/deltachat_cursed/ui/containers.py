@@ -115,45 +115,31 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
-            return None
-
-        if args[0] == "/join":
+        elif args[0] == "/join":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_group_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
-            return None
-
-        if args[0] == "/delete":
+        elif args[0] == "/delete":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             model.current_chat.delete()
             model.select_chat(None)
-            return None
-
-        if args[0] == "/names":
+        elif args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
-
-        if args[0] == "/add":
+        elif args[0] == "/add":
             for addr in args[1].split(","):
                 model.current_chat.add_contact(addr.strip())
-            return None
-
-        if args[0] == "/kick":
+        elif args[0] == "/kick":
             for addr in args[1].split(","):
                 model.current_chat.remove_contact(addr.strip())
-            return None
-
-        if args[0] == "/part":
+        elif args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
-            return None
-
-        if args[0] == "/id":
+        elif args[0] == "/id":
             return str(model.current_chat.id)
-
-        if args[0] == "/send":
+        elif args[0] == "/send":
             try:
                 chat.send_msg(create_message(chat.account, filename=args[1].strip()))
-                return None
             except ValueError as ex:
                 return f"Error: {ex}"
-
-        return f"ERROR: Unknown command {args[0]}"
+        else:
+            return f"ERROR: Unknown command {args[0]}"
+        return None
