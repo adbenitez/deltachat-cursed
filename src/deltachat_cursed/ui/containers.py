@@ -107,31 +107,43 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         model = self.root.account
         acc = model.account
         args = cmd.split(maxsplit=1)
+
         if args[0] == "/query":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
             return None
+
         if args[0] == "/join":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_group_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
             return None
+
         if args[0] == "/delete":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             model.current_chat.delete()
             model.select_chat(None)
             return None
+
         if args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
+
         if args[0] == "/add":
             for addr in args[1].split(","):
                 model.current_chat.add_contact(addr.strip())
-        elif args[0] == "/kick":
+            return None
+
+        if args[0] == "/kick":
             for addr in args[1].split(","):
                 model.current_chat.remove_contact(addr.strip())
-        elif args[0] == "/part":
+            return None
+
+        if args[0] == "/part":
             model.current_chat.remove_contact(acc.get_self_contact())
+            return None
+
         if args[0] == "/id":
             return str(model.current_chat.id)
+
         return f"ERROR: Unknown command {args[0]}"

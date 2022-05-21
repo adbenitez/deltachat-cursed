@@ -20,6 +20,7 @@
 
 - end UI gracefully when `ctrl + C` is pressed
 - clear draft if command doesn't print any text
+- don't print "unknown command" for `/add`, `/kick` and `/part` commands
 
 ## [0.3.1]
 
