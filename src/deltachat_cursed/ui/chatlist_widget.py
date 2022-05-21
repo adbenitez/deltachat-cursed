@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import urwid
 from deltachat import const
@@ -7,7 +7,7 @@ from ..event import ChatListMonitor
 
 
 class ListItem(urwid.Button):
-    def __init__(self, caption: tuple, callback, arg=None) -> None:
+    def __init__(self, caption: Union[tuple, str], callback, arg=None) -> None:
         super().__init__("")
         urwid.connect_signal(self, "click", callback, arg)
         self._w = urwid.AttrMap(
@@ -63,7 +63,7 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
                 self.focus_position = pos
             else:
                 if new_messages > 0:
-                    label = ("unread_chat", label)
+                    label = ("unread_chat", label)  # type: ignore
                 button = ListItem(label, self.chat_change, i)
                 self.chat_list.insert(pos, button)
 
