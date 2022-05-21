@@ -113,8 +113,13 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
 
         if args[0] == "/query":
             self.msg_send_widget.widgetEdit.set_edit_text("")
-            chat = acc.create_chat(args[1].strip())
-            model.select_chat_by_id(chat.id)
+            try:
+                chat = acc.create_chat(args[1].strip())
+                model.select_chat_by_id(chat.id)
+            except AssertionError:
+                return "Error: invalid email address"
+            except ValueError as ex:
+                return f"Error: {ex}"
         elif args[0] == "/join":
             self.msg_send_widget.widgetEdit.set_edit_text("")
             chat = acc.create_group_chat(args[1].strip())
@@ -126,13 +131,24 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         elif args[0] == "/names":
             return "\n".join(c.addr for c in model.current_chat.get_contacts())
         elif args[0] == "/add":
-            for addr in args[1].split(","):
-                model.current_chat.add_contact(addr.strip())
+            try:
+                for addr in args[1].split(","):
+                    model.current_chat.add_contact(addr.strip())
+            except ValueError as ex:
+                return f"Error: {ex}"
         elif args[0] == "/kick":
-            for addr in args[1].split(","):
-                model.current_chat.remove_contact(addr.strip())
+            try:
+                for addr in args[1].split(","):
+                    model.current_chat.remove_contact(addr.strip())
+            except AttributeError:
+                return "Error: invalid email address"
+            except ValueError as ex:
+                return f"Error: {ex}"
         elif args[0] == "/part":
-            model.current_chat.remove_contact(acc.get_self_contact())
+            try:
+                model.current_chat.remove_contact(acc.get_self_contact())
+            except ValueError as ex:
+                return f"Error: {ex}"
         elif args[0] == "/id":
             return str(model.current_chat.id)
         elif args[0] == "/send":
