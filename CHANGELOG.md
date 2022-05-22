@@ -6,6 +6,9 @@
 
 - new boolean setting `display_emoji` in `curseddelta.conf` file, to enable/disable display of emoji in chat names, contact names, and messages.
 - support for sending emoji typing its name between `:`, example `:thumbs_up:`
+- emoji autocompletion when `Tab` is pressed after a `:` character
+- contact names autocompletion when `Tab` is pressed after a `@` character
+- commad autocompletion when `Tab` is pressed
 
 ### Changed
 

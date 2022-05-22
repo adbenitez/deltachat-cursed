@@ -9,6 +9,21 @@ from typing import Any, Callable, Dict
 from deltachat import Account, Message
 
 APP_NAME = "Cursed Delta"
+COMMANDS = {
+    key: key
+    for key in [
+        "/query",
+        "/join",
+        "/delete",
+        "/names",
+        "/add",
+        "/kick",
+        "/part",
+        "/id",
+        "/send",
+        "//",
+    ]
+}
 default_theme = {
     "background": ["", "", "", "", "g11"],
     "status_bar": ["", "", "", "white", "g23"],

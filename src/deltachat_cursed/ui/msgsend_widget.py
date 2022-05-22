@@ -5,8 +5,10 @@ import urwid
 import urwid_readline
 from deltachat import Chat
 from emoji import demojize
+from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
 
 from ..event import ChatListMonitor
+from ..util import COMMANDS
 
 
 def get_subtitle(chat) -> str:
@@ -30,6 +32,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.widgetEdit.keymap[
             keymap["insert_new_line"]
         ] = self.widgetEdit.insert_new_line
+        self.widgetEdit.enable_autocomplete(self.complete)
 
         self.pile = urwid.Pile([self.attr, self.widgetEdit])
         super().__init__(self.pile)
@@ -40,6 +43,24 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.typing = False
 
         self.model.add_chatlist_monitor(self)
+
+    def complete(self, text, state) -> Optional[str]:
+        items = []
+        if text.startswith("@"):
+            if self.current_chat:
+                me = self.current_chat.account.get_self_contact()
+                items.extend(
+                    [f"@{c.name}" for c in self.current_chat.get_contacts() if c != me]
+                )
+        elif text.startswith(":"):
+            items.extend(EMOJI_UNICODE_ENGLISH.keys())
+        elif text.startswith("/") or not text:
+            items.extend(COMMANDS.keys())
+        items = [c for c in items if c and c.startswith(text)] if text else items
+        try:
+            return items[state]
+        except (IndexError, TypeError):
+            return None
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
         if self.current_chat is None:

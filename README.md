@@ -48,6 +48,7 @@ $ delta --db ~/.config/DeltaChat/accounts/XXXXXXXXX/dc.db
 - Message will be gray until it is sent.
 - You will see `✓` at the end of the message if it was send, `✓✓` when the message was noticed, or `✖` if message failed to send.
 - You can send emojis sending typing their string representation, for example: `:thumbs_up:`
+- You can have emoji, contact names and commands autocompletion typing `:`, `@` or `/` and pressing <kbd>Tab</kbd>
 - You can tweak the app colors editing `~/.curseddelta/theme.json`
 - You can tweak the app keymap editing `~/.curseddelta/keymap.json`
 - You can tweak the app settings editing `~/.curseddelta/curseddelta.conf`
