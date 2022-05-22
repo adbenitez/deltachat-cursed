@@ -80,6 +80,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.current_chat = chats[index]
         msg = self.current_chat.get_draft()
         self.widgetEdit.set_edit_text(msg.text if msg else "")
+        self.widgetEdit.set_edit_pos(len(self.widgetEdit.get_edit_text()))
         self.update_status_bar(index, chats)
 
     def save_draft(self, chat: Chat) -> None:

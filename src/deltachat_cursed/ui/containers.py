@@ -59,6 +59,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 text = text[1:]
             elif text.startswith("/"):
                 edit.set_edit_text(self.process_command(current_chat, text))
+                edit.set_edit_pos(len(edit.get_edit_text()))
                 self.resize_zone(size)
                 return None
             if current_chat.is_contact_request():
@@ -71,6 +72,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 edit.set_edit_text(
                     "Error: message could not be sent, are you a member of the chat?"
                 )
+            edit.set_edit_pos(len(edit.get_edit_text()))
             self.resize_zone(size)
         # give the focus to the chat list
         elif key == self.keymap["left"]:
@@ -96,6 +98,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
             edit.set_edit_text(reply + "\n\n")
             self.root.main_columns.focus_position = 2
             self.root.right_side.focus_position = 1
+            edit.set_edit_pos(len(edit.get_edit_text()))
             self.resize_zone(size)
         else:
             self.resize_zone(size)

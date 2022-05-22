@@ -18,6 +18,7 @@
 
 - avoid `RuntimeError` on `AccountPlugin.chatlist_changed()`
 - search for `curseddelta.conf` inside `/etc/curseddelta/` as documented
+- cursor is shown properly at the end of the input field when a draft exists
 
 ## [0.4.1]
 
