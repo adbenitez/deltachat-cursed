@@ -3,6 +3,7 @@ from typing import Optional
 
 import urwid
 from deltachat import Chat
+from emoji import emojize
 
 from ..util import create_message
 
@@ -64,7 +65,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
                 # accept contact requests automatically until UI allows to accept/block
                 current_chat.accept()
             try:
-                current_chat.send_text(text)
+                current_chat.send_text(emojize(text))
                 edit.set_edit_text("")
             except ValueError:
                 edit.set_edit_text(
