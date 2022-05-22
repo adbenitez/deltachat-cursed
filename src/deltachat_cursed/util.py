@@ -164,6 +164,7 @@ def get_configuration() -> dict:
         cfg["general"].getboolean("open_file", True) and "DISPLAY" in os.environ
     )
     cfg_gen["date_format"] = cfg["general"].get("date_format", "%x", raw=True)
+    cfg_gen["display_emoji"] = cfg["general"].getboolean("display_emoji", False)
 
     return cfg_full
 

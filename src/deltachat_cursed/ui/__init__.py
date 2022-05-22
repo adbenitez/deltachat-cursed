@@ -39,18 +39,20 @@ class CursedDelta(ChatListMonitor):
             ("unread_chat", *theme["unread_chat"]),
         ]
 
+        display_emoji = conf["general"]["display_emoji"]
+
         self.chatlist_container = ChatListContainer(
-            self, ChatListWidget(keymap, self.account)
+            self, ChatListWidget(keymap, self.account, display_emoji)
         )
 
         # message list
         dformat = conf["general"]["date_format"]
         self.msgs_container = MessagesContainer(
-            self, MessagesWidget(dformat, keymap, theme, self.account)
+            self, MessagesWidget(dformat, keymap, theme, self.account, display_emoji)
         )
 
         # message writing + status bar widget
-        self.msg_send_widget = MessageSendWidget(keymap, self.account)
+        self.msg_send_widget = MessageSendWidget(keymap, self.account, display_emoji)
         self.msg_send_container = MessageSendContainer(self, self.msg_send_widget)
 
         # Right pannel

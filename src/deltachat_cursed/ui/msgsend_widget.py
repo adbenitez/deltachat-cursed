@@ -4,6 +4,7 @@ import deltachat as dc
 import urwid
 import urwid_readline
 from deltachat import Chat
+from emoji import demojize
 
 from ..event import ChatListMonitor
 
@@ -16,7 +17,8 @@ def get_subtitle(chat) -> str:
 
 
 class MessageSendWidget(urwid.Filler, ChatListMonitor):
-    def __init__(self, keymap: dict, account) -> None:
+    def __init__(self, keymap: dict, account, display_emoji: bool) -> None:
+        self.display_emoji = display_emoji
         self.text_caption = " >> "
         self.status_bar = urwid.Text(("status_bar", " "), align="left")
         self.attr = urwid.AttrMap(self.status_bar, "status_bar")
@@ -73,7 +75,8 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             verified = ""
             if chat.is_protected():
                 verified = "✓ "
-            text = f" {verified}[ {chat.get_name()} ] -- {get_subtitle(chat)}"
+            name = chat.get_name() if self.display_emoji else demojize(chat.get_name())
+            text = f" {verified}[ {name} ] -- {get_subtitle(chat)}"
 
         self.status_bar.set_text(text)
 

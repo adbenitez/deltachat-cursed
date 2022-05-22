@@ -2,6 +2,7 @@ from datetime import timezone
 from typing import Optional
 
 import urwid
+from emoji import demojize
 
 from ..event import ChatListMonitor
 
@@ -10,12 +11,13 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
     """Widget used to print the message list"""
 
     def __init__(  # noqa
-        self, date_format: str, keymap: dict, theme: dict, account
+        self, date_format: str, keymap: dict, theme: dict, account, display_emoji: bool
     ) -> None:
         self.DATE_FORMAT = date_format
         self.theme = theme
         self.keymap = keymap
         self.model = account
+        self.display_emoji = display_emoji
         self.updating = False
         self.model.add_chatlist_monitor(self)
 
@@ -60,8 +62,10 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
     def print_msg(self, msg, prev_date) -> None:
         local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         sender = msg.get_sender_contact()
-        name = sender.display_name
         color = self.get_name_color(sender.id)
+        name = (
+            sender.display_name if self.display_emoji else demojize(sender.display_name)
+        )
 
         cur_date = local_date.strftime(f"│ {self.DATE_FORMAT} │")
 
@@ -89,6 +93,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         text = msg.text
         if msg.filename:
             text = f"[file://{msg.filename}]{' – ' if text else ''}{text}"
+
+        if not self.display_emoji:
+            text = demojize(text)
 
         if msg.is_out_mdn_received():
             text = text + "  ✓✓"

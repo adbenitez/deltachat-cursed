@@ -2,6 +2,7 @@ from typing import Optional, Union
 
 import urwid
 from deltachat import const
+from emoji import demojize
 
 from ..event import ChatListMonitor
 
@@ -16,10 +17,11 @@ class ListItem(urwid.Button):
 
 
 class ChatListWidget(urwid.ListBox, ChatListMonitor):
-    def __init__(self, keymap: dict, account) -> None:  # noqa
+    def __init__(self, keymap: dict, account, display_emoji: bool) -> None:  # noqa
         self.keymap = keymap
         self.model = account
         self.updating = False
+        self.display_emoji = display_emoji
         self.model.add_chatlist_monitor(self)
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
@@ -52,7 +54,8 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
                 continue
             pos += 1
             chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
-            label = f"{chat_type} {chat.get_name()}"
+            name = chat.get_name()
+            label = f"{chat_type} {name if self.display_emoji else demojize(name)}"
             new_messages = chat.count_fresh_messages()
             if new_messages > 0:
                 label += f" ({new_messages})"
