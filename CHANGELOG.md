@@ -8,7 +8,7 @@
 - support for sending emoji typing its name between `:`, example `:thumbs_up:`
 - emoji autocompletion when `Tab` is pressed after a `:` character
 - contact names autocompletion when `Tab` is pressed after a `@` character
-- commad autocompletion when `Tab` is pressed
+- command autocompletion when `Tab` is pressed
 
 ### Changed
 
