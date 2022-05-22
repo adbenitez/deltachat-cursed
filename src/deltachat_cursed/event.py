@@ -36,7 +36,7 @@ class AccountPlugin:
         else:
             index = chats.index(self.current_chat)
 
-        for m in self.chatlist_monitors:
+        for m in list(self.chatlist_monitors):
             m.chatlist_changed(index, chats)
 
     def select_chat(self, index: Optional[int]) -> None:

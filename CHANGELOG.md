@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- avoid `RuntimeError` on `AccountPlugin.chatlist_changed()`
+
 ## [0.4.1]
 
 ### Changed
