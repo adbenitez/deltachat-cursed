@@ -139,8 +139,8 @@ def fail(*args, **kwargs) -> None:
 
 def get_configuration() -> dict:
     file_name = "curseddelta.conf"
-    home_config = f"{os.path.expanduser('~')}/.{file_name}"
-    confPriorityList = [file_name, home_config, "/etc/" + file_name]
+    home_config = f"{os.path.expanduser('~')}/.curseddelta/{file_name}"
+    confPriorityList = [file_name, home_config, "/etc/curseddelta/" + file_name]
 
     cfg = configparser.ConfigParser()
 
@@ -149,22 +149,21 @@ def get_configuration() -> dict:
             cfg.read(conffile)
             break
     else:
-        cfg.add_section("general")
+        cfg.add_section("global")
 
-    cfg_full: Dict[str, dict] = {}
-    cfg_full["general"] = {}
+    cfg_full: Dict[str, dict] = {"global": {}}
 
     home = os.path.expanduser("~")
-    cfg_gen = cfg_full["general"]
-    cfg_gen["account_path"] = cfg["general"].get(
+    cfg_gbl = cfg_full["global"]
+    cfg_gbl["account_path"] = cfg["global"].get(
         "account_path", home + "/.curseddelta/account/account.db"
     )
-    cfg_gen["notification"] = cfg["general"].getboolean("notification", True)
-    cfg_gen["open_file"] = (
-        cfg["general"].getboolean("open_file", True) and "DISPLAY" in os.environ
+    cfg_gbl["notification"] = cfg["global"].getboolean("notification", True)
+    cfg_gbl["open_file"] = (
+        cfg["global"].getboolean("open_file", True) and "DISPLAY" in os.environ
     )
-    cfg_gen["date_format"] = cfg["general"].get("date_format", "%x", raw=True)
-    cfg_gen["display_emoji"] = cfg["general"].getboolean("display_emoji", False)
+    cfg_gbl["date_format"] = cfg["global"].get("date_format", "%x", raw=True)
+    cfg_gbl["display_emoji"] = cfg["global"].getboolean("display_emoji", False)
 
     return cfg_full
 

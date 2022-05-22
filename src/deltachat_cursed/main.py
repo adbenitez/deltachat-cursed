@@ -49,7 +49,7 @@ def get_parser(cfg: dict) -> ArgumentParser:
         "--db",
         action="store",
         help="database file",
-        default=cfg["general"]["account_path"],
+        default=cfg["global"]["account_path"],
     )
     parser.add_argument(
         "--show-ffi", action="store_true", help="show low level ffi events"

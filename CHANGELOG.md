@@ -6,9 +6,14 @@
 
 - new boolean setting `display_emoji` in `curseddelta.conf` file, to enable/disable display of emoji in chat names, contact names, and messages.
 
+### Changed
+
+- renamed `[general]` configuration section to `[global]`
+
 ### Fixed
 
 - avoid `RuntimeError` on `AccountPlugin.chatlist_changed()`
+- search for `curseddelta.conf` inside `/etc/curseddelta/` as documented
 
 ## [0.4.1]
 

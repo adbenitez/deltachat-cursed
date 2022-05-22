@@ -49,10 +49,19 @@ $ delta --db ~/.config/DeltaChat/accounts/XXXXXXXXX/dc.db
 - You will see `✓` at the end of the message if it was send, `✓✓` when the message was noticed, or `✖` if message failed to send.
 - You can tweak the app colors editing `~/.curseddelta/theme.json`
 - You can tweak the app keymap editing `~/.curseddelta/keymap.json`
+- You can tweak the app settings editing `~/.curseddelta/curseddelta.conf`
 - Put global theme, keymap, and config files in `/etc/curseddelta/`
 - You can have per-folder config files, the application search for this files in the current working directory: `./curseddelta-theme.json`,  `./curseddelta-keymap.json`, `./curseddelta.conf`
 - If you like to use the mouse, you can use the mouse to select chats in the chat list, select the draft area or scroll in the message history.
 
+#### Configuration File Options
+
+Inside your `curseddelta.conf` file, create a `[global]` section and there you can set:
+
+* `account_path`: the path to the default accouunt database to be open when the program is launched without `--db` option
+* `notification`: set to `yes`/`no` to enable/disable notifications (default: yes)
+* `date_format`: format of the date marker in chats (default: `%x`)
+* `display_emoji`: set to `yes`/`no` to enable/disable emoji rendering (default: no)
 
 #### Default Shortcuts
 

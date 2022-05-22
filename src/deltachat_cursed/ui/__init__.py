@@ -39,14 +39,14 @@ class CursedDelta(ChatListMonitor):
             ("unread_chat", *theme["unread_chat"]),
         ]
 
-        display_emoji = conf["general"]["display_emoji"]
+        display_emoji = conf["global"]["display_emoji"]
 
         self.chatlist_container = ChatListContainer(
             self, ChatListWidget(keymap, self.account, display_emoji)
         )
 
         # message list
-        dformat = conf["general"]["date_format"]
+        dformat = conf["global"]["date_format"]
         self.msgs_container = MessagesContainer(
             self, MessagesWidget(dformat, keymap, theme, self.account, display_emoji)
         )
@@ -125,7 +125,7 @@ class CursedDelta(ChatListMonitor):
             self.main_columns.focus_position = 2
             self.right_side.focus_position = 1
         elif key == self.keymap["open_file"]:
-            if not self.conf["general"]["open_file"]:
+            if not self.conf["global"]["open_file"]:
                 return
             current_chat = self.account.current_chat
             if current_chat:
@@ -155,7 +155,7 @@ class CursedDelta(ChatListMonitor):
 
     @account_hookimpl
     def ac_incoming_message(self, message) -> None:
-        if not self.conf["general"]["notification"]:
+        if not self.conf["global"]["notification"]:
             return
         sender = message.get_sender_contact()
         acc = self.account.account
