@@ -187,4 +187,5 @@ def start_ui(args: Namespace) -> None:
     args.acct.add_account_plugin(plugin)
 
     with online_account(args.acct):
-        CursedDelta(args.cfg, get_keymap(), get_theme(), APP_NAME, plugin)
+        app = CursedDelta(args.cfg, get_keymap(), get_theme(), APP_NAME, plugin)
+        app.run()

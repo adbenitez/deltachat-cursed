@@ -82,6 +82,8 @@ class CursedDelta(ChatListMonitor):
             screen=urwid.raw_display.Screen(),
         )
         self.main_loop.screen.set_terminal_properties(colors=256)
+
+    def run(self) -> None:
         self.main_loop.run()
 
     def print_title(self, messages_count: int) -> None:
