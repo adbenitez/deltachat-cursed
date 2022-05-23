@@ -16,10 +16,10 @@ def _fake_notify(title: str, body: str, image: str) -> None:
 
 def notify_msg(msg) -> None:
     image = msg.chat.get_profile_image()
-    if chat.get_type() != const.DC_CHAT_TYPE_SINGLE:
-        title = f"{msg.chat.get_name()}: {msg.get_sender_contact().display_name}"
-    else:
+    if msg.chat.get_type() == const.DC_CHAT_TYPE_SINGLE:
         title = msg.get_sender_contact().display_name
+    else:
+        title = f"{msg.chat.get_name()}: {msg.get_sender_contact().display_name}"
     notify(body=msg.text, title=title, image=image)
 
 
