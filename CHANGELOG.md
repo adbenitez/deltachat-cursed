@@ -22,6 +22,7 @@
 - search for `curseddelta.conf` inside `/etc/curseddelta/` as documented
 - cursor is shown properly at the end of the input field when a draft exists
 - improved app speed loading chats and messages
+- show chat name in notifications for mailing lists
 
 ## [0.4.1]
 
