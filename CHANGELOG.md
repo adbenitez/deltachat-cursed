@@ -13,6 +13,7 @@
 ### Changed
 
 - renamed `[general]` configuration section to `[global]`
+- improved chat information in status bar, detect properly mailing lists
 
 ### Fixed
 

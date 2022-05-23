@@ -3,7 +3,7 @@ from typing import Optional
 import deltachat as dc
 import urwid
 import urwid_readline
-from deltachat import Chat
+from deltachat import Chat, const
 from emoji import demojize
 from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
 
@@ -11,11 +11,16 @@ from ..event import ChatListMonitor
 from ..util import COMMANDS
 
 
-def get_subtitle(chat) -> str:
+def get_subtitle(chat: Chat) -> str:
+    if chat.get_type() == const.DC_CHAT_TYPE_MAILINGLIST:
+        return "Mailing List"
     members = chat.get_contacts()
-    if not chat.is_group() and members:
+    if chat.get_type() == const.DC_CHAT_TYPE_SINGLE and members:
         return members[0].addr
-    return f"{len(members)} member(s)"
+    count = len(members)
+    if count == 1:
+        return "1 member"
+    return f"{count} members"
 
 
 class MessageSendWidget(urwid.Filler, ChatListMonitor):
