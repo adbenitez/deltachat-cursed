@@ -5,9 +5,10 @@ import urwid
 from emoji import demojize
 
 from ..event import ChatListMonitor
+from .scli import LazyEvalListWalker, ListBoxPlus
 
 
-class MessagesWidget(urwid.ListBox, ChatListMonitor):
+class MessagesWidget(ListBoxPlus, ChatListMonitor):
     """Widget used to print the message list"""
 
     def __init__(  # noqa
@@ -19,6 +20,9 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
         self.model = account
         self.display_emoji = display_emoji
         self.updating = False
+        super().__init__(
+            LazyEvalListWalker(urwid.MonitoredList(), self.get_message_widget, -1)
+        )
         self.model.add_chatlist_monitor(self)
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
@@ -34,49 +38,25 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
     def update(self, current_chat_index: Optional[int], chats: list) -> None:
         if self.updating:
             return
+
         self.updating = True
 
         if current_chat_index is None:
             msgs = []
         else:
-            msgs = chats[current_chat_index].get_messages()
-
-        self.msg_list = urwid.SimpleFocusListWalker(  # noqa
-            [urwid.Text(("top", ""), align="left")]
-        )
-        super().__init__(self.msg_list)
-
-        self.pos = 0  # noqa
-
-        prev_date = None
-        for msg in msgs:
-            self.print_msg(msg, prev_date)
-            local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
-            prev_date = local_date.strftime(f"│ {self.DATE_FORMAT} │")
-
-        self.pos += 1
-        self.msg_list.insert(self.pos, urwid.Text(("bottom", "")))
+            msgs = self.model.account.get_messages(chats[current_chat_index].id)
+        self.contents = urwid.MonitoredList(msgs)
 
         self.updating = False
 
-    def print_msg(self, msg, prev_date) -> None:
+    def get_message_widget(self, msg_id, _position=None) -> urwid.Widget:
+        msg = self.model.account.get_message_by_id(msg_id)
         local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         sender = msg.get_sender_contact()
         color = self.get_name_color(sender.id)
         name = (
             sender.display_name if self.display_emoji else demojize(sender.display_name)
         )
-
-        cur_date = local_date.strftime(f"│ {self.DATE_FORMAT} │")
-
-        if cur_date != prev_date:
-            fill = "─" * (len(cur_date) - 2)
-            date_text = "┌" + fill + "┐\n" + cur_date + "\n└" + fill + "┘"
-
-            date_to_display = urwid.Text(("date", date_text), align="center")
-            self.focus_position = self.pos
-            self.pos += 1
-            self.msg_list.insert(self.pos, date_to_display)
 
         hour = local_date.strftime(" %H:%M ")
 
@@ -133,13 +113,7 @@ class MessagesWidget(urwid.ListBox, ChatListMonitor):
                     lines.append(line)
             message_text = urwid.Text(lines or "")
 
-        message_to_display = urwid.Columns(
-            [(size_name + 10, message_meta), message_text]
-        )
-
-        self.pos += 1
-        self.msg_list.insert(self.pos, message_to_display)
-        self.focus_position = self.pos
+        return urwid.Columns([(size_name + 10, message_meta), message_text])
 
     def get_name_color(self, id_: int) -> list:
         if id_ == self.model.account.get_self_contact().id:

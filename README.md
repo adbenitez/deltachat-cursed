@@ -101,6 +101,7 @@ This are some temporal commands to do things that are not implemented yet using 
 
 The user interface is based on [ncTelegram](https://github.com/Nanoseb/ncTelegram)
 
+Some code and ideas were taken from [scli](https://github.com/isamert/scli/)
 
 ## License
 

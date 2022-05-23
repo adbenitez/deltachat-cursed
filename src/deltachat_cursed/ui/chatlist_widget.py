@@ -1,10 +1,11 @@
 from typing import Optional, Union
 
 import urwid
-from deltachat import const
+from deltachat import Chat, const
 from emoji import demojize
 
 from ..event import ChatListMonitor
+from .scli import LazyEvalListWalker, ListBoxPlus
 
 
 class ListItem(urwid.Button):
@@ -16,12 +17,16 @@ class ListItem(urwid.Button):
         )
 
 
-class ChatListWidget(urwid.ListBox, ChatListMonitor):
+class ChatListWidget(ListBoxPlus, ChatListMonitor):
     def __init__(self, keymap: dict, account, display_emoji: bool) -> None:  # noqa
         self.keymap = keymap
         self.model = account
         self.updating = False
         self.display_emoji = display_emoji
+        self.current_chat_id = None
+        super().__init__(
+            LazyEvalListWalker(urwid.MonitoredList(), self.get_chat_widget, 0)
+        )
         self.model.add_chatlist_monitor(self)
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
@@ -35,53 +40,29 @@ class ChatListWidget(urwid.ListBox, ChatListMonitor):
             return
         self.updating = True
 
-        # refresh chat list
-        self.chat_list = urwid.SimpleFocusListWalker(  # noqa
-            [urwid.AttrMap(urwid.Text("Chat list:"), "status_bar")]
-        )
-        super().__init__(self.chat_list)
-
-        pos = self.focus_position  # noqa
-
         if current_chat_index is None:
-            current_id = None
+            self.current_chat_id = None
         else:
-            current_id = chats[current_chat_index].id
+            self.current_chat_id = chats[current_chat_index].id
+        self.contents = chats
 
-        # build the chat list
-        for i, chat in enumerate(chats):
-            if chat.id < 10:
-                continue
-            pos += 1
-            chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
-            name = chat.get_name()
-            label = f"{chat_type} {name if self.display_emoji else demojize(name)}"
-            new_messages = chat.count_fresh_messages()
-            if new_messages > 0:
-                label += f" ({new_messages})"
-
-            if chat.id == current_id:
-                button = ListItem(("cur_chat", label), self.chat_change, i)
-                self.chat_list.insert(pos, button)
-                self.focus_position = pos
-            else:
-                if new_messages > 0:
-                    label = ("unread_chat", label)  # type: ignore
-                button = ListItem(label, self.chat_change, i)
-                self.chat_list.insert(pos, button)
-
-        # pos += 1
-        # self.chat_list.insert(
-        #     pos, urwid.AttrMap(urwid.Divider('─'), 'separator'))
-        # pos += 1
-        # self.chat_list.insert(pos, urwid.Text('✚  New group'))
-        # pos += 1
-        # self.chat_list.insert(pos, urwid.Text('✚  New contact'))
-        # pos += 1
-        # self.chat_list.insert(pos, urwid.Text('☺  Contacts'))
-        # pos += 1
-        # self.chat_list.insert(pos, urwid.AttrMap(urwid.Divider('─'), 'separator'))
         self.updating = False
+
+    def get_chat_widget(self, chat: Chat, position: int) -> urwid.Widget:
+        chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
+        name = chat.get_name()
+        label = f"{chat_type} {name if self.display_emoji else demojize(name)}"
+        new_messages = chat.count_fresh_messages()
+        if new_messages > 0:
+            label += f" ({new_messages})"
+
+        if chat.id == self.current_chat_id:
+            button = ListItem(("cur_chat", label), self.chat_change, position)
+        else:
+            if new_messages > 0:
+                label = ("unread_chat", label)  # type: ignore
+            button = ListItem(label, self.chat_change, position)
+        return button
 
     def chat_change(self, button, index: int) -> None:
         self.model.select_chat(index)
