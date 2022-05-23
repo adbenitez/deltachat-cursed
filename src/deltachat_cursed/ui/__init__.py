@@ -162,5 +162,5 @@ class CursedDelta(ChatListMonitor):
         if sender == me:
             return
         name = acc.get_config("displayname") or me.addr
-        if not message.chat.is_group() or ("@" + name in message.text):
+        if not message.chat.is_muted() or ("@" + name in message.text):
             notify_msg(message)

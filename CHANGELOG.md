@@ -14,6 +14,7 @@
 
 - renamed `[general]` configuration section to `[global]`
 - improved chat information in status bar, detect properly mailing lists
+- show notifications for all unmuted chats instead
 
 ### Fixed
 
