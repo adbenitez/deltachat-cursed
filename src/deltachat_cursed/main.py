@@ -4,10 +4,10 @@ import time
 from argparse import ArgumentParser, Namespace
 
 import deltachat.const
-from deltachat import Account
 from deltachat.events import FFIEventLogger
 from deltachat.tracker import ConfigureTracker
 
+from .account import Account
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .ui import CursedDelta

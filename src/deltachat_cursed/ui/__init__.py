@@ -141,10 +141,7 @@ class CursedDelta(ChatListMonitor):
                             break
 
     def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
-        new_messages = 0
-        for chat in chats:
-            new_messages += chat.count_fresh_messages()
-        self.print_title(new_messages)
+        self.print_title(self.account.account.get_fresh_messages_cnt())
 
         if hasattr(self, "main_loop"):
             self.main_loop.draw_screen()
