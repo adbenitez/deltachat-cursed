@@ -52,39 +52,39 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
 
     def get_message_widget(self, msg_id, _position=None) -> urwid.Widget:
         msg = self.model.account.get_message_by_id(msg_id)
-        local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         sender = msg.get_sender_contact()
+
+        local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
+        if msg.is_encrypted() or sender.id < 10:
+            timestamp = local_date.strftime(" %H:%M ")
+            timestamp_wgt = urwid.Text(("encrypted", timestamp))
+        else:
+            timestamp = local_date.strftime("!%H:%M ")
+            timestamp_wgt = urwid.Text(("unencrypted", timestamp))
+
         color = self.get_name_color(sender.id)
-        name = (
-            sender.display_name if self.display_emoji else demojize(sender.display_name)
+        name = textwrap.shorten(
+            sender.display_name
+            if self.display_emoji
+            else demojize(sender.display_name),
+            80,
         )
-
-        hour = local_date.strftime(" %H:%M ")
-
-        size_name = len(name)
-        if size_name > 9:
-            name = name[0:9] + "..."
-            size_name = len(name)
-
-        status = "encrypted" if msg.is_encrypted() else "unencrypted"
-        message_meta = urwid.Text(
-            [("hour", hour), (urwid.AttrSpec(*color), name), (status, " > ")]
-        )
+        components: list = [(urwid.AttrSpec(*color), name)]
+        if msg.is_out_mdn_received():
+            components.append("  ✓✓")
+        elif msg.is_out_delivered():
+            components.append("  ✓")
+        elif msg.is_out_pending():
+            components.append("  →")
+        elif msg.is_out_failed():
+            components.append(("failed", "  ✖"))
+        header_wgt = urwid.Text(components)
 
         text = msg.text
         if msg.filename:
             text = f"[file://{msg.filename}]{' – ' if text else ''}{text}"
-
         if not self.display_emoji:
             text = demojize(text)
-
-        if msg.is_out_mdn_received():
-            text = text + "  ✓✓"
-        elif msg.is_out_delivered():
-            text = text + "  ✓"
-        elif msg.is_out_failed():
-            text = text + "  ✖"
-
         lines = []
         quote_sender = msg.quote and msg.quote.get_sender_contact()
         if msg.quoted_text:
@@ -95,9 +95,7 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
                 quote_color = "quote"
             lines.append((quote_color, "│ "))
             lines.append(("quote", f"{textwrap.shorten(msg.quoted_text, 150)}\n"))
-        if msg.is_out_pending() or msg.is_out_failed():
-            lines.append(("pending", text))
-        elif msg.is_system_message():
+        if msg.is_system_message():
             lines.append(("system_msg", text))
         else:
             me = self.model.account.get_self_contact()
@@ -110,8 +108,11 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
                 lines.append(("mention", text))
             else:
                 lines.append(text)
+        body_wgt = urwid.Text(lines or "")
 
-        return urwid.Columns([(size_name + 10, message_meta), urwid.Text(lines or "")])
+        return urwid.Columns(
+            [(len(timestamp), timestamp_wgt), urwid.Pile([header_wgt, body_wgt])]
+        )
 
     def get_name_color(self, id_: int) -> list:
         if id_ == self.model.account.get_self_contact().id:

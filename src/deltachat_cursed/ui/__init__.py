@@ -27,10 +27,8 @@ class CursedDelta(ChatListMonitor):
             ("status_bar", *theme["status_bar"]),
             ("separator", *theme["separator"]),
             ("date", *theme["date"]),
-            ("hour", *theme["hour"]),
             ("encrypted", *theme["encrypted"]),
             ("unencrypted", *theme["unencrypted"]),
-            ("pending", *theme["pending"]),
             ("cur_chat", *theme["cur_chat"]),
             ("reversed", *theme["reversed"]),
             ("quote", *theme["quote"]),
@@ -38,6 +36,7 @@ class CursedDelta(ChatListMonitor):
             ("self_msg", *theme["self_msg"]),
             ("unread_chat", *theme["unread_chat"]),
             ("system_msg", *theme["system_msg"]),
+            ("failed", *theme["failed"]),
         ]
 
         display_emoji = conf["global"]["display_emoji"]

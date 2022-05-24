@@ -10,6 +10,7 @@
 - contact names autocompletion when `Tab` is pressed after a `@` character
 - command autocompletion when `Tab` is pressed
 - support for messages with quotes
+- "failed" theme attribute, to style failed message badge
 
 ### Changed
 
@@ -17,6 +18,10 @@
 - improved chat information in status bar, detect properly mailing lists
 - show notifications for all unmuted chats instead
 - removed `ctrl + r` shortcut until a proper way to reply a message is added
+- removed "hour" and "pending" theme attributes
+- removed `>` status indicator, encryption status is now displayed in the message timestamp
+- show message delivery status beside the user's name
+- message layout tweaked
 
 ### Fixed
 
