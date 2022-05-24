@@ -45,7 +45,18 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
             items.extend(EMOJI_UNICODE_ENGLISH.keys())
         elif text.startswith("/") or not text:
             items.extend(COMMANDS.keys())
-        items = [c for c in items if c and c.startswith(text)] if text else items
+
+        if text:
+            matches = []
+            fuzzy_matches = []
+            for item in items:
+                if not item:
+                    continue
+                if item.startswith(text):
+                    matches.append(item)
+                elif text[1:] in item[1:]:
+                    fuzzy_matches.append(item)
+            items = matches + fuzzy_matches
         try:
             return items[state]
         except (IndexError, TypeError):
