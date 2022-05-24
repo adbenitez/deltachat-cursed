@@ -48,7 +48,7 @@ def get_parser(cfg: dict) -> ArgumentParser:
     parser.add_argument(
         "--db",
         action="store",
-        help="database file",
+        help="account's database file",
         default=cfg["global"]["account_path"],
     )
     parser.add_argument(
