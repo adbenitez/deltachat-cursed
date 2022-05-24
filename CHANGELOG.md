@@ -11,6 +11,7 @@
 - command autocompletion when `Tab` is pressed
 - support for messages with quotes
 - "failed" theme attribute, to style failed message badge
+- support for messages with impersonation/override names
 
 ### Changed
 

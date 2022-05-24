@@ -4,7 +4,7 @@ import sys
 from deltachat import const
 from notifypy import Notify
 
-from ..util import APP_NAME
+from ..util import APP_NAME, get_sender_name
 
 __all__ = ["notify", "notify_msg"]
 app_icon = os.path.join(os.path.abspath(os.path.dirname(__file__)), "logo.png")
@@ -17,9 +17,9 @@ def _fake_notify(title: str, body: str, image: str) -> None:
 def notify_msg(msg) -> None:
     image = msg.chat.get_profile_image()
     if msg.chat.get_type() == const.DC_CHAT_TYPE_SINGLE:
-        title = msg.get_sender_contact().display_name
+        title = get_sender_name(msg)
     else:
-        title = f"{msg.chat.get_name()}: {msg.get_sender_contact().display_name}"
+        title = f"{msg.chat.get_name()}: {get_sender_name(msg)}"
     notify(body=msg.text, title=title, image=image)
 
 

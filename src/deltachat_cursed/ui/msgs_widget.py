@@ -6,6 +6,7 @@ import urwid
 from emoji import demojize
 
 from ..event import ChatListMonitor
+from ..util import get_sender_name
 from .scli import LazyEvalListWalker, ListBoxPlus
 
 
@@ -63,10 +64,9 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
             timestamp_wgt = urwid.Text(("unencrypted", timestamp))
 
         color = self.get_name_color(sender.id)
+        name = get_sender_name(msg)
         name = textwrap.shorten(
-            sender.display_name
-            if self.display_emoji
-            else demojize(sender.display_name),
+            name if self.display_emoji else demojize(name),
             80,
         )
         components: list = [(urwid.AttrSpec(*color), name)]
@@ -90,7 +90,7 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
         if msg.quoted_text:
             if quote_sender:
                 quote_color = urwid.AttrSpec(*self.get_name_color(quote_sender.id))
-                lines.append((quote_color, f"│ {quote_sender.display_name}\n"))
+                lines.append((quote_color, f"│ {get_sender_name(msg.quote)}\n"))
             else:
                 quote_color = "quote"
             lines.append((quote_color, "│ "))

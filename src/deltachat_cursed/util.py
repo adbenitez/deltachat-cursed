@@ -231,3 +231,9 @@ def create_message(
         msg.set_override_sender_name(sender)
 
     return msg
+
+
+def get_sender_name(msg: Message) -> str:
+    if msg.override_sender_name:
+        return f"~{msg.override_sender_name}"
+    return msg.get_sender_contact().display_name
