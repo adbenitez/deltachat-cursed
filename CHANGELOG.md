@@ -12,6 +12,7 @@
 - support for messages with quotes
 - "failed" theme attribute, to style failed message badge
 - support for messages with impersonation/override names
+- notify reply-mentions in muted groups
 
 ### Changed
 
@@ -31,6 +32,7 @@
 - cursor is shown properly at the end of the input field when a draft exists
 - improved app speed loading chats and messages
 - show chat name in notifications for mailing lists
+- don't notify mentions in muted direct/private chats
 
 ## [0.4.1]
 

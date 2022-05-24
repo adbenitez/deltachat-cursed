@@ -9,7 +9,7 @@ from emoji import emojize
 
 from .event import AccountPlugin, ChatListMonitor
 from .notifications import notify_msg
-from .util import COMMANDS, Container
+from .util import COMMANDS, Container, is_multiuser
 from .widgets.chatlist import ChatListWidget
 from .widgets.composer import ComposerWidget
 from .widgets.conversation import ConversationWidget
@@ -118,13 +118,21 @@ class Application(ChatListMonitor):
     def ac_incoming_message(self, message: Message) -> None:
         if not self.conf["global"]["notification"]:
             return
+
         sender = message.get_sender_contact()
         acc = self.events.account
         me = acc.get_self_contact()
         if sender == me:
             return
-        name = acc.get_config("displayname") or me.addr
-        if not message.chat.is_muted() or ("@" + name in message.text):
+
+        notify = not message.chat.is_muted()
+        if not notify and is_multiuser(message.chat):
+            if message.quote and message.quote.get_sender_contact() == me:
+                notify = True
+            else:
+                name = acc.get_config("displayname") or me.addr
+                notify = f"@{name}" in message.text
+        if notify:
             notify_msg(message)
 
     def _print_title(self, messages_count: int) -> None:
