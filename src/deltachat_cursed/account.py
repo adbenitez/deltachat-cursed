@@ -1,7 +1,8 @@
+from tempfile import NamedTemporaryFile
 from typing import List
 
 from deltachat import Account as _Account
-from deltachat import Chat, const
+from deltachat import Message
 from deltachat.capi import ffi, lib
 
 
@@ -24,6 +25,52 @@ class Account(_Account):
             for i in range(0, lib.dc_array_get_cnt(dc_array))
         ]
 
-    @staticmethod
-    def is_multiuser(chat: Chat) -> bool:
-        return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
+    def create_message(
+        self,
+        text: str = None,
+        html: str = None,
+        viewtype: str = None,
+        filename: str = None,
+        bytefile=None,
+        sender: str = None,
+        quote: Message = None,
+    ) -> Message:
+        if bytefile:
+            assert filename is not None, "bytefile given but filename not provided"
+            blobdir = self.get_blobdir()
+            parts = filename.split(".", maxsplit=1)
+            if len(parts) == 2:
+                prefix, suffix = parts
+                prefix += "-"
+                suffix = "." + suffix
+            else:
+                prefix = filename + "-"
+                suffix = None
+            with NamedTemporaryFile(
+                dir=blobdir, prefix=prefix, suffix=suffix, delete=False
+            ) as fp:
+                filename = fp.name
+            assert filename
+            with open(filename, "wb") as f:
+                with bytefile:
+                    f.write(bytefile.read())
+
+        if not viewtype:
+            if filename:
+                viewtype = "file"
+            else:
+                viewtype = "text"
+        msg = Message.new_empty(self, viewtype)
+
+        if quote is not None:
+            msg.quote = quote
+        if text:
+            msg.set_text(text)
+        if html:
+            msg.set_html(html)
+        if filename:
+            msg.set_file(filename)
+        if sender:
+            msg.set_override_sender_name(sender)
+
+        return msg

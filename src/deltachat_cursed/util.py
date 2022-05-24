@@ -3,10 +3,9 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from tempfile import NamedTemporaryFile
 from typing import Any, Callable, Dict
 
-from deltachat import Account, Message
+from deltachat import Account, Chat, Message, const
 
 APP_NAME = "Cursed Delta"
 COMMANDS = {
@@ -182,58 +181,11 @@ def get_configuration() -> dict:
     return cfg_full
 
 
-def create_message(
-    account: Account,
-    text: str = None,
-    html: str = None,
-    viewtype: str = None,
-    filename: str = None,
-    bytefile=None,
-    sender: str = None,
-    quote: Message = None,
-) -> Message:
-    if bytefile:
-        assert filename is not None, "bytefile given but filename not provided"
-        blobdir = account.get_blobdir()
-        parts = filename.split(".", maxsplit=1)
-        if len(parts) == 2:
-            prefix, suffix = parts
-            prefix += "-"
-            suffix = "." + suffix
-        else:
-            prefix = filename + "-"
-            suffix = None
-        with NamedTemporaryFile(
-            dir=blobdir, prefix=prefix, suffix=suffix, delete=False
-        ) as fp:
-            filename = fp.name
-        assert filename
-        with open(filename, "wb") as f:
-            with bytefile:
-                f.write(bytefile.read())
-
-    if not viewtype:
-        if filename:
-            viewtype = "file"
-        else:
-            viewtype = "text"
-    msg = Message.new_empty(account, viewtype)
-
-    if quote is not None:
-        msg.quote = quote
-    if text:
-        msg.set_text(text)
-    if html:
-        msg.set_html(html)
-    if filename:
-        msg.set_file(filename)
-    if sender:
-        msg.set_override_sender_name(sender)
-
-    return msg
-
-
 def get_sender_name(msg: Message) -> str:
     if msg.override_sender_name:
         return f"~{msg.override_sender_name}"
     return msg.get_sender_contact().display_name
+
+
+def is_multiuser(chat: Chat) -> bool:
+    return chat.get_type() != const.DC_CHAT_TYPE_SINGLE

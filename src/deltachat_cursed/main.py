@@ -14,7 +14,6 @@ from .ui import CursedDelta
 from .util import (
     APP_NAME,
     capture_keyboard_interrupt,
-    create_message,
     fail,
     get_configuration,
     get_keymap,
@@ -166,7 +165,7 @@ def send_cmd(args: Namespace) -> None:
 
         print(f"Sending message to {chat.get_name()!r}")
         msg = chat.send_msg(
-            create_message(args.acct, text=args.text, filename=args.filename)
+            args.acct.create_message(text=args.text, filename=args.filename)
         )
         while not msg.is_out_delivered():
             time.sleep(0.1)

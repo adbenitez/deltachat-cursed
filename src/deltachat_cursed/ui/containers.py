@@ -5,7 +5,7 @@ import urwid
 from deltachat import Chat
 from emoji import emojize
 
-from ..util import COMMANDS, create_message
+from ..util import COMMANDS
 
 
 class ChatListContainer(urwid.WidgetPlaceholder):
@@ -145,7 +145,7 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         elif args[0] == COMMANDS["/send"]:
             try:
                 path = os.path.expanduser(args[1].strip())
-                chat.send_msg(create_message(chat.account, filename=path))
+                chat.send_msg(chat.account.create_message(filename=path))
             except ValueError as ex:
                 text = f"Error: {ex}"
         else:

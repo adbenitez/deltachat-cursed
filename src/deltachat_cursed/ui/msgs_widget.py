@@ -6,7 +6,7 @@ import urwid
 from emoji import demojize
 
 from ..event import ChatListMonitor
-from ..util import get_sender_name
+from ..util import get_sender_name, is_multiuser
 from .scli import LazyEvalListWalker, ListBoxPlus
 
 
@@ -102,7 +102,7 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
             dname = self.model.account.get_config("displayname")
             if sender == me:
                 lines.append(("self_msg", text))
-            elif msg.account.is_multiuser(msg.chat) and (
+            elif is_multiuser(msg.chat) and (
                 (dname and f"@{dname}" in text) or (quote_sender and quote_sender == me)
             ):
                 lines.append(("mention", text))
