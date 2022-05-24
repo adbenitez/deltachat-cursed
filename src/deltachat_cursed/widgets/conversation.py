@@ -118,6 +118,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
                 lines.append(text)
         body_wgt = urwid.Text(lines or "")
 
+        msg.mark_seen()
         return urwid.Columns(
             [(len(timestamp), timestamp_wgt), urwid.Pile([header_wgt, body_wgt])]
         )

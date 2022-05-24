@@ -13,6 +13,7 @@
 - "failed" theme attribute, to style failed message badge
 - support for messages with impersonation/override names
 - notify reply-mentions in muted groups
+- support for marking messages as read while they are read
 
 ### Changed
 
