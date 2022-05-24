@@ -80,26 +80,6 @@ class MessageSendContainer(urwid.WidgetPlaceholder):
         # give the focus to the message list
         elif key in ("up", "page up", "esc"):
             self.root.right_side.focus_position = 0
-        elif key == self.keymap["reply"]:
-            current_chat = self.root.account.current_chat
-            if not current_chat:
-                return None
-            msgs = current_chat.get_messages()
-            if not msgs:
-                return None
-            edit = self.msg_send_widget.widgetEdit
-            sender = msgs[-1].get_sender_contact().display_name
-            text = msgs[-1].text.strip()
-            if not msgs[-1].is_text():
-                text = "[File]\n" + text
-            reply = f"\n> @{sender}:\n"
-            for line in text.splitlines(keepends=True):
-                reply += "> " + line
-            edit.set_edit_text(reply + "\n\n")
-            self.root.main_columns.focus_position = 2
-            self.root.right_side.focus_position = 1
-            edit.set_edit_pos(len(edit.get_edit_text()))
-            self.resize_zone(size)
         else:
             self.resize_zone(size)
             return key

@@ -1,3 +1,4 @@
+import textwrap
 from datetime import timezone
 from typing import Optional
 
@@ -84,36 +85,33 @@ class MessagesWidget(ListBoxPlus, ChatListMonitor):
         elif msg.is_out_failed():
             text = text + "  ✖"
 
+        lines = []
+        quote_sender = msg.quote and msg.quote.get_sender_contact()
+        if msg.quoted_text:
+            if quote_sender:
+                quote_color = urwid.AttrSpec(*self.get_name_color(quote_sender.id))
+                lines.append((quote_color, f"│ {quote_sender.display_name}\n"))
+            else:
+                quote_color = "quote"
+            lines.append((quote_color, "│ "))
+            lines.append(("quote", f"{textwrap.shorten(msg.quoted_text, 150)}\n"))
         if msg.is_out_pending() or msg.is_out_failed():
-            message_text = urwid.Text(("pending", text))
+            lines.append(("pending", text))
+        elif msg.is_system_message():
+            lines.append(("system_msg", text))
         else:
             me = self.model.account.get_self_contact()
-            display_name = self.model.account.get_config("displayname")
-            mention = display_name and "@" + display_name in text
-            lines = []
-            for line in text.splitlines(keepends=True):
-                if line.startswith(">"):
-                    quoting = True
-                    quote = ""
-                    while quoting:
-                        if line.startswith(">"):
-                            quote += "│"
-                            line = line[1:]
-                        elif line.startswith(" >"):
-                            quote += " │"
-                            line = line[2:]
-                        else:
-                            quoting = False
-                    lines.append(("quote", quote + line))
-                elif sender == me:
-                    lines.append(("self_msg", line))
-                elif mention:
-                    lines.append(("mention", line))
-                else:
-                    lines.append(line)
-            message_text = urwid.Text(lines or "")
+            dname = self.model.account.get_config("displayname")
+            if sender == me:
+                lines.append(("self_msg", text))
+            elif msg.account.is_multiuser(msg.chat) and (
+                (dname and f"@{dname}" in text) or (quote_sender and quote_sender == me)
+            ):
+                lines.append(("mention", text))
+            else:
+                lines.append(text)
 
-        return urwid.Columns([(size_name + 10, message_meta), message_text])
+        return urwid.Columns([(size_name + 10, message_meta), urwid.Text(lines or "")])
 
     def get_name_color(self, id_: int) -> list:
         if id_ == self.model.account.get_self_contact().id:

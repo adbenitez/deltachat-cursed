@@ -38,6 +38,7 @@ default_theme = {
     "reversed": ["", "", "", "g11", "white"],
     "quote": ["", "", "", "dark gray", "g11"],
     "mention": ["", "", "", "bold, light red", "g11"],
+    "system_msg": ["", "", "", "dark gray", "g11"],
     "self_msg": ["", "", "", "dark green", "g11"],
     "self_color": ["bold, #6d0", "g11"],
     "users_color": [
@@ -70,7 +71,6 @@ default_keymap = {
     "down": "j",
     "quit": "q",
     "insert_text": "i",
-    "reply": "ctrl r",
     "open_file": "ctrl o",
     "send_msg": "enter",
     "insert_new_line": "meta enter",

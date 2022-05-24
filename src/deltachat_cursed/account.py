@@ -1,6 +1,7 @@
 from typing import List
 
 from deltachat import Account as _Account
+from deltachat import Chat, const
 from deltachat.capi import ffi, lib
 
 
@@ -22,3 +23,7 @@ class Account(_Account):
             lib.dc_array_get_id(dc_array, i)
             for i in range(0, lib.dc_array_get_cnt(dc_array))
         ]
+
+    @staticmethod
+    def is_multiuser(chat: Chat) -> bool:
+        return chat.get_type() != const.DC_CHAT_TYPE_SINGLE

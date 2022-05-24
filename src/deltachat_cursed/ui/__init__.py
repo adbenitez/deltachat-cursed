@@ -37,6 +37,7 @@ class CursedDelta(ChatListMonitor):
             ("mention", *theme["mention"]),
             ("self_msg", *theme["self_msg"]),
             ("unread_chat", *theme["unread_chat"]),
+            ("system_msg", *theme["system_msg"]),
         ]
 
         display_emoji = conf["global"]["display_emoji"]

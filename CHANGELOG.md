@@ -9,12 +9,14 @@
 - emoji autocompletion when `Tab` is pressed after a `:` character
 - contact names autocompletion when `Tab` is pressed after a `@` character
 - command autocompletion when `Tab` is pressed
+- support for messages with quotes
 
 ### Changed
 
 - renamed `[general]` configuration section to `[global]`
 - improved chat information in status bar, detect properly mailing lists
 - show notifications for all unmuted chats instead
+- removed `ctrl + r` shortcut until a proper way to reply a message is added
 
 ### Fixed
 

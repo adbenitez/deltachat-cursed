@@ -71,7 +71,6 @@ Inside your `curseddelta.conf` file, create a `[global]` section and there you c
 - Press <kbd>q</kbd> to quit Cursed Delta.
 - Press <kbd>Ctrl</kbd> + <kbd>x</kbd> to toggle the chat list.
 - Use <kbd>Meta</kbd> + <kbd>Enter</kbd> to send the message.
-- Use <kbd>Ctrl</kbd> + <kbd>r</kbd> to reply last message in chat.
 - Use <kbd>Ctrl</kbd> + <kbd>o</kbd> to open attachemnt in the last message in chat.
 - You can navigate the chat list with <kbd>Meta</kbd> + <kbd>↑</kbd> and
   <kbd>Meta</kbd> + <kbd>↓</kbd>.
