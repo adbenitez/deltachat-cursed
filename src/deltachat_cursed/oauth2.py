@@ -1,7 +1,7 @@
 import webbrowser
 import wsgiref.simple_server
 from itertools import count
-from typing import Optional
+from typing import Any, Callable, Dict, Optional
 from urllib.parse import parse_qs, urlparse
 
 from deltachat import Account
@@ -87,7 +87,7 @@ class _RedirectWSGIApp:
         self.last_request_uri: Optional[str] = None
         self._success_message = success_message
 
-    def __call__(self, environ, start_response) -> list:
+    def __call__(self, environ: Dict[str, Any], start_response: Callable) -> list:
         """WSGI Callable.
         Args:
             environ (Mapping[str, Any]): The WSGI environment.

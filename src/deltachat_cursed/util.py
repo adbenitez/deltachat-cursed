@@ -3,8 +3,9 @@ import json
 import os
 import sys
 from contextlib import contextmanager
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, Optional
 
+import urwid
 from deltachat import Account, Chat, Message, const
 
 APP_NAME = "Cursed Delta"
@@ -76,6 +77,25 @@ default_keymap = {
     "prev_chat": "meta down",
     "toggle_chatlist": "ctrl x",
 }
+
+
+class Container(urwid.WidgetPlaceholder):
+    def __init__(
+        self,
+        widget: urwid.Widget,
+        keypress_callback: Callable,
+        process_unhandled: bool = False,
+    ) -> None:
+        self._keypress_callback = keypress_callback
+        self._process_unhandled = process_unhandled
+        super().__init__(widget)
+
+    def keypress(self, size: list, key: str) -> Optional[str]:
+        if self._process_unhandled:
+            key = super().keypress(size, key)
+            return self._keypress_callback(size, key)
+        key = self._keypress_callback(size, key)
+        return super().keypress(size, key)
 
 
 @contextmanager
@@ -189,3 +209,19 @@ def get_sender_name(msg: Message) -> str:
 
 def is_multiuser(chat: Chat) -> bool:
     return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
+
+
+def get_subtitle(chat: Chat) -> str:
+    if chat.get_type() == const.DC_CHAT_TYPE_MAILINGLIST:
+        return "Mailing List"
+    members = chat.get_contacts()
+    if chat.get_type() == const.DC_CHAT_TYPE_SINGLE and members:
+        return members[0].addr
+    count = len(members)
+    if chat.get_type() == const.DC_CHAT_TYPE_BROADCAST:
+        if count == 1:
+            return "1 recipient"
+        return f"{count} recipients"
+    if count == 1:
+        return "1 member"
+    return f"{count} members"

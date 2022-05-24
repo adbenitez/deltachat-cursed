@@ -1,5 +1,7 @@
 """stuff adapted from https://github.com/isamert/scli/"""
 
+from typing import Callable, Iterable
+
 import urwid
 
 
@@ -16,7 +18,7 @@ class LazyEvalListWalker(urwid.ListWalker):
     https://urwid.readthedocs.io/en/latest/manual/widgets.html#list-walkers
     """
 
-    def __init__(self, contents, eval_func, init_focus_pos=0):
+    def __init__(self, contents, eval_func: Callable, init_focus_pos=0):
         if not getattr(contents, "__getitem__", None):
             raise urwid.ListWalkerError(
                 f"ListWalker expecting list like object, got: {contents}"
@@ -31,7 +33,7 @@ class LazyEvalListWalker(urwid.ListWalker):
         return self._contents
 
     @contents.setter
-    def contents(self, contents_new):
+    def contents(self, contents_new) -> None:
         self._remove_contents_modified_callback()
         self._contents = contents_new
         self._set_contents_modified_callback(self._modified)
@@ -43,42 +45,42 @@ class LazyEvalListWalker(urwid.ListWalker):
 
         self._modified()
 
-    def _set_contents_modified_callback(self, callback):
+    def _set_contents_modified_callback(self, callback: Callable) -> None:
         try:
             self.contents.set_modified_callback(callback)
         except AttributeError:
             # Changes to object will not be automatically updated
             pass
 
-    def _remove_contents_modified_callback(self):
+    def _remove_contents_modified_callback(self) -> None:
         try:
             self.contents.set_modified_callback(noop)
         except AttributeError:
             pass
 
-    def _modified(self):
+    def _modified(self) -> None:
         if self.focus >= len(self.contents):
             # Making sure that if after some items are removed from `contents` it becomes shorter then the current `focus` position, we don't crash.
             self.focus = max(0, len(self.contents) - 1)
         super()._modified()
 
-    def __getitem__(self, position):
+    def __getitem__(self, position: int) -> urwid.Widget:
         item = self.contents[position]
         widget = self._eval_func(item, position)
         return widget
 
-    def next_position(self, position):
+    def next_position(self, position: int) -> int:
         if position >= len(self.contents) - 1:
             raise IndexError
         return position + 1
 
     @staticmethod
-    def prev_position(position):
+    def prev_position(position: int) -> int:
         if position <= 0:
             raise IndexError
         return position - 1
 
-    def set_focus(self, position):
+    def set_focus(self, position: int) -> None:
         if position < 0 or position >= len(self.contents):
             # NOTE: there is crash in this method that I can not reliably recproduce:
             # Happens when I start a search through message widgets w `/` and mash the keyboard. Seems to only happen if I push many keys fast enough..
@@ -87,14 +89,14 @@ class LazyEvalListWalker(urwid.ListWalker):
         self.focus = position
         self._modified()
 
-    def positions(self, reverse=False):
+    def positions(self, reverse=False) -> Iterable:
         ret = range(len(self.contents))
         if reverse:
-            ret = reversed(ret)
+            return reversed(ret)
         return ret
 
 
-def listbox_set_body(listbox, body_new):
+def listbox_set_body(listbox: urwid.ListBox, body_new) -> None:
     # Can't just do `listbox.body = body_new`:
     # https://github.com/urwid/urwid/issues/428
     # pylint: disable=protected-access
@@ -113,7 +115,7 @@ class ListBoxPlus(urwid.ListBox):
     - Updates to new `contents` are displayed automatically. Fixes an urwid bug (see listbox_set_body function).
     """
 
-    def __init__(self, body=None):
+    def __init__(self, body=None) -> None:
         if body is None:
             body = []
         super().__init__(body)
@@ -125,14 +127,14 @@ class ListBoxPlus(urwid.ListBox):
         except AttributeError:
             return self.body
 
-    def _set_contents(self, contents_new):
+    def _set_contents(self, contents_new) -> None:
         # This method does not change the self._contents_pre_filter, unlike self._set_contents_pre_filter()
         try:
             self.body.contents = contents_new
         except AttributeError:
             listbox_set_body(self, contents_new)
 
-    def _set_contents_pre_filter(self, contents_new):
+    def _set_contents_pre_filter(self, contents_new) -> None:
         if type(contents_new) is list:  # pylint: disable=unidiomatic-typecheck
             # If contents_new is a `list` (not one of the `ListWalker`s), make the new body the same type as the original (e.g. SimpleListWalker)
             # Shouldn't use `if isinstance(contents_new, list)` test: a ListWalker returns `True` for it too.
@@ -145,7 +147,7 @@ class ListBoxPlus(urwid.ListBox):
     # However, overriding a property which is used in superclass's __init__ seems problematic. Need a way to delay the assignment of property. Maybe something like this is necessary:
     # https://code.activestate.com/recipes/408713-late-binding-properties-allowing-subclasses-to-ove/
 
-    def try_set_focus(self, index, valign=None):
+    def try_set_focus(self, index: int, valign=None) -> None:
         index_orig_arg = index
         if index < 0:
             index = len(self.contents) + index
@@ -158,7 +160,7 @@ class ListBoxPlus(urwid.ListBox):
         if valign is not None:
             self.set_focus_valign(valign)
 
-    def filter_contents(self, test_function, scope=None):
+    def filter_contents(self, test_function: Callable, scope=None) -> None:
         """Remove widgets not passing `test_function`.
 
         Retain only the items in `self.contents` that return `True` when passed as arguments to `test_function`. Pre-filtered `contents` is stored before filtering and can be restored by running `filter_contents` again with `test_function=None`.
@@ -178,10 +180,10 @@ class ListBoxPlus(urwid.ListBox):
             self._set_contents(matching_widgets)
 
     @property
-    def is_filter_on(self):
+    def is_filter_on(self) -> bool:
         return self.contents is not self._contents_pre_filter
 
-    def move_item(self, w, pos, pos_in_prefilter=None):
+    def move_item(self, w, pos, pos_in_prefilter=None) -> None:
         def try_move(seq, w, pos):
             try:
                 ind = seq.index(w)

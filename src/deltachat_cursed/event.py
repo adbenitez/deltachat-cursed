@@ -1,6 +1,9 @@
 from typing import List, Optional, Set
 
-from deltachat import Account, Chat, account_hookimpl
+from deltachat import Chat, Contact, Message, account_hookimpl
+from deltachat.events import FFIEvent
+
+from .account import Account
 
 
 class ChatListMonitor:
@@ -17,25 +20,25 @@ class AccountPlugin:
     def __init__(self, account: Account) -> None:
         self.account = account
         self.chatlist_monitors: Set[ChatListMonitor] = set()
-        for chat in self.get_chats():
+        for chat in self._get_chats():
             self.current_chat = chat
             break
         else:
             self.current_chat = None
 
-    def get_chats(self) -> List[Chat]:
+    def _get_chats(self) -> List[Chat]:
         return [chat for chat in self.account.get_chats() if chat.id >= 10]
 
     def add_chatlist_monitor(self, monitor: ChatListMonitor) -> None:
         self.chatlist_monitors.add(monitor)
-        chats = self.get_chats()
+        chats = self._get_chats()
         monitor.chatlist_changed(self.get_current_index(chats), chats)
 
     def remove_monitor(self, monitor: ChatListMonitor) -> None:
         self.chatlist_monitors.discard(monitor)
 
     def chatlist_changed(self) -> None:
-        chats = self.get_chats()
+        chats = self._get_chats()
         if self.current_chat not in chats:
             if chats:
                 self.current_chat = chats[0]
@@ -50,13 +53,13 @@ class AccountPlugin:
             m.chatlist_changed(index, chats)
 
     def select_chat(self, index: Optional[int]) -> None:
-        chats = self.get_chats()
+        chats = self._get_chats()
         for m in self.chatlist_monitors:
             m.chat_selected(index, chats)
         self.current_chat = None if index is None else chats[index]
 
     def select_chat_by_id(self, chat_id: int) -> None:
-        chats = self.get_chats()
+        chats = self._get_chats()
         chat = self.account.get_chat_by_id(chat_id)
         index = chats.index(chat)
         for m in self.chatlist_monitors:
@@ -64,7 +67,7 @@ class AccountPlugin:
         self.current_chat = chat
 
     def select_next_chat(self) -> None:
-        chats = self.get_chats()
+        chats = self._get_chats()
         if self.current_chat is None:
             if chats:
                 self.select_chat(len(chats) - 1)
@@ -76,7 +79,7 @@ class AccountPlugin:
             self.select_chat(i)
 
     def select_previous_chat(self) -> None:
-        chats = self.get_chats()
+        chats = self._get_chats()
         if self.current_chat is None:
             if chats:
                 self.select_chat(0)
@@ -93,23 +96,23 @@ class AccountPlugin:
         return chats.index(self.current_chat)
 
     @account_hookimpl
-    def ac_incoming_message(self, message) -> None:
+    def ac_incoming_message(self, message: Message) -> None:
         self.chatlist_changed()
 
     @account_hookimpl
-    def ac_message_delivered(self, message) -> None:
+    def ac_message_delivered(self, message: Message) -> None:
         self.chatlist_changed()
 
     @account_hookimpl
-    def ac_member_added(self, chat, contact) -> None:
+    def ac_member_added(self, chat: Chat, contact: Contact) -> None:
         self.chatlist_changed()
 
     @account_hookimpl
-    def ac_member_removed(self, chat, contact) -> None:
+    def ac_member_removed(self, chat: Chat, contact: Contact) -> None:
         self.chatlist_changed()
 
     @account_hookimpl
-    def ac_process_ffi_event(self, ffi_event) -> None:
+    def ac_process_ffi_event(self, ffi_event: FFIEvent) -> None:
         if ffi_event.name == "DC_EVENT_MSGS_CHANGED":
             self.chatlist_changed()
         # if ffi_event.name == 'DC_EVENT_CONTACTS_CHANGED':

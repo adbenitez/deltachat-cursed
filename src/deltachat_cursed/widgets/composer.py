@@ -1,30 +1,17 @@
-from typing import Optional
+from typing import List, Optional
 
-import deltachat as dc
 import urwid
 import urwid_readline
-from deltachat import Chat, const
+from deltachat import Chat, Message
 from emoji import demojize
 from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
 
 from ..event import ChatListMonitor
-from ..util import COMMANDS
+from ..util import COMMANDS, get_subtitle
 
 
-def get_subtitle(chat: Chat) -> str:
-    if chat.get_type() == const.DC_CHAT_TYPE_MAILINGLIST:
-        return "Mailing List"
-    members = chat.get_contacts()
-    if chat.get_type() == const.DC_CHAT_TYPE_SINGLE and members:
-        return members[0].addr
-    count = len(members)
-    if count == 1:
-        return "1 member"
-    return f"{count} members"
-
-
-class MessageSendWidget(urwid.Filler, ChatListMonitor):
-    def __init__(self, keymap: dict, account, display_emoji: bool) -> None:
+class ComposerWidget(urwid.Filler, ChatListMonitor):
+    def __init__(self, keymap: dict, display_emoji: bool) -> None:
         self.display_emoji = display_emoji
         self.text_caption = " >> "
         self.status_bar = urwid.Text(("status_bar", " "), align="left")
@@ -37,19 +24,16 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         self.widgetEdit.keymap[
             keymap["insert_new_line"]
         ] = self.widgetEdit.insert_new_line
-        self.widgetEdit.enable_autocomplete(self.complete)
+        self.widgetEdit.enable_autocomplete(self._complete)
 
         self.pile = urwid.Pile([self.attr, self.widgetEdit])
         super().__init__(self.pile)
 
-        self.model = account
         self.keymap = keymap
         self.current_chat: Optional[Chat] = None
         self.typing = False
 
-        self.model.add_chatlist_monitor(self)
-
-    def complete(self, text, state) -> Optional[str]:
+    def _complete(self, text: str, state: int) -> Optional[str]:
         items = []
         if text.startswith("@"):
             if self.current_chat:
@@ -67,34 +51,9 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
         except (IndexError, TypeError):
             return None
 
-    def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
-        if self.current_chat is None:
-            self.chat_selected(current_chat_index, chats)
-        else:
-            self.update_status_bar(current_chat_index, chats)
-
-    def chat_selected(self, index: Optional[int], chats: list) -> None:
-        if index is not None and self.current_chat == chats[index]:
-            return
-        self.typing = False
-        if self.current_chat:
-            self.save_draft(self.current_chat)
-        if index is None:
-            self.current_chat = None
-            return
-        self.current_chat = chats[index]
-        msg = self.current_chat.get_draft()
-        self.widgetEdit.set_edit_text(msg.text if msg else "")
-        self.widgetEdit.set_edit_pos(len(self.widgetEdit.get_edit_text()))
-        self.update_status_bar(index, chats)
-
-    def save_draft(self, chat: Chat) -> None:
-        text = self.widgetEdit.get_edit_text()
-        msg = dc.Message.new_empty(chat.account, "text")
-        msg.set_text(text)
-        chat.set_draft(msg)
-
-    def update_status_bar(self, current_chat_index: Optional[int], chats: list) -> None:
+    def _update_status_bar(
+        self, current_chat_index: Optional[int], chats: List[Chat]
+    ) -> None:
         if current_chat_index is None:
             text = ""
         else:
@@ -107,7 +66,36 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
 
         self.status_bar.set_text(text)
 
-    def keypress(self, size, key: str) -> Optional[str]:
+    def chatlist_changed(
+        self, current_chat_index: Optional[int], chats: List[Chat]
+    ) -> None:
+        if self.current_chat is None:
+            self.chat_selected(current_chat_index, chats)
+        else:
+            self._update_status_bar(current_chat_index, chats)
+
+    def chat_selected(self, index: Optional[int], chats: List[Chat]) -> None:
+        if index is not None and self.current_chat == chats[index]:
+            return
+        self.typing = False
+        if self.current_chat:
+            self.save_draft(self.current_chat)
+        if index is None:
+            self.current_chat = None
+            return
+        self.current_chat = chats[index]
+        msg = self.current_chat.get_draft()
+        self.widgetEdit.set_edit_text(msg.text if msg else "")
+        self.widgetEdit.set_edit_pos(len(self.widgetEdit.get_edit_text()))
+        self._update_status_bar(index, chats)
+
+    def save_draft(self, chat: Chat) -> None:
+        text = self.widgetEdit.get_edit_text()
+        msg = Message.new_empty(chat.account, "text")
+        msg.set_text(text)
+        chat.set_draft(msg)
+
+    def keypress(self, size: list, key: str) -> Optional[str]:
         key = super().keypress(size, key)
         # save draft on exit
         if key == self.keymap["quit"]:
@@ -116,7 +104,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             text = self.widgetEdit.get_edit_text()
             prev_draft = self.current_chat.get_draft()
             if not prev_draft or prev_draft.text != text:
-                msg = dc.Message.new_empty(self.current_chat.account, "text")
+                msg = Message.new_empty(self.current_chat.account, "text")
                 msg.set_text(text)
                 self.current_chat.set_draft(msg)
         # save draft on first type
@@ -125,7 +113,7 @@ class MessageSendWidget(urwid.Filler, ChatListMonitor):
             draft = self.current_chat.get_draft()
             if not draft or draft.text != text:
                 self.typing = True
-                msg = dc.Message.new_empty(self.current_chat.account, "text")
+                msg = Message.new_empty(self.current_chat.account, "text")
                 msg.set_text(text)
                 self.current_chat.set_draft(msg)
 

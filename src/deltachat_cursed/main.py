@@ -8,9 +8,9 @@ from deltachat.events import FFIEventLogger
 from deltachat.tracker import ConfigureTracker
 
 from .account import Account
+from .application import Application
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
-from .ui import CursedDelta
 from .util import (
     APP_NAME,
     capture_keyboard_interrupt,
@@ -186,5 +186,5 @@ def start_ui(args: Namespace) -> None:
     args.acct.add_account_plugin(plugin)
 
     with online_account(args.acct):
-        app = CursedDelta(args.cfg, get_keymap(), get_theme(), APP_NAME, plugin)
+        app = Application(args.cfg, get_keymap(), get_theme(), APP_NAME, plugin)
         app.run()
