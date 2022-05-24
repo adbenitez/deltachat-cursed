@@ -111,7 +111,7 @@ def get_theme() -> dict:
     for path in themes:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
-                theme = json.load(fd)
+                theme = {**default_theme, **json.load(fd)}
             break
     else:
         theme = default_theme
