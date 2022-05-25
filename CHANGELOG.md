@@ -34,6 +34,7 @@
 - improved app speed loading chats and messages
 - show chat name in notifications for mailing lists
 - don't notify mentions in muted direct/private chats
+- draft saving
 
 ## [0.4.1]
 

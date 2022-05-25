@@ -1,3 +1,5 @@
+from threading import RLock, Thread
+from time import sleep
 from typing import List, Optional
 
 import urwid
@@ -29,9 +31,10 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
         self.pile = urwid.Pile([self.attr, self.widgetEdit])
         super().__init__(self.pile)
 
-        self.keymap = keymap
         self.current_chat: Optional[Chat] = None
-        self.typing = False
+        self._draft_lock = RLock()
+        self._worker = Thread(target=self._autosave_draft, daemon=True)
+        self._worker.start()
 
     def _complete(self, text: str, state: int) -> Optional[str]:
         items = []
@@ -77,6 +80,24 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
 
         self.status_bar.set_text(text)
 
+    def _autosave_draft(self) -> None:
+        while True:
+            self.save_draft()
+            sleep(15)
+
+    def save_draft(self) -> None:
+        with self._draft_lock:
+            chat = self.current_chat
+            if not chat:
+                return
+            text = self.widgetEdit.get_edit_text().strip()
+            if text:
+                draft = Message.new_empty(chat.account, "text")
+                draft.set_text(text)
+            else:
+                draft = None
+            chat.set_draft(draft)
+
     def chatlist_changed(
         self, current_chat_index: Optional[int], chats: List[Chat]
     ) -> None:
@@ -88,44 +109,18 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
     def chat_selected(self, index: Optional[int], chats: List[Chat]) -> None:
         if index is not None and self.current_chat == chats[index]:
             return
-        self.typing = False
-        if self.current_chat:
-            self.save_draft(self.current_chat)
-        if index is None:
-            self.current_chat = None
-            return
-        self.current_chat = chats[index]
-        msg = self.current_chat.get_draft()
-        self.widgetEdit.set_edit_text(msg.text if msg else "")
-        self.widgetEdit.set_edit_pos(len(self.widgetEdit.get_edit_text()))
+
+        with self._draft_lock:
+            # save draft of previous chat before switching
+            if self.current_chat:
+                self.save_draft()
+            if index is None:
+                self.current_chat = None
+                text = ""
+            else:
+                self.current_chat = chats[index]
+                msg = chats[index].get_draft()
+                text = msg.text if msg else ""
+            self.widgetEdit.set_edit_text(text)
+            self.widgetEdit.set_edit_pos(len(text))
         self._update_status_bar(index, chats)
-
-    def save_draft(self, chat: Chat) -> None:
-        text = self.widgetEdit.get_edit_text()
-        msg = Message.new_empty(chat.account, "text")
-        msg.set_text(text)
-        chat.set_draft(msg)
-
-    def keypress(self, size: list, key: str) -> Optional[str]:
-        key = super().keypress(size, key)
-        # save draft on exit
-        if key == self.keymap["quit"]:
-            if not self.current_chat:
-                return None
-            text = self.widgetEdit.get_edit_text()
-            prev_draft = self.current_chat.get_draft()
-            if not prev_draft or prev_draft.text != text:
-                msg = Message.new_empty(self.current_chat.account, "text")
-                msg.set_text(text)
-                self.current_chat.set_draft(msg)
-        # save draft on first type
-        elif not key and not self.typing and self.current_chat:
-            text = self.widgetEdit.get_edit_text()
-            draft = self.current_chat.get_draft()
-            if not draft or draft.text != text:
-                self.typing = True
-                msg = Message.new_empty(self.current_chat.account, "text")
-                msg.set_text(text)
-                self.current_chat.set_draft(msg)
-
-        return key

@@ -96,11 +96,17 @@ class Application(ChatListMonitor):
         self.main_loop.screen.set_terminal_properties(colors=256)
 
     def run(self) -> None:
-        self.main_loop.run()
+        try:
+            self.main_loop.run()
+        except KeyboardInterrupt:
+            try:
+                self.exit()
+            except urwid.ExitMainLoop:
+                pass
 
     def exit(self) -> None:
         if self.events.current_chat:
-            self.composer.save_draft(self.events.current_chat)
+            self.composer.save_draft()
         sys.stdout.write("\x1b]2;\x07")
         raise urwid.ExitMainLoop
 
