@@ -60,6 +60,8 @@ class ChatListWidget(ListBoxPlus, ChatListMonitor):
         else:
             self.current_chat_id = chats[current_chat_index].id
         self.contents = chats
+        if current_chat_index is not None:
+            self.try_set_focus(current_chat_index)
 
         self.updating = False
 
