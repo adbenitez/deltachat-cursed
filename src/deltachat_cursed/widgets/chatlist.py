@@ -77,7 +77,7 @@ class ChatListWidget(ListBoxPlus, ChatListMonitor):
         if chat.id == self.current_chat_id:
             button = ListItem(("cur_chat", label), self._chat_change, position)
         else:
-            if new_messages > 0:
+            if new_messages > 0 and not chat.is_muted():
                 label = ("unread_chat", label)  # type: ignore
             button = ListItem(label, self._chat_change, position)
         return button
