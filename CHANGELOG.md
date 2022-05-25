@@ -15,6 +15,7 @@
 - notify reply-mentions in muted groups
 - support for marking messages as read while they are read
 - `/nick` command to set/show nick / display name
+- `--version` argument to print program version
 
 ### Changed
 

@@ -7,6 +7,7 @@ import deltachat.const
 from deltachat.events import FFIEventLogger
 from deltachat.tracker import ConfigureTracker
 
+from . import __version__
 from .account import Account
 from .application import Application
 from .event import AccountPlugin
@@ -43,6 +44,7 @@ def main() -> None:
 
 def get_parser(cfg: dict) -> ArgumentParser:
     parser = ArgumentParser(prog="curseddelta")
+    parser.add_argument("-v", "--version", action="version", version=__version__)
     parser.add_argument(
         "--db",
         action="store",
