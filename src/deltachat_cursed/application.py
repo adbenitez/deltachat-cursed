@@ -251,51 +251,49 @@ class Application(ChatListMonitor):
 
     def _process_command(self, chat: Chat, cmd: str) -> str:
         model = self.events
-        acc = model.account
+        acct = chat.account
         args = cmd.split(maxsplit=1)
 
         text = ""
         if args[0] == COMMANDS["/query"]:
             try:
-                chat = acc.create_chat(args[1].strip())
-                model.select_chat_by_id(chat.id)
+                model.select_chat_by_id(acct.create_chat(args[1].strip()).id)
             except AssertionError:
                 text = "Error: invalid email address"
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/join"]:
-            chat = acc.create_group_chat(args[1].strip())
-            model.select_chat_by_id(chat.id)
+            model.select_chat_by_id(acct.create_group_chat(args[1].strip()).id)
         elif args[0] == COMMANDS["/delete"]:
-            model.current_chat.delete()
+            chat.delete()
             model.select_chat(None)
         elif args[0] == COMMANDS["/names"]:
-            text = "\n".join(c.addr for c in model.current_chat.get_contacts())
+            text = "\n".join(c.addr for c in chat.get_contacts())
         elif args[0] == COMMANDS["/add"]:
             try:
                 for addr in args[1].split(","):
-                    model.current_chat.add_contact(addr.strip())
+                    chat.add_contact(addr.strip())
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/kick"]:
             try:
                 for addr in args[1].split(","):
-                    model.current_chat.remove_contact(addr.strip())
+                    chat.remove_contact(addr.strip())
             except AttributeError:
                 text = "Error: invalid email address"
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/part"]:
             try:
-                model.current_chat.remove_contact(acc.get_self_contact())
+                chat.remove_contact(acct.get_self_contact())
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/id"]:
-            text = str(model.current_chat.id)
+            text = str(chat.id)
         elif args[0] == COMMANDS["/send"]:
             try:
                 path = os.path.expanduser(args[1].strip())
-                chat.send_msg(chat.account.create_message(filename=path))
+                chat.send_msg(acct.create_message(filename=path))
             except ValueError as ex:
                 text = f"Error: {ex}"
         else:
