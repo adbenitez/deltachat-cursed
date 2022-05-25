@@ -23,6 +23,7 @@ COMMANDS = {
         "/part",
         "/id",
         "/send",
+        "/nick",
         "//",
     ]
 }

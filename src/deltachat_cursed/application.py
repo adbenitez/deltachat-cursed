@@ -9,7 +9,7 @@ from emoji import emojize
 
 from .event import AccountPlugin, ChatListMonitor
 from .notifications import notify_msg
-from .util import COMMANDS, Container, is_multiuser
+from .util import COMMANDS, Container, is_multiuser, shorten_text
 from .widgets.chatlist import ChatListWidget
 from .widgets.composer import ComposerWidget
 from .widgets.conversation import ConversationWidget
@@ -21,12 +21,10 @@ class Application(ChatListMonitor):
         conf: dict,
         keymap: dict,
         theme: dict,
-        app_name: str,
         events: AccountPlugin,
     ) -> None:
         self.conf = conf
         self.keymap = keymap
-        self.app_name = app_name
         self.events = events
 
         account = self.events.account
@@ -141,11 +139,16 @@ class Application(ChatListMonitor):
         if notify:
             notify_msg(message)
 
-    def _print_title(self, messages_count: int) -> None:
-        if messages_count > 0:
-            text = f"\x1b]2;{self.app_name} ({messages_count})\x07"
+    def _print_title(self, badge: int) -> None:
+        name = shorten_text(
+            self.events.account.get_config("displayname")
+            or self.events.account.get_self_contact().addr,
+            30,
+        )
+        if badge > 0:
+            text = f"\x1b]2;({badge if badge < 999 else '+999'}) {name}\x07"
         else:
-            text = f"\x1b]2;{self.app_name}\x07"
+            text = f"\x1b]2;{name}\x07"
         sys.stdout.write(text)
 
     def _unhandle_key(self, key: str) -> None:
@@ -296,6 +299,12 @@ class Application(ChatListMonitor):
                 chat.send_msg(acct.create_message(filename=path))
             except ValueError as ex:
                 text = f"Error: {ex}"
+        elif args[0] == COMMANDS["/nick"]:
+            if len(args) == 2:
+                acct.set_config("displayname", args[1].strip())
+                self._print_title(self.events.account.get_fresh_messages_cnt())
+            else:
+                text = f"Nick: {acct.get_config('displayname')!r}"
         else:
             text = f"ERROR: Unknown command {args[0]}"
 
