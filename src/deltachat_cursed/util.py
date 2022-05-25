@@ -7,6 +7,8 @@ from typing import Any, Callable, Dict, Optional
 
 import urwid
 from deltachat import Account, Chat, Message, const
+from deltachat.capi import lib
+from deltachat.cutil import from_dc_charpointer
 
 APP_NAME = "Cursed Delta"
 COMMANDS = {
@@ -218,6 +220,10 @@ def get_sender_name(msg: Message) -> str:
 
 def is_multiuser(chat: Chat) -> bool:
     return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
+
+
+def get_summarytext(msg: Message, width: int) -> str:
+    return from_dc_charpointer(lib.dc_msg_get_summarytext(msg._dc_msg, width))  # noqa
 
 
 def get_subtitle(chat: Chat) -> str:
