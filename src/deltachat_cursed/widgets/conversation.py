@@ -1,4 +1,3 @@
-import textwrap
 from datetime import timezone
 from typing import List, Optional
 
@@ -9,7 +8,7 @@ from emoji import demojize
 from ..account import Account
 from ..event import ChatListMonitor
 from ..scli import LazyEvalListWalker, ListBoxPlus
-from ..util import get_sender_name, is_multiuser
+from ..util import get_sender_name, is_multiuser, shorten_text
 
 
 class ConversationWidget(ListBoxPlus, ChatListMonitor):
@@ -73,9 +72,9 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
 
         color = self._get_name_color(sender.id)
         name = get_sender_name(msg)
-        name = textwrap.shorten(
+        name = shorten_text(
             name if self.display_emoji else demojize(name),
-            80,
+            50,
         )
         components: list = [(urwid.AttrSpec(*color), name)]
         if msg.is_out_mdn_received():
@@ -102,7 +101,9 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
             else:
                 quote_color = "quote"
             lines.append((quote_color, "│ "))
-            lines.append(("quote", f"{textwrap.shorten(msg.quoted_text, 150)}\n"))
+            lines.append(
+                ("quote", f"{shorten_text(msg.quoted_text, 150, placeholder='[…]')}\n")
+            )
         if msg.is_system_message():
             lines.append(("system_msg", text))
         else:

@@ -118,6 +118,15 @@ def capture_keyboard_interrupt(func: Callable) -> Any:
     return wrapper
 
 
+def shorten_text(text: str, width: int, placeholder: str = "…") -> str:
+    text = " ".join(text.split())
+    if len(text) > width:
+        width -= len(placeholder)
+        assert width > 0, "placeholder can't be bigger than width"
+        text = text[:width].strip() + placeholder
+    return text
+
+
 def get_theme() -> dict:
     file_name = "theme.json"
     themes = [

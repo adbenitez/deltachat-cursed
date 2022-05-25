@@ -9,7 +9,7 @@ from emoji import demojize
 from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
 
 from ..event import ChatListMonitor
-from ..util import COMMANDS, get_subtitle
+from ..util import COMMANDS, get_subtitle, shorten_text
 
 
 class ComposerWidget(urwid.Filler, ChatListMonitor):
@@ -76,7 +76,8 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
             if chat.is_protected():
                 verified = "✓ "
             name = chat.get_name() if self.display_emoji else demojize(chat.get_name())
-            text = f" {verified}[ {name} ] -- {get_subtitle(chat)}"
+            name = shorten_text(name, 40)
+            text = f" {verified}[ {name} ] -- {shorten_text(get_subtitle(chat), 40)}"
 
         self.status_bar.set_text(text)
 

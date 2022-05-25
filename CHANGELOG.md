@@ -25,6 +25,7 @@
 - removed `>` status indicator, encryption status is now displayed in the message timestamp
 - show message delivery status beside the user's name
 - message layout tweaked
+- truncate long names and addresses in the status bar, and long chat names in the chat list
 
 ### Fixed
 
