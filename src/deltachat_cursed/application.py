@@ -219,7 +219,10 @@ class Application(ChatListMonitor):
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
-                edit.set_edit_text(self._process_command(current_chat, text))
+                edit.set_edit_text("")
+                text = self._process_command(current_chat, text)
+                if text:
+                    edit.set_edit_text(text)
                 edit.set_edit_pos(len(edit.get_edit_text()))
                 self._resize_zone(size)
                 return None
@@ -253,7 +256,6 @@ class Application(ChatListMonitor):
 
         text = ""
         if args[0] == COMMANDS["/query"]:
-            self.composer.widgetEdit.set_edit_text("")
             try:
                 chat = acc.create_chat(args[1].strip())
                 model.select_chat_by_id(chat.id)
@@ -262,11 +264,9 @@ class Application(ChatListMonitor):
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/join"]:
-            self.composer.widgetEdit.set_edit_text("")
             chat = acc.create_group_chat(args[1].strip())
             model.select_chat_by_id(chat.id)
         elif args[0] == COMMANDS["/delete"]:
-            self.composer.widgetEdit.set_edit_text("")
             model.current_chat.delete()
             model.select_chat(None)
         elif args[0] == COMMANDS["/names"]:
