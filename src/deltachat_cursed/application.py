@@ -9,7 +9,7 @@ from emoji import emojize
 
 from .event import AccountPlugin, ChatListMonitor
 from .notifications import notify_msg
-from .util import COMMANDS, Container, is_multiuser, shorten_text
+from .util import COMMANDS, Container, get_contact_name, is_multiuser, shorten_text
 from .widgets.chatlist import ChatListWidget
 from .widgets.composer import ComposerWidget
 from .widgets.conversation import ConversationWidget
@@ -125,24 +125,22 @@ class Application(ChatListMonitor):
 
         sender = message.get_sender_contact()
         acc = self.events.account
-        me = acc.get_self_contact()
-        if sender == me:
+        self_contact = acc.get_self_contact()
+        if sender == self_contact:
             return
 
         notify = not message.chat.is_muted()
         if not notify and is_multiuser(message.chat):
-            if message.quote and message.quote.get_sender_contact() == me:
+            if message.quote and message.quote.get_sender_contact() == self_contact:
                 notify = True
             else:
-                name = acc.get_config("displayname") or me.addr
-                notify = f"@{name}" in message.text
+                notify = f"@{get_contact_name(self_contact)}" in message.text
         if notify:
             notify_msg(message)
 
     def _print_title(self, badge: int) -> None:
         name = shorten_text(
-            self.events.account.get_config("displayname")
-            or self.events.account.get_self_contact().addr,
+            get_contact_name(self.events.account.get_self_contact()),
             30,
         )
         if badge > 0:

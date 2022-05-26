@@ -8,7 +8,7 @@ from emoji import demojize
 from ..account import Account
 from ..event import ChatListMonitor
 from ..scli import LazyEvalListWalker, ListBoxPlus
-from ..util import get_sender_name, is_multiuser, shorten_text
+from ..util import get_contact_name, get_sender_name, is_multiuser, shorten_text
 
 
 class ConversationWidget(ListBoxPlus, ChatListMonitor):
@@ -107,12 +107,12 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         if msg.is_system_message():
             lines.append(("system_msg", text))
         else:
-            me = self.account.get_self_contact()
-            dname = self.account.get_config("displayname")
-            if sender == me:
+            self_contact = self.account.get_self_contact()
+            dname = get_contact_name(self_contact)
+            if sender == self_contact:
                 lines.append(("self_msg", text))
             elif is_multiuser(msg.chat) and (
-                (dname and f"@{dname}" in text) or (quote_sender and quote_sender == me)
+                f"@{dname}" in text or (quote_sender and quote_sender == self_contact)
             ):
                 lines.append(("mention", text))
             else:
