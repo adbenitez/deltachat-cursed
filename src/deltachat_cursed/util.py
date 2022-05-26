@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from typing import Any, Callable, Dict, Optional
 
 import urwid
-from deltachat import Account, Chat, Message, const
+from deltachat import Account, Chat, Contact, Message, const
 from deltachat.capi import lib
 from deltachat.cutil import from_dc_charpointer
 
@@ -214,9 +214,16 @@ def get_configuration() -> dict:
 
 
 def get_sender_name(msg: Message) -> str:
-    if msg.override_sender_name:
-        return f"~{msg.override_sender_name}"
-    return msg.get_sender_contact().display_name
+    sender = msg.override_sender_name
+    if sender:
+        return f"~{sender}"
+    return get_contact_name(msg.get_sender_contact())
+
+
+def get_contact_name(contact: Contact) -> str:
+    if contact == contact.account.get_self_contact():
+        return contact.account.get_config("displayname") or contact.addr
+    return contact.display_name
 
 
 def is_multiuser(chat: Chat) -> bool:

@@ -30,6 +30,7 @@
 - truncate long names and addresses in the status bar, and long chat names in the chat list
 - improved notifications, better notification summaries, show account address to differentiate between notifications of several running instances of Cursed Delta
 - don't highlight muted chats with unread messages
+- show own display name instead of "Me" for self messages
 
 ### Fixed
 
