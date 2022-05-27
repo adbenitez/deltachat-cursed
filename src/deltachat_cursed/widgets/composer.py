@@ -72,12 +72,11 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
             text = ""
         else:
             chat = chats[current_chat_index]
-            verified = ""
-            if chat.is_protected():
-                verified = "✓ "
+            verified = "✓ " if chat.is_protected() else ""
+            muted = " (muted)" if chat.is_muted() else ""
             name = chat.get_name() if self.display_emoji else demojize(chat.get_name())
             name = shorten_text(name, 40)
-            text = f" {verified}[ {name} ] -- {shorten_text(get_subtitle(chat), 40)}"
+            text = f" {verified}[ {name} ]{muted} -- {shorten_text(get_subtitle(chat), 40)}"
 
         self.status_bar.set_text(text)
 

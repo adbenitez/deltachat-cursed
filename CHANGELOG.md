@@ -7,6 +7,7 @@
 - support for Delta Chat contact colors
 - style pinned chats in chat list
 - `/pin` and `/unpin` commands to pin/unpin chats
+- `/mute` and `/unmute` commands to mute/unmute chats
 
 ## [0.5.0]
 

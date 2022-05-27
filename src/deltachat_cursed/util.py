@@ -26,6 +26,8 @@ COMMANDS = {
         "/nick",
         "/pin",
         "/unpin",
+        "/mute",
+        "/unmute",
         "//",
     ]
 }

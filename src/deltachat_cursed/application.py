@@ -316,6 +316,10 @@ class Application(ChatListMonitor):
         elif args[0] == COMMANDS["/unpin"]:
             if is_pinned(chat):
                 set_chat_visibility(chat, "normal")
+        elif args[0] == COMMANDS["/mute"]:
+            chat.mute()
+        elif args[0] == COMMANDS["/unmute"]:
+            chat.unmute()
         else:
             text = f"ERROR: Unknown command {args[0]}"
 
