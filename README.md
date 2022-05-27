@@ -53,7 +53,7 @@ For more tips and info check [the user guide](https://github.com/adbenitez/delta
 
 ## Credits
 
-The user interface is based on [ncTelegram](https://github.com/Nanoseb/ncTelegram)
+The user interface was initially based on [ncTelegram](https://github.com/Nanoseb/ncTelegram)
 
 Some code and ideas were taken from [scli](https://github.com/isamert/scli/)
 
