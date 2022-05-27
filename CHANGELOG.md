@@ -5,6 +5,7 @@
 ### Added
 
 - support for Delta Chat contact colors
+- style pinned chats in chat list
 
 ## [0.5.0]
 

@@ -6,7 +6,7 @@ from emoji import demojize
 
 from ..event import ChatListMonitor
 from ..scli import LazyEvalListWalker, ListBoxPlus
-from ..util import shorten_text
+from ..util import is_pinned, shorten_text
 
 
 class ListItem(urwid.Button):
@@ -16,7 +16,7 @@ class ListItem(urwid.Button):
         super().__init__("")
         urwid.connect_signal(self, "click", callback, arg)
         self._w = urwid.AttrMap(
-            urwid.SelectableIcon(caption, 1), None, focus_map="status_bar"
+            urwid.SelectableIcon(caption, 0), None, focus_map="status_bar"
         )
 
 
@@ -69,7 +69,8 @@ class ChatListWidget(ListBoxPlus, ChatListMonitor):
     def _get_chat_widget(self, chat: Chat, position: int) -> urwid.Widget:
         chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
         name = shorten_text(chat.get_name(), 40)
-        label = f"{chat_type} {name if self.display_emoji else demojize(name)}"
+        marker = "│" if is_pinned(chat) else " "
+        label = f"{marker}{chat_type} {name if self.display_emoji else demojize(name)}"
         new_messages = chat.count_fresh_messages()
         if new_messages > 0:
             label += f" ({new_messages})"

@@ -209,12 +209,17 @@ def get_contact_color(contact: Contact) -> str:
     return f"#{lib.dc_contact_get_color(contact._dc_contact):06X}"  # noqa
 
 
+def get_summarytext(msg: Message, width: int) -> str:
+    return from_dc_charpointer(lib.dc_msg_get_summarytext(msg._dc_msg, width))  # noqa
+
+
 def is_multiuser(chat: Chat) -> bool:
     return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
 
 
-def get_summarytext(msg: Message, width: int) -> str:
-    return from_dc_charpointer(lib.dc_msg_get_summarytext(msg._dc_msg, width))  # noqa
+def is_pinned(chat: Chat) -> bool:
+    visibility = lib.dc_chat_get_visibility(chat._dc_chat)  # noqa
+    return visibility == const.DC_CHAT_VISIBILITY_PINNED
 
 
 def get_subtitle(chat: Chat) -> str:
