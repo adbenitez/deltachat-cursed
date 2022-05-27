@@ -27,7 +27,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         self.keymap = keymap
         self.account = account
         self.display_emoji = display_emoji
-        self.msgs = []
+        self.msgs: List[int] = []
         self.updating = False
         super().__init__(
             LazyEvalListWalker(urwid.MonitoredList(), self._get_message_widget, -1)
