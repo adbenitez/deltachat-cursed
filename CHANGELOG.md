@@ -31,6 +31,7 @@
 - improved notifications, better notification summaries, show account address to differentiate between notifications of several running instances of Cursed Delta
 - don't highlight muted chats with unread messages
 - show own display name instead of "Me" for self messages
+- day marker style
 
 ### Fixed
 

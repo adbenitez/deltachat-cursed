@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime, timezone
 from typing import List, Optional
 
 import urwid
@@ -22,11 +22,12 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         account: Account,
         display_emoji: bool,
     ) -> None:
-        self.DATE_FORMAT = date_format
+        self.date_format = date_format
         self.theme = theme
         self.keymap = keymap
         self.account = account
         self.display_emoji = display_emoji
+        self.msgs = []
         self.updating = False
         super().__init__(
             LazyEvalListWalker(urwid.MonitoredList(), self._get_message_widget, -1)
@@ -51,23 +52,32 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         self.updating = True
 
         if current_chat_index is None:
-            msgs = []
+            self.msgs = []
         else:
-            msgs = self.account.get_messages(chats[current_chat_index].id)
-        self.contents = urwid.MonitoredList(msgs)
+            self.msgs = self.account.get_messages(chats[current_chat_index].id)
+        self.contents = urwid.MonitoredList(self.msgs)
 
         self.updating = False
 
-    def _get_message_widget(self, msg_id: int, _position: int = None) -> urwid.Widget:
+    def _get_date(self, position: int) -> Optional[datetime]:
+        if 0 <= position < len(self.msgs):
+            return (
+                self.account.get_message_by_id(self.msgs[position])
+                .time_sent.replace(tzinfo=timezone.utc)
+                .astimezone()
+            )
+        return None
+
+    def _get_message_widget(self, msg_id: int, position: int) -> urwid.Widget:
         msg = self.account.get_message_by_id(msg_id)
         sender = msg.get_sender_contact()
 
-        local_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
+        cur_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         if msg.is_encrypted() or sender.id < 10:
-            timestamp = local_date.strftime(" %H:%M ")
+            timestamp = cur_date.strftime(" %H:%M ")
             timestamp_wgt = urwid.Text(("encrypted", timestamp))
         else:
-            timestamp = local_date.strftime("!%H:%M ")
+            timestamp = cur_date.strftime("!%H:%M ")
             timestamp_wgt = urwid.Text(("unencrypted", timestamp))
 
         color = self._get_name_color(sender.id)
@@ -119,10 +129,27 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
                 lines.append(text)
         body_wgt = urwid.Text(lines or "")
 
-        msg.mark_seen()
-        return urwid.Columns(
+        msg_wgt = urwid.Columns(
             [(len(timestamp), timestamp_wgt), urwid.Pile([header_wgt, body_wgt])]
         )
+
+        pdate = self._get_date(position - 1)
+        if not pdate or (pdate.year, pdate.month, pdate.day) != (
+            cur_date.year,
+            cur_date.month,
+            cur_date.day,
+        ):
+            date = urwid.Text(("date", cur_date.strftime(f"\n  {self.date_format}  ")))
+            divider = urwid.AttrMap(urwid.Divider("─", top=1, bottom=1), "date")
+            date_wgt = urwid.Columns([divider, ("flow", date), divider])
+            margin = ("fixed", 1, urwid.Text(" "))
+            date_wgt = urwid.Columns([margin, date_wgt, margin])
+            widget = urwid.Pile([date_wgt, msg_wgt])
+        else:
+            widget = msg_wgt
+
+        msg.mark_seen()
+        return widget
 
     def _get_name_color(self, id_: int) -> list:
         if id_ == self.account.get_self_contact().id:
