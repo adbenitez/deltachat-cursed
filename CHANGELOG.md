@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.5.0]
 
 ### Added
 
@@ -101,7 +101,7 @@
 - Initial release
 
 
-[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...HEAD
+[0.5.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...v0.3.1
