@@ -79,4 +79,5 @@ This are some temporal commands to do things that are not implemented yet using 
 - Send `/id` in a chat to get the chat's ID
 - Use `/send /path/to/file.txt` to send a file attachment
 - Send `/nick` YourNick to set your display name
+- Send `/pin` / `/unpin` to pin/unpin chat
 - To send a message starting with `/` use `//`

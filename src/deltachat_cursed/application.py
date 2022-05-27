@@ -9,7 +9,15 @@ from emoji import emojize
 
 from .event import AccountPlugin, ChatListMonitor
 from .notifications import notify_msg
-from .util import COMMANDS, Container, get_contact_name, is_multiuser, shorten_text
+from .util import (
+    COMMANDS,
+    Container,
+    get_contact_name,
+    is_multiuser,
+    is_pinned,
+    set_chat_visibility,
+    shorten_text,
+)
 from .widgets.chatlist import ChatListWidget
 from .widgets.composer import ComposerWidget
 from .widgets.conversation import ConversationWidget
@@ -303,6 +311,11 @@ class Application(ChatListMonitor):
                 self._print_title(self.events.account.get_fresh_messages_cnt())
             else:
                 text = f"Nick: {acct.get_config('displayname')!r}"
+        elif args[0] == COMMANDS["/pin"]:
+            set_chat_visibility(chat, "pinned")
+        elif args[0] == COMMANDS["/unpin"]:
+            if is_pinned(chat):
+                set_chat_visibility(chat, "normal")
         else:
             text = f"ERROR: Unknown command {args[0]}"
 

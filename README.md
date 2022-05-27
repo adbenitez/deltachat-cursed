@@ -22,14 +22,12 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [X] Emoji support and auto-completion
 - [X] @Mentions support and auto-completion
 - [X] Display message replies
-- [X] Add/remove group members
-- [X] Delete chats
+- [X] Chat operations: delete, pin/unpin, add/remove members
 - [ ] Clear chat messages
-- [ ] Ability to send stickers
 - [ ] Change chat name
-- [ ] Pin/unpin chats
 - [ ] Mute/unmute chats
 - [ ] Archive/Unarchive chats
+- [ ] Ability to send stickers
 - [ ] Jump to quoted messages
 - [ ] Export/import keys and full backups
 - [ ] Record and send voice messages

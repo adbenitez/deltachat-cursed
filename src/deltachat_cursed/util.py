@@ -24,6 +24,8 @@ COMMANDS = {
         "/id",
         "/send",
         "/nick",
+        "/pin",
+        "/unpin",
         "//",
     ]
 }
@@ -220,6 +222,18 @@ def is_multiuser(chat: Chat) -> bool:
 def is_pinned(chat: Chat) -> bool:
     visibility = lib.dc_chat_get_visibility(chat._dc_chat)  # noqa
     return visibility == const.DC_CHAT_VISIBILITY_PINNED
+
+
+def set_chat_visibility(chat: Chat, visibility: str) -> None:
+    if visibility == "normal":
+        _visibility = const.DC_CHAT_VISIBILITY_NORMAL
+    elif visibility == "pinned":
+        _visibility = const.DC_CHAT_VISIBILITY_PINNED
+    elif visibility == "archived":
+        _visibility = const.DC_CHAT_VISIBILITY_ARCHIVED
+    else:
+        raise ValueError(f"Invalid visibility: {visibility!r}")
+    lib.dc_set_chat_visibility(chat.account._dc_context, chat.id, _visibility)  # noqa
 
 
 def get_subtitle(chat: Chat) -> str:
