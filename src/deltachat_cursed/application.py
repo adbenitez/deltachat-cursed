@@ -13,6 +13,7 @@ from .util import (
     COMMANDS,
     Container,
     get_contact_name,
+    is_mailing_list,
     is_multiuser,
     is_pinned,
     set_chat_visibility,
@@ -320,8 +321,20 @@ class Application(ChatListMonitor):
             chat.mute()
         elif args[0] == COMMANDS["/unmute"]:
             chat.unmute()
+        elif args[0] == COMMANDS["/topic"]:
+            name = args[1].strip() if len(args) == 2 else ""
+            if name:
+                if is_multiuser(chat):
+                    if is_mailing_list(chat) or chat.can_send():
+                        chat.set_name(name)
+                    else:
+                        text = "Error: can't change chat name"
+                else:
+                    chat.account.create_contact(chat.get_contacts()[0], name)
+            else:
+                text = "Error: Command expects one argument but none was given"
         else:
-            text = f"ERROR: Unknown command {args[0]}"
+            text = f"Error: Unknown command {args[0]}"
 
         return text
 

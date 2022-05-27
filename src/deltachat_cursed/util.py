@@ -28,6 +28,7 @@ COMMANDS = {
         "/unpin",
         "/mute",
         "/unmute",
+        "/topic",
         "//",
     ]
 }
@@ -219,6 +220,10 @@ def get_summarytext(msg: Message, width: int) -> str:
 
 def is_multiuser(chat: Chat) -> bool:
     return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
+
+
+def is_mailing_list(chat: Chat) -> bool:
+    return chat.get_type() != const.DC_CHAT_TYPE_MAILINGLIST
 
 
 def is_pinned(chat: Chat) -> bool:

@@ -81,4 +81,5 @@ This are some temporal commands to do things that are not implemented yet using 
 - Send `/nick` YourNick to set your display name
 - Send `/pin` or `/unpin` to pin/unpin chat
 - Send `/mute` or `/unmute` to mute/unmute chat
+- Send `/topic <NEW NAME>` to change chat name
 - To send a message starting with `/` use `//`
