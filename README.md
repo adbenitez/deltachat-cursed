@@ -32,7 +32,7 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [ ] Archive/Unarchive chats
 - [ ] Jump to quoted messages
 - [ ] Export/import keys and full backups
-- [ ] Record and send voice msgs
+- [ ] Record and send voice messages
 - [ ] Reply messages
 - [ ] Delete messages
 - [ ] List contacts
