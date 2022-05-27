@@ -8,7 +8,13 @@ from emoji import demojize
 from ..account import Account
 from ..event import ChatListMonitor
 from ..scli import LazyEvalListWalker, ListBoxPlus
-from ..util import get_contact_name, get_sender_name, is_multiuser, shorten_text
+from ..util import (
+    get_contact_color,
+    get_contact_name,
+    get_sender_name,
+    is_multiuser,
+    shorten_text,
+)
 
 
 class ConversationWidget(ListBoxPlus, ChatListMonitor):
@@ -71,6 +77,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
     def _get_message_widget(self, msg_id: int, position: int) -> urwid.Widget:
         msg = self.account.get_message_by_id(msg_id)
         sender = msg.get_sender_contact()
+        background = self.theme["background"][-1]
 
         cur_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         if msg.is_encrypted() or sender.id < 10:
@@ -80,13 +87,14 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
             timestamp = cur_date.strftime("!%H:%M ")
             timestamp_wgt = urwid.Text(("unencrypted", timestamp))
 
-        color = self._get_name_color(sender.id)
         name = get_sender_name(msg)
         name = shorten_text(
             name if self.display_emoji else demojize(name),
             50,
         )
-        components: list = [(urwid.AttrSpec(*color), name)]
+        components: list = [
+            (urwid.AttrSpec(get_contact_color(sender), background), name)
+        ]
         if msg.is_out_mdn_received():
             components.append("  ✓✓")
         elif msg.is_out_delivered():
@@ -106,7 +114,9 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         quote_sender = msg.quote and msg.quote.get_sender_contact()
         if msg.quoted_text:
             if quote_sender:
-                quote_color = urwid.AttrSpec(*self._get_name_color(quote_sender.id))
+                quote_color = urwid.AttrSpec(
+                    get_contact_color(quote_sender), background
+                )
                 lines.append((quote_color, f"│ {get_sender_name(msg.quote)}\n"))
             else:
                 quote_color = "quote"
@@ -150,14 +160,6 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
 
         msg.mark_seen()
         return widget
-
-    def _get_name_color(self, id_: int) -> list:
-        if id_ == self.account.get_self_contact().id:
-            return self.theme["self_color"]
-
-        users_color = self.theme["users_color"]
-        color = id_ % len(users_color)
-        return users_color[color]
 
     def keypress(self, size: list, key: str) -> Optional[str]:
         key = super().keypress(size, key)

@@ -27,44 +27,23 @@ COMMANDS = {
         "//",
     ]
 }
+fg_color = "white"
+bg_color = "g11"
 default_theme = {
-    "background": ["", "", "", "", "g11"],
+    "background": ["", "", "", fg_color, bg_color],
     "status_bar": ["", "", "", "white", "g23"],
     "separator": ["", "", "", "g15", "g15"],
-    "date": ["", "", "", "#6f0", "g11"],
-    "encrypted": ["", "", "", "dark gray", "g11"],
-    "unencrypted": ["", "", "", "dark red", "g11"],
-    "failed": ["", "", "", "dark red", "g11"],
-    "cur_chat": ["", "", "", "light blue", "g11"],
-    "unread_chat": ["", "", "", "#6f0", "g11"],
-    "reversed": ["", "", "", "g11", "white"],
-    "quote": ["", "", "", "dark gray", "g11"],
-    "mention": ["", "", "", "bold, light red", "g11"],
-    "system_msg": ["", "", "", "dark gray", "g11"],
-    "self_msg": ["", "", "", "dark green", "g11"],
-    "self_color": ["bold, #6d0", "g11"],
-    "users_color": [
-        ["dark red", "g11"],
-        ["dark green", "g11"],
-        ["brown", "g11"],
-        ["dark blue", "g11"],
-        ["dark magenta", "g11"],
-        ["dark cyan", "g11"],
-        ["light red", "g11"],
-        ["light green", "g11"],
-        ["yellow", "g11"],
-        ["light blue", "g11"],
-        ["light magenta", "g11"],
-        ["light cyan", "g11"],
-        ["white", "g11"],
-        ["#f80", "g11"],
-        ["#06f", "g11"],
-        ["#f08", "g11"],
-        ["#f00", "g11"],
-        ["#80f", "g11"],
-        ["#8af", "g11"],
-        ["#0f8", "g11"],
-    ],
+    "date": ["", "", "", "#6f0", bg_color],
+    "encrypted": ["", "", "", "dark gray", bg_color],
+    "unencrypted": ["", "", "", "dark red", bg_color],
+    "failed": ["", "", "", "dark red", bg_color],
+    "cur_chat": ["", "", "", "light blue", bg_color],
+    "unread_chat": ["", "", "", "#6f0", bg_color],
+    "reversed": ["", "", "", bg_color, fg_color],
+    "quote": ["", "", "", "dark gray", bg_color],
+    "mention": ["", "", "", "bold, light red", bg_color],
+    "system_msg": ["", "", "", "dark gray", bg_color],
+    "self_msg": ["", "", "", "dark green", bg_color],
 }
 default_keymap = {
     "left": "h",
@@ -224,6 +203,10 @@ def get_contact_name(contact: Contact) -> str:
     if contact == contact.account.get_self_contact():
         return contact.account.get_config("displayname") or contact.addr
     return contact.display_name
+
+
+def get_contact_color(contact: Contact) -> str:
+    return f"#{lib.dc_contact_get_color(contact._dc_contact):06X}"  # noqa
 
 
 def is_multiuser(chat: Chat) -> bool:
