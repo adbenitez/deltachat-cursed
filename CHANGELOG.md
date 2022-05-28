@@ -10,6 +10,8 @@
 - `/mute` and `/unmute` commands to mute/unmute chats
 - `/topic` command to change chat name
 - `/clear` command to delete all messages in current chat
+- support for importing/exporting encryption keys
+- support for importing/exporting backups (including password-protected backups)
 
 ### Changed
 

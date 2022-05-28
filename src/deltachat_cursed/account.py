@@ -2,12 +2,41 @@ from tempfile import NamedTemporaryFile
 from typing import List
 
 from deltachat import Account as _Account
-from deltachat import Message
+from deltachat import Message, const
 from deltachat.capi import ffi, lib
+from deltachat.cutil import as_dc_charpointer
+from deltachat.tracker import ImexTracker
 
 
 class Account(_Account):
     """Patched Delta Chat Account"""
+
+    def export_all(self, path: str, passphrase: str = None) -> str:
+        export_files = self._export(path, const.DC_IMEX_EXPORT_BACKUP, passphrase)
+        if len(export_files) != 1:
+            raise RuntimeError("found more than one new file")
+        return export_files[0]
+
+    def import_all(self, path: str, passphrase: str = None) -> None:
+        assert not self.is_configured(), "cannot import into configured account"
+        self._import(path, const.DC_IMEX_IMPORT_BACKUP, passphrase)
+
+    def _import(self, path: str, imex_cmd: int, passphrase: str = None) -> None:
+        with self.temp_plugin(ImexTracker()) as imex_tracker:
+            self.imex(path, imex_cmd, passphrase)
+            imex_tracker.wait_finish()
+
+    def _export(self, path: str, imex_cmd: int, passphrase: str = None) -> list:
+        with self.temp_plugin(ImexTracker()) as imex_tracker:
+            self.imex(path, imex_cmd, passphrase)
+            return imex_tracker.wait_finish()
+
+    def imex(self, path, imex_cmd, passphrase=None):
+        if not passphrase:
+            passphrase = ffi.NULL
+        else:
+            passphrase = as_dc_charpointer(passphrase)
+        lib.dc_imex(self._dc_context, imex_cmd, as_dc_charpointer(path), passphrase)
 
     def get_fresh_messages_cnt(self) -> int:
         """Return the number of fresh messages"""

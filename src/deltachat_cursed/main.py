@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 
 import deltachat.const
 from deltachat.events import FFIEventLogger
-from deltachat.tracker import ConfigureTracker
+from deltachat.tracker import ConfigureTracker, ImexFailed
 
 from . import __version__
 from .account import Account
@@ -13,6 +13,7 @@ from .application import Application
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .util import (
+    abspath,
     capture_keyboard_interrupt,
     fail,
     get_configuration,
@@ -96,13 +97,51 @@ def get_parser(cfg: dict) -> ArgumentParser:
         required=True,
     )
     send_parser.add_argument(
-        "-a", metavar="file", dest="filename", help="attach file to the message"
+        "-a",
+        metavar="file",
+        dest="filename",
+        help="attach file to the message",
+        type=abspath,
     )
     send_parser.add_argument("text", help="text message to send", nargs="?")
     send_parser.set_defaults(cmd=send_cmd)
 
     list_parser = subparsers.add_parser("list", help="print chat list")
     list_parser.set_defaults(cmd=list_cmd)
+
+    import_parser = subparsers.add_parser("import", help="import keys or full backup")
+    import_parser.add_argument(
+        "--password",
+        "-p",
+        help="if provided, this passphrase will be used to access the encrypted backup",
+    )
+    import_parser.add_argument(
+        "path",
+        help="path to a backup file or path to a directory containing keys to import",
+        type=abspath,
+    )
+    import_parser.set_defaults(cmd=import_cmd)
+
+    export_parser = subparsers.add_parser("export", help="export full backup or keys")
+    export_parser.add_argument(
+        "--keys-only",
+        "-k",
+        action="store_true",
+        help="export only the public and private keys",
+    )
+    export_parser.add_argument(
+        "--password",
+        "-p",
+        help="if provided, this passphrase will be used to encrypt the exported backup",
+    )
+    export_parser.add_argument(
+        "folder",
+        help="path to the directory where the files should be saved, if not given, current working directory is used",
+        nargs="?",
+        default=os.curdir,
+        type=abspath,
+    )
+    export_parser.set_defaults(cmd=export_cmd)
 
     return parser
 
@@ -180,6 +219,42 @@ def list_cmd(args: Namespace) -> None:
     for chat in args.acct.get_chats():
         if chat.id >= 10:
             print(f"#{chat.id} - {chat.get_name()}")
+
+
+def import_cmd(args: Namespace) -> None:
+    if os.path.isdir(args.path):
+        if args.password:
+            fail("Error: only full backups support password protection")
+        try:
+            args.acct.import_self_keys(args.path)
+            print("Keys imported successfully")
+        except ImexFailed:
+            fail(f"Error: no valid keys found in {args.path!r}")
+    elif os.path.isfile(args.path):
+        if args.acct.is_configured():
+            fail("Error: can't import backup into an already configured account")
+        try:
+            args.acct.import_all(args.path, args.password)
+            print("Backup imported successfully")
+        except ImexFailed:
+            fail(f"Error: invalid password or backup file {args.path!r}")
+    else:
+        fail(f"Error: file doesn't exists {args.path!r}")
+
+
+def export_cmd(args: Namespace) -> None:
+    try:
+        if args.keys_only:
+            if args.password:
+                fail("Error: only full backups support password protection")
+            paths = args.acct.export_self_keys(args.folder)
+        else:
+            paths = [args.acct.export_all(args.folder, args.password)]
+        print("Exported files:")
+        for path in paths:
+            print(path)
+    except ImexFailed:
+        fail(f"Error: failed to export to {args.folder!r}")
 
 
 def start_ui(args: Namespace) -> None:

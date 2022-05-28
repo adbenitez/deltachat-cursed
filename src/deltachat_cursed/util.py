@@ -259,3 +259,7 @@ def get_subtitle(chat: Chat) -> str:
     if count == 1:
         return "1 member"
     return f"{count} members"
+
+
+def abspath(path: str) -> str:
+    return os.path.abspath(os.path.expanduser(path))
