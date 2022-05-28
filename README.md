@@ -27,8 +27,7 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [ ] Ability to send stickers
 - [ ] Jump to quoted messages
 - [ ] Record and send voice messages
-- [ ] Reply messages
-- [ ] Delete messages
+- [ ] Message operations: reply, delete, open attachment/links, see info
 - [ ] List contacts
 - [ ] Search
 - [ ] Set disappearing messages timer
