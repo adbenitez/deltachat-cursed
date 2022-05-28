@@ -1,15 +1,49 @@
 from tempfile import NamedTemporaryFile
+from threading import Event
 from typing import List
 
 from deltachat import Account as _Account
-from deltachat import Message, const
+from deltachat import Message, const, hookspec
 from deltachat.capi import ffi, lib
 from deltachat.cutil import as_dc_charpointer
+from deltachat.events import EventThread
 from deltachat.tracker import ImexTracker
 
 
 class Account(_Account):
     """Patched Delta Chat Account"""
+
+    def __init__(  # noqa
+        self, db_path: str, logging: bool = True, closed: bool = False
+    ) -> None:
+        # initialize per-account plugin system
+        self._pm = hookspec.PerAccount._make_plugin_manager()
+        self._logging = logging
+
+        self.add_account_plugin(self)
+
+        self.db_path = db_path
+        path = db_path.encode("utf8") if hasattr(db_path, "encode") else db_path
+
+        self._dc_context = ffi.gc(
+            lib.dc_context_new_closed(path)
+            if closed
+            else lib.dc_context_new(ffi.NULL, path, ffi.NULL),
+            lib.dc_context_unref,
+        )
+        if self._dc_context == ffi.NULL:
+            raise ValueError(f"Could not dc_context_new: {db_path}")
+
+        self._shutdown_event = Event()
+        self._event_thread = EventThread(self)
+        self._configkeys = self.get_config("sys.config_keys").split()
+        hook = hookspec.Global._get_plugin_manager().hook
+        hook.dc_account_init(account=self)
+
+    def open(self, passphrase: str = "") -> bool:
+        return bool(
+            lib.dc_context_open(self._dc_context, as_dc_charpointer(passphrase))
+        )
 
     def export_all(self, path: str, passphrase: str = None) -> str:
         export_files = self._export(path, const.DC_IMEX_EXPORT_BACKUP, passphrase)

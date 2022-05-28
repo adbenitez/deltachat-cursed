@@ -19,6 +19,7 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [X] Ability to send files
 - [X] Notifications
 - [X] Read receipts ✓✓
+- [X] Create and open encrypted accounts
 - [X] Import/export keys and backups (including password-protected backups)
 - [X] Emoji support and auto-completion
 - [X] @Mentions support and auto-completion

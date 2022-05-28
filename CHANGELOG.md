@@ -12,11 +12,13 @@
 - `/clear` command to delete all messages in current chat
 - support for importing/exporting encryption keys
 - support for importing/exporting backups (including password-protected backups)
+- support for creating and opening encrypted databases
 
 ### Changed
 
 - `display_emoji` is enabled by default
 - improved chatlist style
+- if no password is provided to `init` subcommand a prompt will be shown to enter the password, entering an empty password will then trigger OAuth2, to avoid the prompt an empty password ("") can be passed to the CLI
 
 ## [0.5.0]
 

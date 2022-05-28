@@ -2,6 +2,7 @@ import os
 import sys
 import time
 from argparse import ArgumentParser, Namespace
+from getpass import getpass
 
 import deltachat.const
 from deltachat.events import FFIEventLogger
@@ -32,7 +33,26 @@ def main() -> None:
     args = get_parser(cfg).parse_args(sys.argv[1:])
 
     args.cfg = cfg
-    args.acct = Account(os.path.expanduser(args.db))
+    args.acct = Account(args.db, closed=True)
+
+    is_new = not os.path.exists(args.db)
+    opened = False
+    if args.db_prompt:
+        if is_new:
+            prompt = "Enter new database password:"
+        else:
+            prompt = "Enter database password:"
+        args.db_pass = getpass(prompt)
+        if is_new:
+            if args.db_pass != getpass("Enter database password again:"):
+                fail("Error: passwords don't match")
+    elif not args.db_pass and not is_new:
+        opened = args.acct.open()
+        if not opened:
+            args.db_pass = getpass("Enter database password:")
+    if not opened:
+        if not args.acct.open(args.db_pass):
+            fail("Error: failed to open database, is the password correct?")
 
     if args.show_ffi:
         args.acct.add_account_plugin(FFIEventLogger(args.acct))
@@ -51,6 +71,21 @@ def get_parser(cfg: dict) -> ArgumentParser:
         action="store",
         help="account's database file",
         default=cfg["global"]["account_path"],
+        type=abspath,
+    )
+    parser.add_argument(
+        "--password",
+        help="password to open an encrypted database, if the database doesn't exist it will be created and encrypted with the given password",
+        default="",
+        dest="db_pass",
+        metavar="PASSWORD",
+    )
+    parser.add_argument(
+        "--prompt",
+        "-p",
+        action="store_true",
+        dest="db_prompt",
+        help="prompt for password to open/create encrypted database",
     )
     parser.add_argument(
         "--show-ffi", action="store_true", help="show low level ffi events"
@@ -69,7 +104,7 @@ def get_parser(cfg: dict) -> ArgumentParser:
     init_parser.add_argument("addr", help="your e-mail address")
     init_parser.add_argument(
         "password",
-        help="your password, if not provided OAuth2 will be used",
+        help="your password, if not provided you will be requested to enter it, if empty, OAuth2 will be used",
         nargs="?",
     )
     init_parser.set_defaults(cmd=init_cmd)
@@ -112,8 +147,13 @@ def get_parser(cfg: dict) -> ArgumentParser:
     import_parser = subparsers.add_parser("import", help="import keys or full backup")
     import_parser.add_argument(
         "--password",
+        help="if provided, this passphrase will be used to access an encrypted backup",
+    )
+    import_parser.add_argument(
+        "--prompt",
         "-p",
-        help="if provided, this passphrase will be used to access the encrypted backup",
+        action="store_true",
+        help="prompt for password to access an encrypted backup",
     )
     import_parser.add_argument(
         "path",
@@ -131,8 +171,13 @@ def get_parser(cfg: dict) -> ArgumentParser:
     )
     export_parser.add_argument(
         "--password",
-        "-p",
         help="if provided, this passphrase will be used to encrypt the exported backup",
+    )
+    export_parser.add_argument(
+        "--prompt",
+        "-p",
+        action="store_true",
+        help="prompt for password to encrypt backup",
     )
     export_parser.add_argument(
         "folder",
@@ -151,6 +196,9 @@ def init_cmd(args: Namespace) -> None:
         fail("Error: account already configured")
 
     args.acct.set_config("addr", args.addr)
+
+    if args.password is None:
+        args.password = getpass("Enter account password:")
 
     if args.password:
         args.acct.set_config("mail_pw", args.password)
@@ -223,8 +271,10 @@ def list_cmd(args: Namespace) -> None:
 
 def import_cmd(args: Namespace) -> None:
     if os.path.isdir(args.path):
-        if args.password:
-            fail("Error: only full backups support password protection")
+        if args.password or args.prompt:
+            fail(
+                "Error: can't import keys, only full backups support password protection"
+            )
         try:
             args.acct.import_self_keys(args.path)
             print("Keys imported successfully")
@@ -233,6 +283,10 @@ def import_cmd(args: Namespace) -> None:
     elif os.path.isfile(args.path):
         if args.acct.is_configured():
             fail("Error: can't import backup into an already configured account")
+
+        if args.prompt:
+            args.password = getpass("Enter backup password:")
+
         try:
             args.acct.import_all(args.path, args.password)
             print("Backup imported successfully")
@@ -245,10 +299,16 @@ def import_cmd(args: Namespace) -> None:
 def export_cmd(args: Namespace) -> None:
     try:
         if args.keys_only:
-            if args.password:
-                fail("Error: only full backups support password protection")
+            if args.password or args.prompt:
+                fail(
+                    "Error: can't export keys, only full backups support password protection"
+                )
             paths = args.acct.export_self_keys(args.folder)
         else:
+            if args.prompt:
+                args.password = getpass("Enter new backup password:")
+                if args.password != getpass("Enter backup password again:"):
+                    fail("Error: passwords don't match")
             paths = [args.acct.export_all(args.folder, args.password)]
         print("Exported files:")
         for path in paths:

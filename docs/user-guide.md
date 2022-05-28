@@ -10,21 +10,40 @@ $ pip install -U deltachat-cursed
 
 ## Usage
 
-After installation the command `delta` should be available, or you can use `python3 -m deltachat-cursed`. You can check if it is installed running the command `delta --help`
+After installation the command `delta` should be available, or you can use
+`python3 -m deltachat-cursed`. You can check if it is installed running the command
+`delta --version` or `delta --help` to see all the options
+
+### Creating new account
 
 The first time you use Cursed Delta you need to configure your account:
 
 ```
-$ delta init me@example.com YourStrongPassword  # omit password to use OAuth2
+$ delta init me@example.com
 ```
 
+You will be asked for a password, press enter directly (empty password) to use OAuth2.
 Then run `delta` command to start the application with your configured account.
+
+### Opening existing account
 
 If you want to use an already existent account, for example to open an account created with the official Delta Chat client:
 
 ```
 $ delta --db ~/.config/DeltaChat/accounts/XXXXXXXXX/dc.db
 ```
+
+If the account is encrypted you will be asked for a password.
+
+### Creating encrypted account
+
+To create an encrypted account:
+
+```
+$ delta --prompt --db ~/MyAccounts/encrypted.db init me@example.com
+```
+
+You will be prompted for a password to encrypt the database, keep the password safe because you will need it to open the account each time and if the password is lost you will lose access to the account.
 
 ## Tips
 
