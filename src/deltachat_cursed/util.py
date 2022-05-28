@@ -193,7 +193,7 @@ def get_configuration() -> dict:
         cfg["global"].getboolean("open_file", True) and "DISPLAY" in os.environ
     )
     cfg_gbl["date_format"] = cfg["global"].get("date_format", "%b %d, %Y", raw=True)
-    cfg_gbl["display_emoji"] = cfg["global"].getboolean("display_emoji", False)
+    cfg_gbl["display_emoji"] = cfg["global"].getboolean("display_emoji", True)
 
     return cfg_full
 

@@ -48,7 +48,7 @@ Inside your `curseddelta.conf` file, create a `[global]` section and there you c
 * `account_path`: the path to the default accouunt database to be open when the program is launched without `--db` option
 * `notification`: set to `yes`/`no` to enable/disable notifications (default: yes)
 * `date_format`: format of the date marker in chats (default: `%x`)
-* `display_emoji`: set to `yes`/`no` to enable/disable emoji rendering (default: no)
+* `display_emoji`: set to `yes`/`no` to enable/disable emoji rendering (default: yes)
 
 ## Default Shortcuts
 

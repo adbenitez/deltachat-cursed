@@ -11,6 +11,10 @@
 - `/topic` command to change chat name
 - `/clear` command to delete all messages in current chat
 
+### Changed
+
+- `display_emoji` is enabled by default
+
 ## [0.5.0]
 
 ### Added
