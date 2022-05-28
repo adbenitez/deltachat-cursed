@@ -14,6 +14,7 @@
 ### Changed
 
 - `display_emoji` is enabled by default
+- improved chatlist style
 
 ## [0.5.0]
 

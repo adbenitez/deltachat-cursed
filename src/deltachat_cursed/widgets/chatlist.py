@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional
 
 import urwid
 from deltachat import Chat, const
@@ -10,25 +10,27 @@ from ..util import is_pinned, shorten_text
 
 
 class ListItem(urwid.Button):
-    def __init__(
-        self, caption: Union[tuple, str], callback: Callable, arg=None
-    ) -> None:
+    def __init__(self, caption: list, callback: Callable, arg=None) -> None:
         super().__init__("")
         urwid.connect_signal(self, "click", callback, arg)
         self._w = urwid.AttrMap(
-            urwid.SelectableIcon(caption, 0), None, focus_map="status_bar"
+            urwid.SelectableIcon(caption, 3), None, focus_map="status_bar"
         )
 
 
 class ChatListWidget(ListBoxPlus, ChatListMonitor):
     def __init__(
-        self, keymap: dict, select_chat_callback: Callable, display_emoji: bool
+        self,
+        keymap: dict,
+        select_chat_callback: Callable,
+        display_emoji: bool,
     ) -> None:  # noqa
         self.keymap = keymap
         self._select_chat = select_chat_callback
         self.updating = False
         self.display_emoji = display_emoji
         self.current_chat_id = None
+        self.chats: List[Chat] = []
         super().__init__(
             LazyEvalListWalker(urwid.MonitoredList(), self._get_chat_widget, 0)
         )
@@ -60,28 +62,57 @@ class ChatListWidget(ListBoxPlus, ChatListMonitor):
             self.current_chat_id = None
         else:
             self.current_chat_id = chats[current_chat_index].id
+        self.chats = chats
         self.contents = chats
         if current_chat_index is not None:
             self.try_set_focus(current_chat_index)
 
         self.updating = False
 
+    def _get_chat(self, position) -> Optional[Chat]:
+        if 0 <= position < len(self.chats):
+            return self.chats[position]
+        return None
+
     def _get_chat_widget(self, chat: Chat, position: int) -> urwid.Widget:
-        chat_type = "@" if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else "#"
+        elements: list = []
+
+        chat_color = urwid.AttrSpec(
+            "#fff",
+            f"#{chat.get_color():06X}",
+        )
+        elements.append(
+            (
+                chat_color,
+                " @ " if chat.get_type() == const.DC_CHAT_TYPE_SINGLE else " # ",
+            )
+        )
+
+        elements.append(" ")
+
         name = shorten_text(chat.get_name(), 40)
-        marker = "│" if is_pinned(chat) else " "
-        label = f"{marker}{chat_type} {name if self.display_emoji else demojize(name)}"
+        label = f"{name if self.display_emoji else demojize(name)}"
+        if chat.id == self.current_chat_id:
+            label = ("cur_chat", label)  # type: ignore
+        elements.append(label)
+
         new_messages = chat.count_fresh_messages()
         if new_messages > 0:
-            label += f" ({new_messages})"
+            elements.append(" ")
+            if chat.is_muted():
+                elements.append(f"({new_messages})")
+            else:
+                elements.append(("unread_chat", f"({new_messages})"))
 
-        if chat.id == self.current_chat_id:
-            button = ListItem(("cur_chat", label), self._chat_change, position)
-        else:
-            if new_messages > 0 and not chat.is_muted():
-                label = ("unread_chat", label)  # type: ignore
-            button = ListItem(label, self._chat_change, position)
-        return button
+        widget = ListItem(elements, self._chat_change, position)
+
+        if is_pinned(chat):
+            next_chat = self._get_chat(position + 1)
+            if next_chat and not is_pinned(next_chat):
+                divider = urwid.AttrMap(urwid.Divider("─"), "pinned_marker")
+                widget = urwid.Pile([widget, divider])
+
+        return widget
 
     def _chat_change(self, _button, index: int) -> None:
         self._select_chat(index)

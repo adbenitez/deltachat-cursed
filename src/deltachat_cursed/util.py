@@ -43,13 +43,14 @@ default_theme = {
     "encrypted": ["", "", "", "dark gray", bg_color],
     "unencrypted": ["", "", "", "dark red", bg_color],
     "failed": ["", "", "", "dark red", bg_color],
-    "cur_chat": ["", "", "", "light blue", bg_color],
-    "unread_chat": ["", "", "", "#6f0", bg_color],
+    "cur_chat": ["", "", "", "black", "light blue"],
+    "unread_chat": ["", "", "", "#000", "#6f0"],
     "reversed": ["", "", "", bg_color, fg_color],
     "quote": ["", "", "", "dark gray", bg_color],
     "mention": ["", "", "", "bold, light red", bg_color],
     "system_msg": ["", "", "", "dark gray", bg_color],
     "self_msg": ["", "", "", "dark green", bg_color],
+    "pinned_marker": ["", "", "", "dark gray", bg_color],
 }
 default_keymap = {
     "left": "h",
