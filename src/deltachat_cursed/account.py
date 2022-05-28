@@ -25,6 +25,9 @@ class Account(_Account):
             for i in range(0, lib.dc_array_get_cnt(dc_array))
         ]
 
+    def delete_messages(self, messages: List[int]) -> None:
+        lib.dc_delete_msgs(self._dc_context, messages, len(messages))
+
     def create_message(
         self,
         text: str = None,

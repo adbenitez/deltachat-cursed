@@ -9,6 +9,7 @@
 - `/pin` and `/unpin` commands to pin/unpin chats
 - `/mute` and `/unmute` commands to mute/unmute chats
 - `/topic` command to change chat name
+- `/clear` command to delete all messages in current chat
 
 ## [0.5.0]
 

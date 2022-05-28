@@ -82,4 +82,5 @@ This are some temporal commands to do things that are not implemented yet using 
 - Send `/pin` or `/unpin` to pin/unpin chat
 - Send `/mute` or `/unmute` to mute/unmute chat
 - Send `/topic <NEW NAME>` to change chat name
+- Send `/clear` to delete all messages in current chat
 - To send a message starting with `/` use `//`

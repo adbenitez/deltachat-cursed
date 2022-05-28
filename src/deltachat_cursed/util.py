@@ -29,6 +29,7 @@ COMMANDS = {
         "/mute",
         "/unmute",
         "/topic",
+        "/clear",
         "//",
     ]
 }

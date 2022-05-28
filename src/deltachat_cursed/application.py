@@ -333,6 +333,10 @@ class Application(ChatListMonitor):
                     chat.account.create_contact(chat.get_contacts()[0], name)
             else:
                 text = "Error: Command expects one argument but none was given"
+        elif args[0] == COMMANDS["/clear"]:
+            msgs = chat.account.get_messages(chat.id)
+            if msgs:
+                chat.account.delete_messages(msgs)
         else:
             text = f"Error: Unknown command {args[0]}"
 
