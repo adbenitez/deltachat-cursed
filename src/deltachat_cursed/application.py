@@ -37,22 +37,7 @@ class Application(ChatListMonitor):
         self.events = events
 
         account = self.events.account
-        palette = [
-            ("bg", *theme["background"]),
-            ("status_bar", *theme["status_bar"]),
-            ("separator", *theme["separator"]),
-            ("date", *theme["date"]),
-            ("encrypted", *theme["encrypted"]),
-            ("unencrypted", *theme["unencrypted"]),
-            ("cur_chat", *theme["cur_chat"]),
-            ("reversed", *theme["reversed"]),
-            ("quote", *theme["quote"]),
-            ("mention", *theme["mention"]),
-            ("self_msg", *theme["self_msg"]),
-            ("unread_chat", *theme["unread_chat"]),
-            ("system_msg", *theme["system_msg"]),
-            ("failed", *theme["failed"]),
-        ]
+        palette = [(key, *value) for key, value in theme.items()]
         display_emoji = conf["global"]["display_emoji"]
 
         # Chatlist
@@ -93,7 +78,7 @@ class Application(ChatListMonitor):
         self.events.add_chatlist_monitor(self)
         account.add_account_plugin(self)
 
-        bg = urwid.AttrMap(self.main_columns, "bg")
+        bg = urwid.AttrMap(self.main_columns, "background")
         self.main_loop = urwid.MainLoop(
             bg,
             palette,
