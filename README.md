@@ -46,7 +46,7 @@ $ pip install -U deltachat-cursed
 ```
 
 After installation the command `delta` should be available.
-For more tips and info check [the user guide](https://github.com/adbenitez/deltachat-cursed/docs/user-guide.md)
+For more tips and info check [the user guide](https://github.com/adbenitez/deltachat-cursed/blob/master/docs/user-guide.md)
 
 
 ## Credits
