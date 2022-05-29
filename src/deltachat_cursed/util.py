@@ -220,8 +220,20 @@ def get_summarytext(msg: Message, width: int) -> str:
     return from_dc_charpointer(lib.dc_msg_get_summarytext(msg._dc_msg, width))  # noqa
 
 
+def is_self_talk(chat: Chat) -> bool:
+    return bool(lib.dc_chat_is_self_talk(chat._dc_chat))  # noqa
+
+
+def is_device_talk(chat: Chat) -> bool:
+    return bool(lib.dc_chat_is_device_talk(chat._dc_chat))  # noqa
+
+
 def is_multiuser(chat: Chat) -> bool:
-    return chat.get_type() != const.DC_CHAT_TYPE_SINGLE
+    return chat.get_type() in (
+        const.DC_CHAT_TYPE_GROUP,
+        const.DC_CHAT_TYPE_MAILINGLIST,
+        const.DC_CHAT_TYPE_BROADCAST,
+    )
 
 
 def is_mailing_list(chat: Chat) -> bool:
@@ -246,19 +258,27 @@ def set_chat_visibility(chat: Chat, visibility: str) -> None:
 
 
 def get_subtitle(chat: Chat) -> str:
-    if chat.get_type() == const.DC_CHAT_TYPE_MAILINGLIST:
-        return "Mailing List"
-    members = chat.get_contacts()
-    if chat.get_type() == const.DC_CHAT_TYPE_SINGLE and members:
-        return members[0].addr
-    count = len(members)
-    if chat.get_type() == const.DC_CHAT_TYPE_BROADCAST:
-        if count == 1:
-            return "1 recipient"
-        return f"{count} recipients"
-    if count == 1:
-        return "1 member"
-    return f"{count} members"
+    chat_type = chat.get_type()
+    contacts = chat.get_contacts()
+    if chat_type == const.DC_CHAT_TYPE_MAILINGLIST:
+        subtitle = "Mailing List"
+    if chat_type == const.DC_CHAT_TYPE_BROADCAST:
+        count = len(contacts)
+        subtitle = "1 recipient" if count == 1 else f"{count} recipients"
+    elif is_multiuser(chat):
+        count = len(contacts)
+        subtitle = "1 member" if count == 1 else f"{count} members"
+    elif len(contacts) >= 1:
+        if is_self_talk(chat):
+            subtitle = "Messages I sent to myself"
+        elif is_device_talk(chat):
+            subtitle = "Locally generated messages"
+        else:
+            subtitle = contacts[0].addr
+    else:
+        subtitle = ""
+
+    return subtitle
 
 
 def abspath(path: str) -> str:

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Show proper description in status bar for "Saved Messages" and "Device Messages" chats
+
 ## [0.6.0]
 
 ### Added
@@ -121,6 +127,7 @@
 - Initial release
 
 
+[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...HEAD
 [0.6.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.0...v0.4.1
