@@ -68,7 +68,6 @@ def get_parser(cfg: dict) -> ArgumentParser:
     parser.add_argument("-v", "--version", action="version", version=__version__)
     parser.add_argument(
         "--db",
-        action="store",
         help="account's database file",
         default=cfg["global"]["account_path"],
         type=abspath,
@@ -96,7 +95,6 @@ def get_parser(cfg: dict) -> ArgumentParser:
     init_parser = subparsers.add_parser("init", help="initialize your account")
     init_parser.add_argument(
         "--port",
-        action="store",
         help="port to listen for oauth2 callback (default: %(default)s)",
         type=int,
         default="8383",
