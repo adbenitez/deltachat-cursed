@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 import time
@@ -5,7 +6,6 @@ from argparse import ArgumentParser, Namespace
 from getpass import getpass
 
 import deltachat.const
-from deltachat.events import FFIEventLogger
 from deltachat.tracker import ConfigureTracker, ImexFailed
 
 from . import __version__
@@ -14,26 +14,34 @@ from .application import Application
 from .event import AccountPlugin
 from .oauth2 import get_authz_code, is_oauth2
 from .util import (
+    FFIEventLogger,
     abspath,
     capture_keyboard_interrupt,
     fail,
     get_configuration,
     get_keymap,
     get_theme,
+    make_logger,
     online_account,
 )
 
 
 @capture_keyboard_interrupt
 def main() -> None:
-    app_path = os.path.join(os.path.expanduser("~"), ".curseddelta")
-    if not os.path.exists(app_path):
-        os.makedirs(app_path)
     cfg = get_configuration()
     args = get_parser(cfg).parse_args(sys.argv[1:])
 
     args.cfg = cfg
-    args.acct = Account(args.db, closed=True)
+    try:
+        args.acct = Account(args.db, closed=True)
+    except ValueError:
+        fail(f"Error: couldn't open account's database: {args.db!r}")
+
+    args.logger = make_logger(args.log)
+    if args.log == "debug":
+        core_logger = logging.Logger("Core", logging.DEBUG)
+        core_logger.parent = args.logger
+        args.acct.add_account_plugin(FFIEventLogger(args.acct, core_logger))
 
     is_new = not os.path.exists(args.db)
     opened = False
@@ -53,9 +61,6 @@ def main() -> None:
     if not opened:
         if not args.acct.open(args.db_pass):
             fail("Error: failed to open database, is the password correct?")
-
-    if args.show_ffi:
-        args.acct.add_account_plugin(FFIEventLogger(args.acct))
 
     if "cmd" in args:
         args.cmd(args)
@@ -87,7 +92,11 @@ def get_parser(cfg: dict) -> ArgumentParser:
         help="prompt for password to open/create encrypted database",
     )
     parser.add_argument(
-        "--show-ffi", action="store_true", help="show low level ffi events"
+        "--log",
+        help="set the severity level of what should be saved in the log file (default: %(default)s)",
+        choices=["debug", "info", "warn", "error", "disabled"],
+        default="warn",
+        type=str.lower,
     )
 
     subparsers = parser.add_subparsers(title="subcommands")

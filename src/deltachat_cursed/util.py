@@ -1,5 +1,6 @@
 import configparser
 import json
+import logging.handlers
 import os
 import sys
 from contextlib import contextmanager
@@ -9,8 +10,14 @@ import urwid
 from deltachat import Account, Chat, Contact, Message, const
 from deltachat.capi import lib
 from deltachat.cutil import from_dc_charpointer
+from deltachat.events import FFIEvent
+from deltachat.hookspec import account_hookimpl
 
 APP_NAME = "Cursed Delta"
+APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
+if not os.path.exists(APP_FOLDER):
+    os.makedirs(APP_FOLDER)
+LOGS_FOLDER = os.path.join(APP_FOLDER, "logs")
 COMMANDS = {
     key: key
     for key in [
@@ -87,6 +94,20 @@ class Container(urwid.WidgetPlaceholder):
         return super().keypress(size, key)
 
 
+class FFIEventLogger:
+    def __init__(self, account: Account, logger: logging.Logger) -> None:
+        self.account = account
+        self.logger = logger
+
+    @account_hookimpl
+    def ac_process_ffi_event(self, ffi_event: FFIEvent) -> None:
+        self.account.log(str(ffi_event))
+
+    @account_hookimpl
+    def ac_log_line(self, message: str) -> None:
+        self.logger.debug(message)
+
+
 @contextmanager
 def online_account(acct: Account) -> Account:
     if not acct.is_configured():
@@ -107,6 +128,32 @@ def capture_keyboard_interrupt(func: Callable) -> Any:
     return wrapper
 
 
+def make_logger(log_level: str) -> logging.Logger:
+    logger = logging.Logger(APP_NAME)
+    logger.parent = None
+
+    if log_level == "disabled":
+        logger.disabled = True
+        return logger
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+
+    log_path = os.path.join(LOGS_FOLDER, "log.txt")
+    if not os.path.exists(LOGS_FOLDER):
+        os.makedirs(LOGS_FOLDER)
+
+    fhandler = logging.handlers.RotatingFileHandler(
+        log_path, backupCount=2, maxBytes=2000000
+    )
+    fhandler.setLevel(log_level.upper())
+    fhandler.setFormatter(formatter)
+    logger.addHandler(fhandler)
+
+    return logger
+
+
 def shorten_text(text: str, width: int, placeholder: str = "…") -> str:
     text = " ".join(text.split())
     if len(text) > width:
@@ -120,7 +167,7 @@ def get_theme() -> dict:
     file_name = "theme.json"
     themes = [
         "curseddelta-" + file_name,
-        f"{os.path.expanduser('~')}/.curseddelta/{file_name}",
+        os.path.join(APP_FOLDER, file_name),
         "/etc/curseddelta/" + file_name,
     ]
 
@@ -141,7 +188,7 @@ def get_keymap() -> dict:
     file_name = "keymap.json"
     keymaps = [
         "curseddelta-" + file_name,
-        f"{os.path.expanduser('~')}/.curseddelta/{file_name}",
+        os.path.join(APP_FOLDER, file_name),
         "/etc/curseddelta/" + file_name,
     ]
 
@@ -170,7 +217,7 @@ def fail(*args, **kwargs) -> None:
 
 def get_configuration() -> dict:
     file_name = "curseddelta.conf"
-    home_config = f"{os.path.expanduser('~')}/.curseddelta/{file_name}"
+    home_config = os.path.join(APP_FOLDER, file_name)
     confPriorityList = [file_name, home_config, "/etc/curseddelta/" + file_name]
 
     cfg = configparser.ConfigParser()
@@ -184,10 +231,9 @@ def get_configuration() -> dict:
 
     cfg_full: Dict[str, dict] = {"global": {}}
 
-    home = os.path.expanduser("~")
     cfg_gbl = cfg_full["global"]
     cfg_gbl["account_path"] = cfg["global"].get(
-        "account_path", home + "/.curseddelta/account/account.db"
+        "account_path", os.path.join(APP_FOLDER, "account", "account.db")
     )
     cfg_gbl["notification"] = cfg["global"].getboolean("notification", True)
     cfg_gbl["open_file"] = (

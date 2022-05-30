@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- `--log` option to control debugging level, logs are saved in a file in the app's folder
+
+### Changed
+
+- removed `--show-ffi` CLI option
+
 ### Fixed
 
 - Show proper description in status bar for "Saved Messages" and "Device Messages" chats
