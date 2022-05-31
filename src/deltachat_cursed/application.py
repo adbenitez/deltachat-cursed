@@ -7,7 +7,7 @@ import urwid
 from deltachat import Chat
 from emoji import emojize
 
-from .event import AccountPlugin, ChatListMonitor
+from .event import ChatListMonitor, EventCenter
 from .util import (
     COMMANDS,
     Container,
@@ -29,11 +29,11 @@ class Application(ChatListMonitor):
         conf: dict,
         keymap: dict,
         theme: dict,
-        events: AccountPlugin,
+        event_center: EventCenter,
     ) -> None:
         self.conf = conf
         self.keymap = keymap
-        self.events = events
+        self.events = event_center
 
         account = self.events.account
         palette = [(key, *value) for key, value in theme.items()]

@@ -19,7 +19,7 @@ class ChatListMonitor:
         pass
 
 
-class AccountPlugin:
+class EventCenter:
     def __init__(self, account: Account, logger: Logger, notifications: bool) -> None:
         self.account = account
         self.logger = logger
