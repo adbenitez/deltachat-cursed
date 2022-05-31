@@ -69,7 +69,7 @@ def main() -> None:
 
 
 def get_parser(cfg: dict) -> ArgumentParser:
-    parser = ArgumentParser(prog="curseddelta")
+    parser = ArgumentParser(prog="delta")
     parser.add_argument("-v", "--version", action="version", version=__version__)
     parser.add_argument(
         "--db",
