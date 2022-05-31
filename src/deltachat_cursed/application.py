@@ -4,11 +4,10 @@ import sys
 from typing import Optional
 
 import urwid
-from deltachat import Chat, Message, account_hookimpl
+from deltachat import Chat
 from emoji import emojize
 
 from .event import AccountPlugin, ChatListMonitor
-from .notifications import notify_msg
 from .util import (
     COMMANDS,
     Container,
@@ -76,7 +75,6 @@ class Application(ChatListMonitor):
         )
 
         self.events.add_chatlist_monitor(self)
-        account.add_account_plugin(self)
 
         bg = urwid.AttrMap(self.main_columns, "background")
         self.main_loop = urwid.MainLoop(
@@ -111,26 +109,6 @@ class Application(ChatListMonitor):
     def chat_selected(self, index: Optional[int], chats: list) -> None:
         self.main_columns.focus_position = 2
         self.right_side.focus_position = 1
-
-    @account_hookimpl
-    def ac_incoming_message(self, message: Message) -> None:
-        if not self.conf["global"]["notification"]:
-            return
-
-        sender = message.get_sender_contact()
-        acc = self.events.account
-        self_contact = acc.get_self_contact()
-        if sender == self_contact:
-            return
-
-        notify = not message.chat.is_muted()
-        if not notify and is_multiuser(message.chat):
-            if message.quote and message.quote.get_sender_contact() == self_contact:
-                notify = True
-            else:
-                notify = f"@{get_contact_name(self_contact)}" in message.text
-        if notify:
-            notify_msg(message)
 
     def _print_title(self, badge: int) -> None:
         name = shorten_text(

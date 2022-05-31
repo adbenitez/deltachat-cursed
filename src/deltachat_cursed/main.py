@@ -325,7 +325,7 @@ def export_cmd(args: Namespace) -> None:
 
 
 def start_ui(args: Namespace) -> None:
-    plugin = AccountPlugin(args.acct)
+    plugin = AccountPlugin(args.acct, args.logger, args.cfg["global"]["notification"])
     args.acct.add_account_plugin(plugin)
 
     with online_account(args.acct):

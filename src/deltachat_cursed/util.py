@@ -2,8 +2,12 @@ import configparser
 import json
 import logging.handlers
 import os
+import queue
 import sys
+import time
+from collections import deque
 from contextlib import contextmanager
+from threading import Event, Thread
 from typing import Any, Callable, Dict, Optional
 
 import urwid
@@ -92,6 +96,66 @@ class Container(urwid.WidgetPlaceholder):
             return self._keypress_callback(size, key)
         key = self._keypress_callback(size, key)
         return super().keypress(size, key)
+
+
+class Throttle:
+    """Do at most one call (the most recent) in the given interval"""
+
+    def __init__(self, func: Callable[..., None], interval: float = 1) -> None:
+        self.func = func
+        self.interval = interval
+        self._tasks: deque = deque(maxlen=1)
+        self._event = Event()
+        self._worker = Thread(target=self._loop, daemon=True)
+        self._worker.start()
+
+    def _loop(self) -> None:
+        while True:
+            try:
+                args, kwargs = self._tasks.pop()
+                start = time.time()
+                try:
+                    self.func(*args, **kwargs)
+                except Exception:  # noqa
+                    pass
+                time.sleep(max(self.interval - time.time() + start, 0))
+            except IndexError:
+                self._event.wait()
+                self._event.clear()
+
+    def __call__(self, *args, **kwargs) -> None:
+        self._tasks.append((args, kwargs))
+        self._event.set()
+
+
+class BatchThrottle:
+    """Group calls arguments into a single function call at the given interval"""
+
+    def __init__(self, func: Callable[..., None], interval: float = 1) -> None:
+        self.func = func
+        self.interval = interval
+        self._args: queue.Queue = queue.Queue()
+        self._worker = Thread(target=self._loop, daemon=True)
+        self._worker.start()
+
+    def _loop(self) -> None:
+        while True:
+            args = [*self._args.get()]
+            cooldown = self.interval
+            start = time.time()
+            while cooldown > 0:
+                try:
+                    args.extend(self._args.get(timeout=cooldown))
+                    cooldown -= time.time() - start
+                except queue.Empty:
+                    break
+            try:
+                self.func(*args)
+            except Exception:  # noqa
+                pass
+
+    def __call__(self, *args) -> None:
+        self._args.put(args)
 
 
 class FFIEventLogger:

@@ -1,9 +1,12 @@
-from typing import List, Optional, Set
+from logging import Logger
+from typing import Callable, List, Optional, Set
 
 from deltachat import Chat, Contact, Message, account_hookimpl
 from deltachat.events import FFIEvent
 
 from .account import Account
+from .notifications import notify_msgs
+from .util import BatchThrottle, Throttle, get_contact_name, is_multiuser
 
 
 class ChatListMonitor:
@@ -17,14 +20,22 @@ class ChatListMonitor:
 
 
 class AccountPlugin:
-    def __init__(self, account: Account) -> None:
+    def __init__(self, account: Account, logger: Logger, notifications: bool) -> None:
         self.account = account
+        self.logger = logger
+        self.notifications_enabled = notifications
         self.chatlist_monitors: Set[ChatListMonitor] = set()
         for chat in self._get_chats():
             self.current_chat = chat
             break
         else:
             self.current_chat = None
+        self.chatlist_changed: Callable = Throttle(self._chatlist_changed, interval=1)
+        self.notify_msgs: Callable = BatchThrottle(self._notify_msgs, interval=2)
+
+    def _notify_msgs(self, *args) -> None:
+        self.logger.debug("Notifying %s new messages", len(args))
+        notify_msgs(*args)
 
     def _get_chats(self) -> List[Chat]:
         return [chat for chat in self.account.get_chats() if chat.id >= 10]
@@ -37,7 +48,8 @@ class AccountPlugin:
     def remove_monitor(self, monitor: ChatListMonitor) -> None:
         self.chatlist_monitors.discard(monitor)
 
-    def chatlist_changed(self) -> None:
+    def _chatlist_changed(self, event) -> None:
+        self.logger.debug("Chatlist changed, event=%s", event)
         chats = self._get_chats()
         if self.current_chat not in chats:
             if chats:
@@ -97,23 +109,41 @@ class AccountPlugin:
 
     @account_hookimpl
     def ac_incoming_message(self, message: Message) -> None:
-        self.chatlist_changed()
+        self.chatlist_changed(message)
+
+        if not self.notifications_enabled:
+            return
+
+        self_contact = self.account.get_self_contact()
+        if message.get_sender_contact() == self_contact:
+            return
+
+        chat = message.chat
+        notify = not chat.is_muted()
+        if not notify and is_multiuser(chat):
+            quote = message.quote
+            if quote and quote.get_sender_contact() == self_contact:
+                notify = True
+            else:
+                notify = f"@{get_contact_name(self_contact)}" in message.text
+        if notify:
+            self.notify_msgs(message)
 
     @account_hookimpl
     def ac_message_delivered(self, message: Message) -> None:
-        self.chatlist_changed()
+        self.chatlist_changed(message)
 
     @account_hookimpl
     def ac_member_added(self, chat: Chat, contact: Contact) -> None:
-        self.chatlist_changed()
+        self.chatlist_changed(chat)
 
     @account_hookimpl
     def ac_member_removed(self, chat: Chat, contact: Contact) -> None:
-        self.chatlist_changed()
+        self.chatlist_changed(chat)
 
     @account_hookimpl
     def ac_process_ffi_event(self, ffi_event: FFIEvent) -> None:
         if ffi_event.name == "DC_EVENT_MSGS_CHANGED":
-            self.chatlist_changed()
+            self.chatlist_changed(ffi_event)
         # if ffi_event.name == 'DC_EVENT_CONTACTS_CHANGED':
         #     self.chatlist_changed()
