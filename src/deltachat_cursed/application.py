@@ -224,11 +224,14 @@ class Application(ChatListMonitor):
 
     def _process_command(self, chat: Chat, cmd: str) -> str:
         model = self.events
-        acct = chat.account
+        acct = chat.account if chat else self.events.account
         args = cmd.split(maxsplit=1)
 
         text = ""
-        if args[0] == COMMANDS["/query"]:
+        processed = True
+        if args[0] not in COMMANDS:
+            text = f"Error: Unknown command {args[0]}"
+        elif args[0] == COMMANDS["/query"]:
             try:
                 model.select_chat_by_id(acct.create_chat(args[1].strip()).id)
             except AssertionError:
@@ -237,6 +240,20 @@ class Application(ChatListMonitor):
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/join"]:
             model.select_chat_by_id(acct.create_group_chat(args[1].strip()).id)
+        elif args[0] == COMMANDS["/nick"]:
+            if len(args) == 2:
+                acct.set_config("displayname", args[1].strip())
+                self._print_title(acct.get_fresh_messages_cnt())
+            else:
+                text = f"Nick: {acct.get_config('displayname')!r}"
+        else:
+            processed = False
+
+        # commands that require a chat to be selected come next
+        if processed:
+            pass
+        elif not chat:
+            text = "Error: select a chat before using that command"
         elif args[0] == COMMANDS["/delete"]:
             chat.delete()
             model.select_chat(None)
@@ -269,12 +286,6 @@ class Application(ChatListMonitor):
                 chat.send_msg(acct.create_message(filename=path))
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/nick"]:
-            if len(args) == 2:
-                acct.set_config("displayname", args[1].strip())
-                self._print_title(self.events.account.get_fresh_messages_cnt())
-            else:
-                text = f"Nick: {acct.get_config('displayname')!r}"
         elif args[0] == COMMANDS["/pin"]:
             set_chat_visibility(chat, "pinned")
         elif args[0] == COMMANDS["/unpin"]:
@@ -300,8 +311,6 @@ class Application(ChatListMonitor):
             msgs = chat.account.get_messages(chat.id)
             if msgs:
                 chat.account.delete_messages(msgs)
-        else:
-            text = f"Error: Unknown command {args[0]}"
 
         return text
 

@@ -16,6 +16,7 @@
 
 - show proper description in status bar for "Saved Messages" and "Device Messages" chats
 - don't notify any system message
+- avoid crash when using commands without a chat selected
 
 ## [0.6.0]
 
