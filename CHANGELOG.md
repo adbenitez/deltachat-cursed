@@ -14,7 +14,8 @@
 
 ### Fixed
 
-- Show proper description in status bar for "Saved Messages" and "Device Messages" chats
+- show proper description in status bar for "Saved Messages" and "Device Messages" chats
+- don't notify any system message
 
 ## [0.6.0]
 

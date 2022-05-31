@@ -111,16 +111,13 @@ class AccountPlugin:
     def ac_incoming_message(self, message: Message) -> None:
         self.chatlist_changed(message)
 
-        if not self.notifications_enabled:
-            return
-
-        self_contact = self.account.get_self_contact()
-        if message.get_sender_contact() == self_contact:
+        if not self.notifications_enabled or message.is_system_message():
             return
 
         chat = message.chat
         notify = not chat.is_muted()
         if not notify and is_multiuser(chat):
+            self_contact = self.account.get_self_contact()
             quote = message.quote
             if quote and quote.get_sender_contact() == self_contact:
                 notify = True
