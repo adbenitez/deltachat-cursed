@@ -7,4 +7,4 @@ pylint==2.13.9
 pylama==8.3.8
 types-pkg-resources==0.1.3
 types-setuptools==57.4.14
-types-emoji==1.2.8
+types-emoji==1.7.0
