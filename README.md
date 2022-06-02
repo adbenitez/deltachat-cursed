@@ -24,7 +24,10 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [X] Emoji support and auto-completion
 - [X] @Mentions support and auto-completion
 - [X] Display message replies
+- [X] themes/skins and keyboard shortcuts customization
 - [X] Chat operations: delete, pin/unpin, mute/unmute, add/remove members, change chat name, clear chat messages
+- [ ] Proxy support
+- [ ] Support for contact verification and group invitations links
 - [ ] Block/unblock contacts and see the list of blocked contacts
 - [ ] Ability to send stickers
 - [ ] Jump to quoted messages
@@ -36,6 +39,7 @@ ncurses Delta Chat client developed in Python with the urwid library.
 - [ ] Open HTML messages
 - [ ] Open webxdc documents
 - [ ] View archived chats and allow to archive/Unarchive
+- [ ] Multi-language support
 
 ## Installation
 
