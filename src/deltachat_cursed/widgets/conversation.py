@@ -78,13 +78,13 @@ class ConversationWidget(ListBoxPlus):
             (urwid.AttrSpec(get_contact_color(sender), self.nick_bg), name)
         ]
         if msg.is_out_mdn_received():
-            components.append("  ✓✓")
+            components.append(" ✓✓")
         elif msg.is_out_delivered():
-            components.append("  ✓")
+            components.append(" ✓")
         elif msg.is_out_pending():
-            components.append("  →")
+            components.append(" →")
         elif msg.is_out_failed():
-            components.append(("failed", "  ✖"))
+            components.extend([" ", ("failed", " ! ")])
         header_wgt = urwid.Text(components)
 
         text = msg.text

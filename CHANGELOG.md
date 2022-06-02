@@ -11,6 +11,7 @@
 ### Changed
 
 - removed `--show-ffi` CLI option
+- improved failed delivery indicator
 
 ### Fixed
 

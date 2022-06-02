@@ -53,7 +53,7 @@ default_theme = {
     "date": ["", "", "", "#6f0", bg_color],
     "encrypted": ["", "", "", "dark gray", bg_color],
     "unencrypted": ["", "", "", "dark red", bg_color],
-    "failed": ["", "", "", "dark red", bg_color],
+    "failed": ["", "", "", "white", "dark red"],
     "cur_chat": ["", "", "", "black", "light blue"],
     "unread_chat": ["", "", "", "#000", "#6f0"],
     "reversed": ["", "", "", bg_color, fg_color],
