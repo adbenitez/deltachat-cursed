@@ -46,11 +46,7 @@ class LazyEvalListWalker(urwid.ListWalker):
         self._modified()
 
     def _set_contents_modified_callback(self, callback: Callable) -> None:
-        try:
-            self.contents.set_modified_callback(callback)
-        except AttributeError:
-            # Changes to object will not be automatically updated
-            pass
+        self.contents.set_modified_callback(callback)
 
     def _remove_contents_modified_callback(self) -> None:
         try:
