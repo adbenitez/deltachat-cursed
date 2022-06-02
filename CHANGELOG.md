@@ -5,7 +5,7 @@
 ### Added
 
 - `--log` option to control debugging level, logs are saved in a file in the app's folder
-- throttle events to avoid to much lag in the UI when several new messages arrive
+- throttle events to avoid too much lag in the UI when several new messages arrive
 - throttle notifications, group several notifications per chat
 
 ### Changed
