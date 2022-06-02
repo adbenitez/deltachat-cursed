@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import Optional
 
 import urwid
 from deltachat import Chat
 from emoji import demojize
 
 from ..account import Account
-from ..event import ChatListMonitor
 from ..scli import LazyEvalListWalker, ListBoxPlus
 from ..util import (
     get_contact_color,
@@ -17,7 +16,7 @@ from ..util import (
 )
 
 
-class ConversationWidget(ListBoxPlus, ChatListMonitor):
+class ConversationWidget(ListBoxPlus):
     """Widget used to print the message list"""
 
     def __init__(  # noqa
@@ -29,46 +28,30 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         display_emoji: bool,
     ) -> None:
         self.date_format = date_format
-        self.theme = theme
+        self.nick_bg = theme["background"][-1]
         self.keymap = keymap
         self.account = account
         self.display_emoji = display_emoji
-        self.msgs: List[int] = []
-        self.updating = False
+        self.chat: Optional[Chat] = None
         super().__init__(
             LazyEvalListWalker(urwid.MonitoredList(), self._get_message_widget, -1)
         )
 
-    def chatlist_changed(
-        self, current_chat_index: Optional[int], chats: List[Chat]
-    ) -> None:
-        self._update(current_chat_index, chats)
-        if current_chat_index is not None:
-            chats[current_chat_index].mark_noticed()
+    def set_chat(self, chat: Optional[Chat]) -> None:
+        self.chat = chat
+        self.update_conversation()
+        if chat:
+            chat.mark_noticed()
 
-    def chat_selected(self, index: Optional[int], chats: List[Chat]) -> None:
-        self._update(index, chats)
-        if index is not None:
-            chats[index].mark_noticed()
+    def update_conversation(self) -> None:
+        self.contents = (
+            self.chat.account.get_messages(self.chat.id) if self.chat else []
+        )
 
-    def _update(self, current_chat_index: Optional[int], chats: List[Chat]) -> None:
-        if self.updating:
-            return
-
-        self.updating = True
-
-        if current_chat_index is None:
-            self.msgs = []
-        else:
-            self.msgs = self.account.get_messages(chats[current_chat_index].id)
-        self.contents = urwid.MonitoredList(self.msgs)
-
-        self.updating = False
-
-    def _get_date(self, position: int) -> Optional[datetime]:
-        if 0 <= position < len(self.msgs):
+    def _get_date(self, account: Account, position: int) -> Optional[datetime]:
+        if 0 <= position < len(self.contents):
             return (
-                self.account.get_message_by_id(self.msgs[position])
+                account.get_message_by_id(self.contents[position])
                 .time_sent.replace(tzinfo=timezone.utc)
                 .astimezone()
             )
@@ -77,7 +60,6 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
     def _get_message_widget(self, msg_id: int, position: int) -> urwid.Widget:
         msg = self.account.get_message_by_id(msg_id)
         sender = msg.get_sender_contact()
-        background = self.theme["background"][-1]
 
         cur_date = msg.time_sent.replace(tzinfo=timezone.utc).astimezone()
         if msg.is_encrypted() or sender.id < 10:
@@ -93,7 +75,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
             50,
         )
         components: list = [
-            (urwid.AttrSpec(get_contact_color(sender), background), name)
+            (urwid.AttrSpec(get_contact_color(sender), self.nick_bg), name)
         ]
         if msg.is_out_mdn_received():
             components.append("  ✓✓")
@@ -115,7 +97,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         if msg.quoted_text:
             if quote_sender:
                 quote_color = urwid.AttrSpec(
-                    get_contact_color(quote_sender), background
+                    get_contact_color(quote_sender), self.nick_bg
                 )
                 lines.append((quote_color, f"│ {get_sender_name(msg.quote)}\n"))
             else:
@@ -127,7 +109,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
         if msg.is_system_message():
             lines.append(("system_msg", text))
         else:
-            self_contact = self.account.get_self_contact()
+            self_contact = msg.account.get_self_contact()
             dname = get_contact_name(self_contact)
             if sender == self_contact:
                 lines.append(("self_msg", text))
@@ -143,7 +125,7 @@ class ConversationWidget(ListBoxPlus, ChatListMonitor):
             [(len(timestamp), timestamp_wgt), urwid.Pile([header_wgt, body_wgt])]
         )
 
-        pdate = self._get_date(position - 1)
+        pdate = self._get_date(msg.account, position - 1)
         if not pdate or (pdate.year, pdate.month, pdate.day) != (
             cur_date.year,
             cur_date.month,

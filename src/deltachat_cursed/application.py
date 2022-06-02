@@ -1,16 +1,19 @@
 import os
 import subprocess
 import sys
+from logging import Logger
 from typing import Optional
 
 import urwid
 from deltachat import Chat
 from emoji import emojize
 
-from .event import ChatListMonitor, EventCenter
+from .account import Account
+from .events import EventCenter
 from .util import (
     COMMANDS,
     Container,
+    Throttle,
     get_contact_name,
     is_mailing_list,
     is_multiuser,
@@ -23,39 +26,58 @@ from .widgets.composer import ComposerWidget
 from .widgets.conversation import ConversationWidget
 
 
-class Application(ChatListMonitor):
+class Application:
     def __init__(
         self,
+        account: Account,
         conf: dict,
         keymap: dict,
         theme: dict,
-        event_center: EventCenter,
+        logger: Logger,
     ) -> None:
         self.conf = conf
         self.keymap = keymap
-        self.events = event_center
-
-        account = self.events.account
-        palette = [(key, *value) for key, value in theme.items()]
+        self.account = account
+        self.evcenter = EventCenter(account, logger, conf["global"]["notification"])
+        self.main_loop: urwid.MainLoop = urwid.MainLoop(
+            None,
+            [(key, *value) for key, value in theme.items()],
+            unhandled_input=self._unhandle_key,
+            screen=urwid.raw_display.Screen(),
+        )
+        self.main_loop.screen.set_terminal_properties(colors=256)
+        self.main_loop.draw_screen = Throttle(self.main_loop.draw_screen, interval=0.1)
         display_emoji = conf["global"]["display_emoji"]
 
         # Chatlist
-        chatlist_widget = ChatListWidget(keymap, self.events.select_chat, display_emoji)
-        self.events.add_chatlist_monitor(chatlist_widget)
-        chatlist_container = Container(chatlist_widget, self._chatlist_keypress)
+        self.chatlist = ChatListWidget(keymap, display_emoji)
+        urwid.connect_signal(self.evcenter, "chatlist_changed", self.chatlist.set_chats)
+        chatlist_container = Container(self.chatlist, self._chatlist_keypress)
 
         # Conversation messages
         conversation_widget = ConversationWidget(
-            conf["global"]["date_format"], keymap, theme, account, display_emoji
+            conf["global"]["date_format"], keymap, theme, self.account, display_emoji
         )
-        self.events.add_chatlist_monitor(conversation_widget)
+        urwid.connect_signal(
+            self.chatlist, "chat_selected", conversation_widget.set_chat
+        )
+        urwid.connect_signal(
+            self.evcenter,
+            "conversation_changed",
+            conversation_widget.update_conversation,
+        )
         conversation_container = Container(
             conversation_widget, self._conversation_keypress
         )
 
         # message writing + status bar widget
         self.composer = ComposerWidget(keymap, display_emoji)
-        self.events.add_chatlist_monitor(self.composer)
+        urwid.connect_signal(self.chatlist, "chat_selected", self.composer.set_chat)
+        urwid.connect_signal(
+            self.evcenter,
+            "chat_changed",
+            lambda _chat: self.composer.update_status_bar(),
+        )
         composer_container = Container(
             self.composer, self._composer_keypress, process_unhandled=True
         )
@@ -73,17 +95,17 @@ class Application(ChatListMonitor):
                 ("weight", 4, self.right_side),
             ]
         )
+        self.main_loop.widget = urwid.AttrMap(self.main_columns, "background")
 
-        self.events.add_chatlist_monitor(self)
-
-        bg = urwid.AttrMap(self.main_columns, "background")
-        self.main_loop = urwid.MainLoop(
-            bg,
-            palette,
-            unhandled_input=self._unhandle_key,
-            screen=urwid.raw_display.Screen(),
+        urwid.connect_signal(
+            self.evcenter, "chatlist_changed", self.on_chatlist_changed
         )
-        self.main_loop.screen.set_terminal_properties(colors=256)
+        urwid.connect_signal(
+            self.evcenter, "conversation_changed", self.main_loop.draw_screen
+        )
+        urwid.connect_signal(self.chatlist, "chat_selected", self.on_chat_selected)
+        # call listeners with initial chatlist
+        self.evcenter.chatlist_changed(None)
 
     def run(self) -> None:
         try:
@@ -95,26 +117,21 @@ class Application(ChatListMonitor):
                 pass
 
     def exit(self) -> None:
-        if self.events.current_chat:
+        if self.chatlist.selected_chat:
             self.composer.save_draft()
         sys.stdout.write("\x1b]2;\x07")
         raise urwid.ExitMainLoop
 
-    def chatlist_changed(self, current_chat_index: Optional[int], chats: list) -> None:
-        self._print_title(self.events.account.get_fresh_messages_cnt())
+    def on_chatlist_changed(self, _chats) -> None:
+        self._print_title(self.account.get_fresh_messages_cnt())
+        self.main_loop.draw_screen()
 
-        if hasattr(self, "main_loop"):
-            self.main_loop.draw_screen()
-
-    def chat_selected(self, index: Optional[int], chats: list) -> None:
+    def on_chat_selected(self, _chat) -> None:
         self.main_columns.focus_position = 2
         self.right_side.focus_position = 1
 
     def _print_title(self, badge: int) -> None:
-        name = shorten_text(
-            get_contact_name(self.events.account.get_self_contact()),
-            30,
-        )
+        name = shorten_text(get_contact_name(self.account.get_self_contact()), 30)
         if badge > 0:
             text = f"\x1b]2;({badge if badge < 999 else '+999'}) {name}\x07"
         else:
@@ -142,18 +159,18 @@ class Application(ChatListMonitor):
                 )
                 self.main_columns.focus_position = 0
         elif key == self.keymap["prev_chat"]:
-            self.events.select_previous_chat()
+            self.chatlist.select_previous_chat()
         elif key == self.keymap["next_chat"]:
-            self.events.select_next_chat()
+            self.chatlist.select_next_chat()
         elif key == self.keymap["insert_text"]:
             self.main_columns.focus_position = 2
             self.right_side.focus_position = 1
         elif key == self.keymap["open_file"]:
             if not self.conf["global"]["open_file"]:
                 return
-            current_chat = self.events.current_chat
-            if current_chat:
-                msgs = current_chat.get_messages()
+            selected_chat = self.chatlist.selected_chat
+            if selected_chat:
+                msgs = selected_chat.get_messages()
                 if msgs:
                     for msg in reversed(msgs[-20:]):
                         if msg.filename:
@@ -188,22 +205,22 @@ class Application(ChatListMonitor):
             text = edit.get_edit_text().strip()
             if not text:
                 return None
-            current_chat = self.events.current_chat
+            selected_chat = self.chatlist.selected_chat
             if text.startswith("//"):
                 text = text[1:]
             elif text.startswith("/"):
                 edit.set_edit_text("")
-                text = self._process_command(current_chat, text)
+                text = self._process_command(selected_chat, text)
                 if text:
                     edit.set_edit_text(text)
                 edit.set_edit_pos(len(edit.get_edit_text()))
                 self._resize_zone(size)
                 return None
-            if current_chat.is_contact_request():
+            if selected_chat.is_contact_request():
                 # accept contact requests automatically until UI allows to accept/block
-                current_chat.accept()
+                selected_chat.accept()
             try:
-                current_chat.send_text(emojize(text))
+                selected_chat.send_text(emojize(text))
                 edit.set_edit_text("")
             except ValueError:
                 edit.set_edit_text(
@@ -223,8 +240,7 @@ class Application(ChatListMonitor):
         return None
 
     def _process_command(self, chat: Chat, cmd: str) -> str:
-        model = self.events
-        acct = chat.account if chat else self.events.account
+        acct = chat.account if chat else self.account
         args = cmd.split(maxsplit=1)
 
         text = ""
@@ -233,13 +249,13 @@ class Application(ChatListMonitor):
             text = f"Error: Unknown command {args[0]}"
         elif args[0] == COMMANDS["/query"]:
             try:
-                model.select_chat_by_id(acct.create_chat(args[1].strip()).id)
+                self.chatlist.select_chat(acct.create_chat(args[1].strip()))
             except AssertionError:
                 text = "Error: invalid email address"
             except ValueError as ex:
                 text = f"Error: {ex}"
         elif args[0] == COMMANDS["/join"]:
-            model.select_chat_by_id(acct.create_group_chat(args[1].strip()).id)
+            self.chatlist.select_chat(acct.create_group_chat(args[1].strip()))
         elif args[0] == COMMANDS["/nick"]:
             if len(args) == 2:
                 acct.set_config("displayname", args[1].strip())
@@ -256,7 +272,6 @@ class Application(ChatListMonitor):
             text = "Error: select a chat before using that command"
         elif args[0] == COMMANDS["/delete"]:
             chat.delete()
-            model.select_chat(None)
         elif args[0] == COMMANDS["/names"]:
             text = "\n".join(c.addr for c in chat.get_contacts())
         elif args[0] == COMMANDS["/add"]:
