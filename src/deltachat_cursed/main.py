@@ -11,7 +11,6 @@ from deltachat.tracker import ConfigureTracker, ImexFailed
 from . import __version__
 from .account import Account
 from .application import Application
-from .event import EventCenter
 from .oauth2 import get_authz_code, is_oauth2
 from .util import (
     FFIEventLogger,
@@ -325,11 +324,6 @@ def export_cmd(args: Namespace) -> None:
 
 
 def start_ui(args: Namespace) -> None:
-    event_center = EventCenter(
-        args.acct, args.logger, args.cfg["global"]["notification"]
-    )
-    args.acct.add_account_plugin(event_center)
-
+    app = Application(args.acct, args.cfg, get_keymap(), get_theme(), args.logger)
     with online_account(args.acct):
-        app = Application(args.cfg, get_keymap(), get_theme(), event_center)
         app.run()

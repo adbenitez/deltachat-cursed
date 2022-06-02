@@ -1,6 +1,6 @@
 from threading import RLock, Thread
 from time import sleep
-from typing import List, Optional
+from typing import Optional
 
 import urwid
 import urwid_readline
@@ -8,11 +8,10 @@ from deltachat import Chat, Message
 from emoji import demojize
 from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
 
-from ..event import ChatListMonitor
 from ..util import COMMANDS, get_subtitle, shorten_text
 
 
-class ComposerWidget(urwid.Filler, ChatListMonitor):
+class ComposerWidget(urwid.Filler):
     def __init__(self, keymap: dict, display_emoji: bool) -> None:
         self.display_emoji = display_emoji
         self.text_caption = " >> "
@@ -65,18 +64,16 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
         except (IndexError, TypeError):
             return None
 
-    def _update_status_bar(
-        self, current_chat_index: Optional[int], chats: List[Chat]
-    ) -> None:
-        if current_chat_index is None:
-            text = ""
-        else:
-            chat = chats[current_chat_index]
+    def update_status_bar(self) -> None:
+        chat = self.current_chat
+        if chat:
             verified = "✓ " if chat.is_protected() else ""
             muted = " (muted)" if chat.is_muted() else ""
             name = chat.get_name() if self.display_emoji else demojize(chat.get_name())
             name = shorten_text(name, 40)
             text = f" {verified}[ {name} ]{muted} -- {shorten_text(get_subtitle(chat), 40)}"
+        else:
+            text = ""
 
         self.status_bar.set_text(text)
 
@@ -98,29 +95,18 @@ class ComposerWidget(urwid.Filler, ChatListMonitor):
                 draft = None
             chat.set_draft(draft)
 
-    def chatlist_changed(
-        self, current_chat_index: Optional[int], chats: List[Chat]
-    ) -> None:
-        if self.current_chat is None:
-            self.chat_selected(current_chat_index, chats)
-        else:
-            self._update_status_bar(current_chat_index, chats)
-
-    def chat_selected(self, index: Optional[int], chats: List[Chat]) -> None:
-        if index is not None and self.current_chat == chats[index]:
-            return
-
+    def set_chat(self, chat: Optional[Chat]) -> None:
         with self._draft_lock:
             # save draft of previous chat before switching
             if self.current_chat:
                 self.save_draft()
-            if index is None:
-                self.current_chat = None
-                text = ""
-            else:
-                self.current_chat = chats[index]
-                msg = chats[index].get_draft()
+            if chat:
+                msg = chat.get_draft()
                 text = msg.text if msg else ""
+            else:
+                text = ""
+            self.current_chat = chat
             self.widgetEdit.set_edit_text(text)
             self.widgetEdit.set_edit_pos(len(text))
-        self._update_status_bar(index, chats)
+
+        self.update_status_bar()
