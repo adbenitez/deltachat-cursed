@@ -15,7 +15,7 @@ def load_requirements(path: str) -> list:
                 filename = line.split(maxsplit=1)[1]
                 requirements.extend(load_requirements(os.path.join(dirname, filename)))
             elif line and not line.startswith("#"):
-                requirements.append(line.replace("==", ">="))
+                requirements.append(line)
         return requirements
 
 

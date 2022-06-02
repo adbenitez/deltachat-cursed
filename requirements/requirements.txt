@@ -1,5 +1,5 @@
-deltachat==1.79.0
-urwid==2.1.2
-urwid-readline==0.13
-notify-py==0.3.3
-emoji==1.7.0
+deltachat>=1.79.0
+urwid>=2.1.2
+urwid-readline>=0.13
+notify-py>=0.3.3
+emoji>=1.7.0
