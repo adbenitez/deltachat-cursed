@@ -5,7 +5,7 @@
 ### Added
 
 - `--log` option to control debugging level, logs are saved in a file in the app's folder
-- throttle chatlist refreshing to avoid to much UI lag when several new messages arrive
+- throttle events to avoid to much lag in the UI when several new messages arrive
 - throttle notifications, group several notifications per chat
 
 ### Changed
@@ -17,6 +17,7 @@
 - show proper description in status bar for "Saved Messages" and "Device Messages" chats
 - don't notify any system message
 - avoid crash when using commands without a chat selected
+- improve core events handling
 
 ## [0.6.0]
 
