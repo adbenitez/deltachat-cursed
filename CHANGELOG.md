@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0]
 
 ### Added
 
@@ -12,7 +12,7 @@
 ### Changed
 
 - removed `--show-ffi` CLI option
-- improved failed delivery indicator
+- improved failed delivery indicator style
 - ignore case in auto-completion of nicks, emojis and commands
 
 ### Fixed
@@ -146,7 +146,7 @@
 - Initial release
 
 
-[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...HEAD
+[0.7.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.0...v0.4.1
