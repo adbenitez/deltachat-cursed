@@ -12,6 +12,7 @@
 
 - removed `--show-ffi` CLI option
 - improved failed delivery indicator
+- ignore case in auto-completion of nicks, emojis and commands
 
 ### Fixed
 

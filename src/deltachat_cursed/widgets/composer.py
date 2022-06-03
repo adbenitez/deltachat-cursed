@@ -56,7 +56,7 @@ class ComposerWidget(urwid.Filler):
                     continue
                 if item.startswith(text):
                     matches.append(item)
-                elif text[1:] in item[1:]:
+                elif text[1:].lower() in item[1:].lower():
                     fuzzy_matches.append(item)
             items = matches + fuzzy_matches
         try:
