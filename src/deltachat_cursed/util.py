@@ -49,6 +49,7 @@ bg_color = "g11"
 default_theme = {
     "background": ["", "", "", fg_color, bg_color],
     "status_bar": ["", "", "", "white", "g23"],
+    "focused_item": ["", "", "", "white", "g23"],
     "separator": ["", "", "", "g15", "g15"],
     "date": ["", "", "", "#6f0", bg_color],
     "encrypted": ["", "", "", "dark gray", bg_color],

@@ -14,7 +14,7 @@ class ChatListItem(urwid.Button):
         super().__init__("")
         urwid.connect_signal(self, "click", callback, chat)
         self._w = urwid.AttrMap(
-            urwid.SelectableIcon(caption, 3), None, focus_map="status_bar"
+            urwid.SelectableIcon(caption, 3), None, focus_map="focused_item"
         )
 
 
