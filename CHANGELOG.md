@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.7.0]
+## [v0.7.0]
 
 ### Added
 
@@ -25,7 +25,7 @@
 - avoid crash if the user tries to send a message without selecting a chat
 - avoid crash if theme.json or keymaps.json are invalid
 
-## [0.6.0]
+## [v0.6.0]
 
 ### Added
 
@@ -45,7 +45,7 @@
 - improved chatlist style
 - if no password is provided to `init` subcommand a prompt will be shown to enter the password, entering an empty password will then trigger OAuth2, to avoid the prompt an empty password ("") can be passed to the CLI
 
-## [0.5.0]
+## [v0.5.0]
 
 ### Added
 
@@ -88,7 +88,7 @@
 - don't notify mentions in muted direct/private chats
 - draft saving
 
-## [0.4.1]
+## [v0.4.1]
 
 ### Changed
 
@@ -99,7 +99,7 @@
 - expand user home (`~`) in paths given to `/send` command
 - fixed bug introduced in `v0.4.0` that caused some incoming messages to be not displayed
 
-## [0.4.0]
+## [v0.4.0]
 
 ### Added
 
@@ -127,11 +127,11 @@
 - avoid crash if user tries to send message in a chat where it is not possible to send messages (ex. user is not member, or it is the "Device Messages" chat)
 - hide "Archived Chats" (special chat) from the chat list
 
-## [0.3.1]
+## [v0.3.1]
 
 - fix `IndexError` in `ui/chatlist_widget.py`
 
-## [0.3.0]
+## [v0.3.0]
 
 - Updated code to work with the new `deltachat-1.58.0` API, "Contact Requests" chat was removed.
 - improved notifications, added support for notifications in Windows and MacOS platforms.
@@ -146,10 +146,10 @@
 - Initial release
 
 
-[0.7.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...v0.7.0
-[0.6.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.5.0...v0.6.0
-[0.5.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...v0.5.0
-[0.4.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.0...v0.4.1
-[0.4.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.2.0...v0.3.0
+[v0.7.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...v0.7.0
+[v0.6.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.5.0...v0.6.0
+[v0.5.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.1...v0.5.0
+[v0.4.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.4.0...v0.4.1
+[v0.4.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.1...v0.4.0
+[v0.3.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.3.0...v0.3.1
+[v0.3.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.2.0...v0.3.0
