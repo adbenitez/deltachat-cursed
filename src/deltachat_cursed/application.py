@@ -205,6 +205,7 @@ class Application:
             text = edit.get_edit_text().strip()
             if not text:
                 return None
+
             selected_chat = self.chatlist.selected_chat
             if text.startswith("//"):
                 text = text[1:]
@@ -216,16 +217,20 @@ class Application:
                 edit.set_edit_pos(len(edit.get_edit_text()))
                 self._resize_zone(size)
                 return None
-            if selected_chat.is_contact_request():
-                # accept contact requests automatically until UI allows to accept/block
-                selected_chat.accept()
-            try:
-                selected_chat.send_text(emojize(text))
-                edit.set_edit_text("")
-            except ValueError:
-                edit.set_edit_text(
-                    "Error: message could not be sent, are you a member of the chat?"
-                )
+
+            if selected_chat is None:
+                edit.set_edit_text("Error: no chat selected")
+            else:
+                if selected_chat.is_contact_request():
+                    # accept contact requests automatically on sending
+                    selected_chat.accept()
+                try:
+                    selected_chat.send_text(emojize(text))
+                    edit.set_edit_text("")
+                except ValueError:
+                    edit.set_edit_text(
+                        "Error: message could not be sent, are you a member of the chat?"
+                    )
             edit.set_edit_pos(len(edit.get_edit_text()))
             self._resize_zone(size)
         # give the focus to the chat list

@@ -21,6 +21,7 @@
 - avoid crash when using commands without a chat selected
 - improve core events handling
 - don't reset focus every time the chatlist is refreshed
+- avoid crash if the user tries to send a message without selecting a chat
 
 ## [0.6.0]
 
