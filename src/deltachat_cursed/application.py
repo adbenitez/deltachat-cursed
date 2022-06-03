@@ -246,24 +246,32 @@ class Application:
 
     def _process_command(self, chat: Chat, cmd: str) -> str:
         acct = chat.account if chat else self.account
-        args = cmd.split(maxsplit=1)
+        cmd, *args = cmd.split(maxsplit=1)
+        payload = args[0].strip() if args else None
+        del args
 
         text = ""
         processed = True
-        if args[0] not in COMMANDS:
-            text = f"Error: Unknown command {args[0]}"
-        elif args[0] == COMMANDS["/query"]:
+        if cmd not in COMMANDS:
+            text = f"Error: Unknown command {cmd}"
+        elif cmd == COMMANDS["/query"]:
             try:
-                self.chatlist.select_chat(acct.create_chat(args[1].strip()))
+                if payload:
+                    self.chatlist.select_chat(acct.create_chat(payload))
+                else:
+                    text = "Error: Command expects one argument but none was given"
             except AssertionError:
                 text = "Error: invalid email address"
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/join"]:
-            self.chatlist.select_chat(acct.create_group_chat(args[1].strip()))
-        elif args[0] == COMMANDS["/nick"]:
-            if len(args) == 2:
-                acct.set_config("displayname", args[1].strip())
+        elif cmd == COMMANDS["/join"]:
+            if payload:
+                self.chatlist.select_chat(acct.create_group_chat(payload))
+            else:
+                text = "Error: Command expects one argument but none was given"
+        elif cmd == COMMANDS["/nick"]:
+            if payload:
+                acct.set_config("displayname", payload)
                 self._print_title(acct.get_fresh_messages_cnt())
             else:
                 text = f"Nick: {acct.get_config('displayname')!r}"
@@ -275,59 +283,67 @@ class Application:
             pass
         elif not chat:
             text = "Error: select a chat before using that command"
-        elif args[0] == COMMANDS["/delete"]:
+        elif cmd == COMMANDS["/delete"]:
             chat.delete()
-        elif args[0] == COMMANDS["/names"]:
+        elif cmd == COMMANDS["/names"]:
             text = "\n".join(c.addr for c in chat.get_contacts())
-        elif args[0] == COMMANDS["/add"]:
+        elif cmd == COMMANDS["/add"]:
             try:
-                for addr in args[1].split(","):
-                    chat.add_contact(addr.strip())
+                if payload:
+                    for addr in payload.split(","):
+                        chat.add_contact(addr.strip())
+                else:
+                    text = "Error: Command expects one argument but none was given"
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/kick"]:
+        elif cmd == COMMANDS["/kick"]:
             try:
-                for addr in args[1].split(","):
-                    chat.remove_contact(addr.strip())
+                if payload:
+                    for addr in payload.split(","):
+                        chat.remove_contact(addr.strip())
+                else:
+                    text = "Error: Command expects one argument but none was given"
             except AttributeError:
                 text = "Error: invalid email address"
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/part"]:
+        elif cmd == COMMANDS["/part"]:
             try:
                 chat.remove_contact(acct.get_self_contact())
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/id"]:
+        elif cmd == COMMANDS["/id"]:
             text = str(chat.id)
-        elif args[0] == COMMANDS["/send"]:
+        elif cmd == COMMANDS["/send"]:
             try:
-                path = os.path.expanduser(args[1].strip())
-                chat.send_msg(acct.create_message(filename=path))
+                if payload:
+                    path = os.path.expanduser(payload)
+                    chat.send_msg(acct.create_message(filename=path))
+                else:
+                    text = "Error: Command expects one argument but none was given"
             except ValueError as ex:
                 text = f"Error: {ex}"
-        elif args[0] == COMMANDS["/pin"]:
+        elif cmd == COMMANDS["/pin"]:
             set_chat_visibility(chat, "pinned")
-        elif args[0] == COMMANDS["/unpin"]:
+        elif cmd == COMMANDS["/unpin"]:
             if is_pinned(chat):
                 set_chat_visibility(chat, "normal")
-        elif args[0] == COMMANDS["/mute"]:
+        elif cmd == COMMANDS["/mute"]:
             chat.mute()
-        elif args[0] == COMMANDS["/unmute"]:
+        elif cmd == COMMANDS["/unmute"]:
             chat.unmute()
-        elif args[0] == COMMANDS["/topic"]:
-            name = args[1].strip() if len(args) == 2 else ""
-            if name:
+        elif cmd == COMMANDS["/topic"]:
+            if payload:
                 if is_multiuser(chat):
                     if is_mailing_list(chat) or chat.can_send():
-                        chat.set_name(name)
+                        chat.set_name(payload)
                     else:
                         text = "Error: can't change chat name"
                 else:
-                    chat.account.create_contact(chat.get_contacts()[0], name)
+                    chat.account.create_contact(chat.get_contacts()[0], payload)
             else:
                 text = "Error: Command expects one argument but none was given"
-        elif args[0] == COMMANDS["/clear"]:
+        elif cmd == COMMANDS["/clear"]:
             msgs = chat.account.get_messages(chat.id)
             if msgs:
                 chat.account.delete_messages(msgs)

@@ -5,6 +5,7 @@
 ### Fixed
 
 - update conversation on incoming messages
+- avoid crashes on wrong command usage
 
 ## [v0.7.0]
 
