@@ -61,10 +61,6 @@ class EventCenter:
             self.notify_msgs(message)
 
     @account_hookimpl
-    def ac_message_delivered(self, message: Message) -> None:
-        self.chatlist_changed(message)
-
-    @account_hookimpl
     def ac_process_ffi_event(self, ffi_event: FFIEvent) -> None:
         if ffi_event.name == "DC_EVENT_CHAT_MODIFIED":
             self.chat_changed(self.account.get_chat_by_id(ffi_event.data1))
@@ -72,10 +68,11 @@ class EventCenter:
         if ffi_event.name == "DC_EVENT_CONTACTS_CHANGED":
             self.chatlist_changed(ffi_event)
         if ffi_event.name == "DC_EVENT_INCOMING_MSG":
+            self.conversation_changed(ffi_event)
             self.chatlist_changed(ffi_event)
         if ffi_event.name == "DC_EVENT_MSGS_CHANGED":
-            self.chatlist_changed(ffi_event)
             self.conversation_changed(ffi_event)
+            self.chatlist_changed(ffi_event)
         if ffi_event.name == "DC_EVENT_MSGS_NOTICED":
             self.chatlist_changed(ffi_event)
         if ffi_event.name == "DC_EVENT_MSG_DELIVERED":
