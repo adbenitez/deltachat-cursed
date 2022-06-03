@@ -228,7 +228,7 @@ def shorten_text(text: str, width: int, placeholder: str = "…") -> str:
     return text
 
 
-def get_theme() -> dict:
+def get_theme(logger: logging.Logger) -> dict:
     file_name = "theme.json"
     themes = [
         "curseddelta-" + file_name,
@@ -239,7 +239,11 @@ def get_theme() -> dict:
     for path in themes:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
-                theme = {**default_theme, **json.load(fd)}
+                theme = {**default_theme}
+                try:
+                    theme.update(json.load(fd))
+                except (json.decoder.JSONDecodeError, TypeError) as ex:
+                    logger.warning("Failed to read theme file: %s", ex)
             break
     else:
         theme = default_theme
@@ -249,7 +253,7 @@ def get_theme() -> dict:
     return theme
 
 
-def get_keymap() -> dict:
+def get_keymap(logger: logging.Logger) -> dict:
     file_name = "keymap.json"
     keymaps = [
         "curseddelta-" + file_name,
@@ -260,7 +264,11 @@ def get_keymap() -> dict:
     for path in keymaps:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
-                keymap = {**default_keymap, **json.load(fd)}
+                keymap = {**default_keymap}
+                try:
+                    keymap.update(json.load(fd))
+                except (json.decoder.JSONDecodeError, TypeError) as ex:
+                    logger.warning("Failed to read keymap file: %s", ex)
                 # hack to fix keymap for users of v0.3.1:
                 if keymap["send_msg"] == keymap["insert_new_line"]:
                     keymap["send_msg"] = "enter"

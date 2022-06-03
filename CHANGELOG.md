@@ -23,6 +23,7 @@
 - improve core events handling
 - don't reset focus every time the chatlist is refreshed
 - avoid crash if the user tries to send a message without selecting a chat
+- avoid crash if theme.json or keymaps.json are invalid
 
 ## [0.6.0]
 

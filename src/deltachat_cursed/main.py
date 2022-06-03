@@ -324,6 +324,8 @@ def export_cmd(args: Namespace) -> None:
 
 
 def start_ui(args: Namespace) -> None:
-    app = Application(args.acct, args.cfg, get_keymap(), get_theme(), args.logger)
+    theme = get_theme(args.logger)
+    keymap = get_keymap(args.logger)
+    app = Application(args.acct, args.cfg, keymap, theme, args.logger)
     with online_account(args.acct):
         app.run()
