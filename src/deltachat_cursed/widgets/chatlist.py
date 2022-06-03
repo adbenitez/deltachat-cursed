@@ -1,3 +1,4 @@
+from logging import Logger
 from typing import Callable, List, Optional
 
 import urwid
@@ -20,10 +21,11 @@ class ChatListItem(urwid.Button):
 class ChatListWidget(ListBoxPlus):
     signals = ["chat_selected"]
 
-    def __init__(self, keymap: dict, display_emoji: bool) -> None:  # noqa
+    def __init__(self, keymap: dict, display_emoji: bool, logger: Logger) -> None:
         self.keymap = keymap
         self.display_emoji = display_emoji
         self.selected_chat: Optional[Chat] = None
+        self.logger = logger
         super().__init__(
             LazyEvalListWalker(urwid.MonitoredList(), self._get_chat_widget, 0)
         )
@@ -37,11 +39,15 @@ class ChatListWidget(ListBoxPlus):
         return None
 
     def set_chats(self, chats: List[Chat]) -> None:
+        prev_position = self.get_focus()[1]
         self.contents = chats
+        if prev_position is not None:
+            self.try_set_focus(prev_position)
         if self.selected_chat and self.selected_chat not in self.contents:
             self.select_chat(None)
 
     def select_chat(self, chat: Chat) -> None:
+        self.logger.debug("Chat selected: %s", chat)
         self.selected_chat = chat
         urwid.emit_signal(self, "chat_selected", chat)
 
@@ -53,7 +59,7 @@ class ChatListWidget(ListBoxPlus):
             i -= 1
             if i < 0:
                 i = len(self.contents) - 1
-            self.set_focus(i)
+            self.try_set_focus(i)
             self.select_chat(self.contents[i])
 
     def select_previous_chat(self) -> None:
@@ -64,7 +70,7 @@ class ChatListWidget(ListBoxPlus):
             i += 1
             if i >= len(self.contents):
                 i = 0
-            self.set_focus(i)
+            self.try_set_focus(i)
             self.select_chat(self.contents[i])
 
     def keypress(self, size: list, key: str) -> Optional[str]:

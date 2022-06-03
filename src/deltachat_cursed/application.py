@@ -50,7 +50,7 @@ class Application:
         display_emoji = conf["global"]["display_emoji"]
 
         # Chatlist
-        self.chatlist = ChatListWidget(keymap, display_emoji)
+        self.chatlist = ChatListWidget(keymap, display_emoji, logger)
         urwid.connect_signal(self.evcenter, "chatlist_changed", self.chatlist.set_chats)
         chatlist_container = Container(self.chatlist, self._chatlist_keypress)
 

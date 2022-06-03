@@ -19,6 +19,7 @@
 - don't notify any system message
 - avoid crash when using commands without a chat selected
 - improve core events handling
+- don't reset focus every time the chatlist is refreshed
 
 ## [0.6.0]
 
