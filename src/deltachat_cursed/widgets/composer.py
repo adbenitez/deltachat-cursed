@@ -6,9 +6,11 @@ import urwid
 import urwid_readline
 from deltachat import Chat, Message
 from emoji import demojize
-from emoji.unicode_codes import EMOJI_UNICODE_ENGLISH
+from emoji.unicode_codes import get_emoji_unicode_dict
 
 from ..util import COMMANDS, get_subtitle, shorten_text
+
+EMOJI_UNICODE_ENGLISH = get_emoji_unicode_dict("en")
 
 
 class ComposerWidget(urwid.Filler):
