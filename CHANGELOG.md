@@ -4,7 +4,11 @@
 
 ### Fixed
 
-- Updated to work with the new version (`2.0.0`) of `emoji` library.
+- Updated to work with the new version (`2.0.0`) of `emoji` library
+
+### Changed
+
+- Added support for an space-delimited list of addresses as argument for `/kick` and `/add` commands
 
 ## [v0.7.1]
 

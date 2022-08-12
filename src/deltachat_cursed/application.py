@@ -290,7 +290,8 @@ class Application:
         elif cmd == COMMANDS["/add"]:
             try:
                 if payload:
-                    for addr in payload.split(","):
+                    payload = payload.replace(",", " ")
+                    for addr in payload.split():
                         chat.add_contact(addr.strip())
                 else:
                     text = "Error: Command expects one argument but none was given"
@@ -299,7 +300,8 @@ class Application:
         elif cmd == COMMANDS["/kick"]:
             try:
                 if payload:
-                    for addr in payload.split(","):
+                    payload = payload.replace(",", " ")
+                    for addr in payload.split():
                         chat.remove_contact(addr.strip())
                 else:
                     text = "Error: Command expects one argument but none was given"
