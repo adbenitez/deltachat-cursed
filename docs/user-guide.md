@@ -53,9 +53,9 @@ You will be prompted for a password to encrypt the database, keep the password s
 - You will see `→` in your message if it is not sent yet, `✓` if it was send, `✓✓` when the message was read, or `✖` if the message was not delivered to some of the recipients.
 - You can send emojis sending typing their string representation, for example: `:thumbs_up:`
 - You can have emoji, contact names and commands autocompletion typing `:`, `@` or `/` and pressing <kbd>Tab</kbd>
-- You can tweak the app colors editing `~/.curseddelta/theme.json`
-- You can tweak the app keymap editing `~/.curseddelta/keymap.json`
-- You can tweak the app settings editing `~/.curseddelta/curseddelta.conf`
+- You can tweak the app colors editing `$XDG_CONFIG_HOME/curseddelta/theme.json`
+- You can tweak the app keymap editing `$XDG_CONFIG_HOME/curseddelta/keymap.json`
+- You can tweak the app settings editing `$XDG_CONFIG_HOME/curseddelta/curseddelta.conf`
 - Put global theme, keymap, and config files in `/etc/curseddelta/`
 - You can have per-folder config files, the application search for this files in the current working directory: `./curseddelta-theme.json`,  `./curseddelta-keymap.json`, `./curseddelta.conf`
 - If you like to use the mouse, you can use the mouse to select chats in the chat list, select the draft area or scroll in the message history.
