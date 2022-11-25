@@ -19,7 +19,7 @@ from deltachat.hookspec import account_hookimpl
 
 APP_NAME = "Cursed Delta"
 if os.getenv("XDG_CONFIG_HOME"):
-    APP_FOLDER = os.path.abspath(os.path.join(os.getenv("XDG_CONFIGHOME"), "curseddelta"))
+    APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser(os.getenv("XDG_CONFIG_HOME")), "curseddelta"))
 else:
     APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
 
