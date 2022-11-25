@@ -18,7 +18,11 @@ from deltachat.events import FFIEvent
 from deltachat.hookspec import account_hookimpl
 
 APP_NAME = "Cursed Delta"
-APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
+if os.getenv("XDG_CONFIG_HOME"):
+    APP_FOLDER = os.path.abspath(os.path.join(os.getenv("XDG_CONFIGHOME"), "curseddelta"))
+else:
+    APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
+
 if not os.path.exists(APP_FOLDER):
     os.makedirs(APP_FOLDER)
 LOGS_FOLDER = os.path.join(APP_FOLDER, "logs")
