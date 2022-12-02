@@ -252,7 +252,7 @@ def get_theme(logger: logging.Logger) -> dict:
             break
     else:
         theme = default_theme
-        with open(themes[1], "w", encoding="utf-8") as fd:
+        with open(themes[0], "w", encoding="utf-8") as fd:
             json.dump(theme, fd, indent=2)
 
     return theme
@@ -281,7 +281,7 @@ def get_keymap(logger: logging.Logger) -> dict:
             break
     else:
         keymap = default_keymap
-        with open(keymaps[1], "w", encoding="utf-8") as fd:
+        with open(keymaps[0], "w", encoding="utf-8") as fd:
             json.dump(keymap, fd, indent=1)
 
     return keymap
