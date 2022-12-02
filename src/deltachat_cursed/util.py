@@ -245,7 +245,7 @@ def get_theme(logger: logging.Logger) -> dict:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
                 try:
-                    theme = {**json.load(fd), **default_theme}
+                    theme = {**default_theme, **json.load(fd)}
                     urwid.raw_display.Screen().register_palette(
                         [(key, *value) for key, value in theme.items()]
                     )
