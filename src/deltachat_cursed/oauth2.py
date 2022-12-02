@@ -34,8 +34,8 @@ def get_authz_code(
     ac: Account,
     addr: str,
     port: int,
-    authorization_prompt_message: str = None,
-    success_message: str = None,
+    authorization_prompt_message: Optional[str] = None,
+    success_message: Optional[str] = None,
     open_browser: bool = True,
 ) -> str:
     """Run a local server for receiving the authorization code and return it"""

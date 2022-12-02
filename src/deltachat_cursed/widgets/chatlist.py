@@ -101,7 +101,7 @@ class ChatListWidget(ListBoxPlus):
 
         name = shorten_text(chat.get_name(), 40)
         label = f"{name if self.display_emoji else demojize(name)}"
-        if self.select_chat and chat == self.selected_chat:
+        if self.selected_chat and chat == self.selected_chat:
             label = ("cur_chat", label)  # type: ignore
         elements.append(label)
 

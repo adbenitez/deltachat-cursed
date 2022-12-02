@@ -1,6 +1,6 @@
 from tempfile import NamedTemporaryFile
 from threading import Event
-from typing import List
+from typing import List, Optional
 
 from deltachat import Account as _Account
 from deltachat import Message, const, hookspec
@@ -45,22 +45,26 @@ class Account(_Account):
             lib.dc_context_open(self._dc_context, as_dc_charpointer(passphrase))
         )
 
-    def export_all(self, path: str, passphrase: str = None) -> str:
+    def export_all(self, path: str, passphrase: Optional[str] = None) -> str:
         export_files = self._export(path, const.DC_IMEX_EXPORT_BACKUP, passphrase)
         if len(export_files) != 1:
             raise RuntimeError("found more than one new file")
         return export_files[0]
 
-    def import_all(self, path: str, passphrase: str = None) -> None:
+    def import_all(self, path: str, passphrase: Optional[str] = None) -> None:
         assert not self.is_configured(), "cannot import into configured account"
         self._import(path, const.DC_IMEX_IMPORT_BACKUP, passphrase)
 
-    def _import(self, path: str, imex_cmd: int, passphrase: str = None) -> None:
+    def _import(
+        self, path: str, imex_cmd: int, passphrase: Optional[str] = None
+    ) -> None:
         with self.temp_plugin(ImexTracker()) as imex_tracker:
             self.imex(path, imex_cmd, passphrase)
             imex_tracker.wait_finish()
 
-    def _export(self, path: str, imex_cmd: int, passphrase: str = None) -> list:
+    def _export(
+        self, path: str, imex_cmd: int, passphrase: Optional[str] = None
+    ) -> list:
         with self.temp_plugin(ImexTracker()) as imex_tracker:
             self.imex(path, imex_cmd, passphrase)
             return imex_tracker.wait_finish()
@@ -93,13 +97,13 @@ class Account(_Account):
 
     def create_message(
         self,
-        text: str = None,
-        html: str = None,
-        viewtype: str = None,
-        filename: str = None,
+        text: Optional[str] = None,
+        html: Optional[str] = None,
+        viewtype: Optional[str] = None,
+        filename: Optional[str] = None,
         bytefile=None,
-        sender: str = None,
-        quote: Message = None,
+        sender: Optional[str] = None,
+        quote: Optional[Message] = None,
     ) -> Message:
         if bytefile:
             assert filename is not None, "bytefile given but filename not provided"

@@ -1,7 +1,7 @@
 import os
 import sys
 from collections import OrderedDict
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from deltachat import Message
 from notifypy import Notify
@@ -19,7 +19,7 @@ def _notify(
     account: str,
     title: str,
     body: str,
-    image: str = None,
+    image: Optional[str] = None,
 ) -> None:
     notification = Notify()
     notification.title = title
