@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- removed support for per-folder configuration files
+- changed default app configuration folder to `~/.config/curseddelta/`, `~/.curseddelta/` is still
+  supported for backward compatibility
+
 ## [v0.7.2]
 
 ### Fixed
@@ -163,6 +171,7 @@
 - Initial release
 
 
+[Unreleased]: https://github.com/adbenitez/deltachat-cursed/compare/v0.7.2...Unreleased
 [v0.7.2]: https://github.com/adbenitez/deltachat-cursed/compare/v0.7.1...v0.7.2
 [v0.7.1]: https://github.com/adbenitez/deltachat-cursed/compare/v0.7.0...v0.7.1
 [v0.7.0]: https://github.com/adbenitez/deltachat-cursed/compare/v0.6.0...v0.7.0

@@ -11,6 +11,7 @@ from threading import Event, Thread
 from typing import Any, Callable, Dict, Optional
 
 import urwid
+from appdirs import site_config_dir, user_config_dir
 from deltachat import Account, Chat, Contact, Message, const
 from deltachat.capi import lib
 from deltachat.cutil import from_dc_charpointer
@@ -18,10 +19,15 @@ from deltachat.events import FFIEvent
 from deltachat.hookspec import account_hookimpl
 
 APP_NAME = "Cursed Delta"
-APP_FOLDER = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
+APP_FOLDER = user_config_dir("curseddelta")
 if not os.path.exists(APP_FOLDER):
-    os.makedirs(APP_FOLDER)
+    _alt_folder = os.path.abspath(os.path.join(os.path.expanduser("~"), ".curseddelta"))
+    if os.path.exists(_alt_folder):  # use old folder for backward compatibility
+        APP_FOLDER = _alt_folder
+    else:
+        os.makedirs(APP_FOLDER)
 LOGS_FOLDER = os.path.join(APP_FOLDER, "logs")
+SITE_APP_FOLDER = site_config_dir("curseddelta")
 COMMANDS = {
     key: key
     for key in [
@@ -231,9 +237,8 @@ def shorten_text(text: str, width: int, placeholder: str = "…") -> str:
 def get_theme(logger: logging.Logger) -> dict:
     file_name = "theme.json"
     themes = [
-        "curseddelta-" + file_name,
         os.path.join(APP_FOLDER, file_name),
-        "/etc/curseddelta/" + file_name,
+        os.path.join(SITE_APP_FOLDER, file_name),
     ]
 
     for path in themes:
@@ -256,9 +261,8 @@ def get_theme(logger: logging.Logger) -> dict:
 def get_keymap(logger: logging.Logger) -> dict:
     file_name = "keymap.json"
     keymaps = [
-        "curseddelta-" + file_name,
         os.path.join(APP_FOLDER, file_name),
-        "/etc/curseddelta/" + file_name,
+        os.path.join(SITE_APP_FOLDER, file_name),
     ]
 
     for path in keymaps:
@@ -290,8 +294,10 @@ def fail(*args, **kwargs) -> None:
 
 def get_configuration() -> dict:
     file_name = "curseddelta.conf"
-    home_config = os.path.join(APP_FOLDER, file_name)
-    confPriorityList = [file_name, home_config, "/etc/curseddelta/" + file_name]
+    confPriorityList = [
+        os.path.join(APP_FOLDER, file_name),
+        os.path.join(SITE_APP_FOLDER, file_name),
+    ]
 
     cfg = configparser.ConfigParser()
 
