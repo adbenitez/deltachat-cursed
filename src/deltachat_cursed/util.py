@@ -244,11 +244,14 @@ def get_theme(logger: logging.Logger) -> dict:
     for path in themes:
         if os.path.isfile(path):
             with open(path, encoding="utf-8") as fd:
-                theme = {**default_theme}
                 try:
-                    theme.update(json.load(fd))
-                except (json.decoder.JSONDecodeError, TypeError) as ex:
-                    logger.warning("Failed to read theme file: %s", ex)
+                    theme = {**json.load(fd), **default_theme}
+                    urwid.raw_display.Screen().register_palette(
+                        [(key, *value) for key, value in theme.items()]
+                    )
+                except Exception as ex:  # noqa
+                    logger.exception(ex)
+                    theme = {**default_theme}
             break
     else:
         theme = default_theme

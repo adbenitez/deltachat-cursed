@@ -8,6 +8,10 @@
 - changed default app configuration folder to `~/.config/curseddelta/`, `~/.curseddelta/` is still
   supported for backward compatibility (thanks @formula-spectre and @dotlambda)
 
+### Fixed
+
+- avoid crash if theme/skin definition has invalid values
+
 ## [v0.7.2]
 
 ### Fixed
