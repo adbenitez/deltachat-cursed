@@ -6,7 +6,7 @@
 
 - removed support for per-folder configuration files
 - changed default app configuration folder to `~/.config/curseddelta/`, `~/.curseddelta/` is still
-  supported for backward compatibility
+  supported for backward compatibility (thanks @formula-spectre and @dotlambda)
 
 ## [v0.7.2]
 
