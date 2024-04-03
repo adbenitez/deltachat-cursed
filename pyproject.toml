@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=69", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deltachat-cursed"
+description = "Delta Chat client for the command line"
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["deltachat", "ncurses", "tui"]
+authors = [
+  {name = "adbenitez", email = "adb@merlinux.eu"},
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "deltachat2>=0.2.0",
+    "urwid>=2.6.10",
+    "urwid-readline>=0.14",
+    "appdirs>=1.4.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/adbenitez/deltachat-cursed"
+Issues = "https://github.com/adbenitez/deltachat-cursed/issues"
+
+[project.optional-dependencies]
+full = [
+    "deltachat-rpc-server>=1.136.6",
+]
+dev = [
+  "deltachat-rpc-server",
+  "black",
+  "mypy",
+  "isort",
+  "pylint",
+  "pylama",
+  "pytest",
+]
+
+[project.scripts]
+curseddelta = "deltachat_cursed.main:main"
+delta = "deltachat_cursed.main:main"
+
+[tool.setuptools]
+packages = ["deltachat_cursed"]
+
+[tool.setuptools_scm]
+# can be empty if no extra settings are needed, presence enables setuptools_scm
+version_file = "deltachat_cursed/_version.py"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = "True"

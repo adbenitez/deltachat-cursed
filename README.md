@@ -7,7 +7,6 @@ ncurses Delta Chat client developed in Python with the urwid library.
 </p>
 
 [![Latest Release](https://img.shields.io/pypi/v/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
-[![Supported Versions](https://img.shields.io/pypi/pyversions/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
 [![Downloads](https://pepy.tech/badge/deltachat-cursed)](https://pepy.tech/project/deltachat-cursed)
 [![License](https://img.shields.io/pypi/l/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
 [![CI](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml/badge.svg)](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml)
@@ -15,31 +14,23 @@ ncurses Delta Chat client developed in Python with the urwid library.
 
 #### Features
 
+- [X] Create accounts
+- [X] Tweak account configuration (ex. set display name and status)
 - [X] Ability to send text messages :)
-- [X] Ability to send files
-- [X] Notifications
 - [X] Read receipts ✓✓
-- [X] Create and open encrypted accounts
-- [X] Import/export keys and backups (including password-protected backups)
-- [X] Emoji support and auto-completion
-- [X] @Mentions support and auto-completion
-- [X] Display message replies
-- [X] themes/skins and keyboard shortcuts customization
-- [X] Chat operations: delete, pin/unpin, mute/unmute, add/remove members, change chat name, clear chat messages
-- [ ] Proxy support
+- [X] Display quoted messages
+- [ ] Account switcher
+- [ ] Chat operations: delete, pin/unpin, mute/unmute, archive/unarchive, add/remove members, etc.
+- [ ] Message operations: reply, delete, open attachment/links, see info, jump to quote
+- [ ] Import/export keys and backups
+- [ ] Ability to send files
+- [ ] Notifications
 - [ ] Support for contact verification and group invitations links
 - [ ] Block/unblock contacts and see the list of blocked contacts
-- [ ] Ability to send stickers
-- [ ] Jump to quoted messages
-- [ ] Record and send voice messages
-- [ ] Message operations: reply, delete, open attachment/links, see info
-- [ ] List contacts
-- [ ] Search
-- [ ] Set disappearing messages timer
+- [ ] See contact list
+- [ ] Search messages and chats
 - [ ] Open HTML messages
-- [ ] Open webxdc documents
-- [ ] View archived chats and allow to archive/Unarchive
-- [ ] Multi-language support
+- [ ] View archived chats
 
 ## Installation
 
@@ -50,17 +41,4 @@ $ pip install -U deltachat-cursed
 ```
 
 After installation the command `delta` should be available.
-For more tips and info check [the user guide](https://github.com/adbenitez/deltachat-cursed/blob/master/docs/user-guide.md)
-
-
-## Credits
-
-The user interface was initially based on [ncTelegram](https://github.com/Nanoseb/ncTelegram)
-
-Some code and ideas were taken from [scli](https://github.com/isamert/scli/)
-
-## License
-
-Licensed GPLv3+, see the LICENSE file for details.
-
-Copyright © 2020-2022 Cursed Delta contributors.
+For more tips and info check [the user guide](./docs/user-guide.md)
