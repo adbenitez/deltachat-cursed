@@ -1,6 +1,6 @@
 # Cursed Delta
 
-ncurses Delta Chat client developed in Python with the urwid library.
+> a lightweight Delta Chat client for the command line
 
 <p align="center">
   <img src="https://github.com/adbenitez/deltachat-cursed/blob/master/screenshots/e1.png" alt="screenshot of Cursed Delta"/>
@@ -11,6 +11,8 @@ ncurses Delta Chat client developed in Python with the urwid library.
 [![License](https://img.shields.io/pypi/l/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
 [![CI](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml/badge.svg)](https://github.com/adbenitez/deltachat-cursed/actions/workflows/python-ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+Cursed Delta is a ncurses Delta Chat client developed in Python with the urwid library.
 
 #### Features
 
