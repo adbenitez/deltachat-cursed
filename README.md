@@ -3,7 +3,7 @@
 > a lightweight Delta Chat client for the command line
 
 <p align="center">
-  <img src="https://github.com/adbenitez/deltachat-cursed/blob/master/screenshots/e1.png" alt="screenshot of Cursed Delta"/>
+  <img src="https://github.com/adbenitez/deltachat-cursed/blob/master/screenshots/e1.png?raw=true" alt="screenshot of Cursed Delta"/>
 </p>
 
 [![Latest Release](https://img.shields.io/pypi/v/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
