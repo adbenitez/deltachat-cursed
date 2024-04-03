@@ -1,6 +1,0 @@
-deltachat>=1.97.0
-urwid>=2.1.2
-urwid-readline>=0.13
-notify-py>=0.3.3
-emoji>=2.0.0
-appdirs>=1.4.4
