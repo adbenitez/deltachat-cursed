@@ -42,5 +42,12 @@ Install Cursed Delta with pip:
 $ pip install -U deltachat-cursed
 ```
 
+This program depends on the `deltachat-rpc-server` program to be installed in your system,
+if you want to try to install it using pip run:
+
+```
+$ pip install -U deltachat-cursed[full]
+```
+
 After installation the command `delta` should be available.
 For more tips and info check [the user guide](./docs/user-guide.md)
