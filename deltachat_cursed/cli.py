@@ -52,6 +52,9 @@ class Cli:
         init_parser.add_argument("addr", help="your e-mail address")
         init_parser.add_argument("password", help="your password")
 
+        import_parser = self.add_subcommand(import_cmd, name="import")
+        import_parser.add_argument("path", help="path to the backup file to import")
+
         config_parser = self.add_subcommand(config_cmd, name="config")
         config_parser.add_argument("option", help="option name", nargs="?")
         config_parser.add_argument("value", help="option value to set", nargs="?")
@@ -90,6 +93,20 @@ def init_cmd(client: Client, args: Namespace) -> None:
         print("Account configured successfully.")
     except JsonRpcError as err:
         print("ERROR: Configuration failed:", err)
+        sys.exit(1)
+
+
+def import_cmd(client: Client, args: Namespace) -> None:
+    """import account from backup file"""
+    if args.account:
+        print("Error: -a/--account can't be used with this subcommand")
+        sys.exit(1)
+
+    try:
+        client.rpc.import_backup(client.rpc.add_account(), args.path, None)
+        print("Backup imported successfully.")
+    except JsonRpcError as err:
+        print("ERROR: Failed to import backup:", err)
         sys.exit(1)
 
 
