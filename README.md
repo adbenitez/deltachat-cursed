@@ -1,5 +1,7 @@
 # Cursed Delta
 
+> DEPRECATED: use arcanechat-tui instead
+
 [![Latest Release](https://img.shields.io/pypi/v/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
 [![Downloads](https://pepy.tech/badge/deltachat-cursed)](https://pepy.tech/project/deltachat-cursed)
 [![License](https://img.shields.io/pypi/l/deltachat-cursed.svg)](https://pypi.org/project/deltachat-cursed)
