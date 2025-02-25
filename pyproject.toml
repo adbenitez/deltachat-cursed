@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arcanechat-tui"
-description = "Delta Chat client for the command line"
+description = "ArcaneChat client for the command line"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.8"

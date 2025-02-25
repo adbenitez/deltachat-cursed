@@ -1,4 +1,4 @@
-# Cursed Delta
+# ArcaneChat TUI
 
 [![Latest Release](https://img.shields.io/pypi/v/arcanechat-tui.svg)](https://pypi.org/project/arcanechat-tui)
 [![Downloads](https://pepy.tech/badge/arcanechat-tui)](https://pepy.tech/project/arcanechat-tui)
@@ -9,10 +9,10 @@
 > a lightweight ArcaneChat client for the command line
 
 <p align="center">
-  <img src="https://github.com/ArcaneChat/arcanechat-tui/blob/main/screenshots/e1.png?raw=true" alt="screenshot of Cursed Delta"/>
+  <img src="https://github.com/ArcaneChat/arcanechat-tui/blob/main/screenshots/e1.png?raw=true" alt="screenshot of ArcaneChat"/>
 </p>
 
-Cursed Delta is a ncurses Delta Chat client developed in Python with the urwid library.
+ArcaneChat TUI is a ncurses Delta Chat client developed in Python with the urwid library.
 
 #### Features
 
@@ -36,7 +36,7 @@ Cursed Delta is a ncurses Delta Chat client developed in Python with the urwid l
 
 ## Installation
 
-Install Cursed Delta with pip:
+Install ArcaneChat TUI with pip:
 
 ```
 $ pip install -U arcanechat-tui
@@ -49,5 +49,5 @@ if you want to try to install it using pip run:
 $ pip install -U arcanechat-tui[full]
 ```
 
-After installation the command `curseddelta` (and `delta` alias) should be available.
+After installation the command `arcanechat-tui` (and `arcanechat` alias) should be available.
 For more tips and info check [the user guide](https://github.com/ArcaneChat/arcanechat-tui/blob/main/docs/user-guide.md)

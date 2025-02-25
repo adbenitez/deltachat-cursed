@@ -1,3 +1,3 @@
-"""Cursed Delta, a TUI Delta Chat client for the command line"""
+"""ArcaneChat TUI, a Delta Chat client for the command line"""
 
-APP_NAME = "CursedDelta"
+APP_NAME = "ArcaneChat"
