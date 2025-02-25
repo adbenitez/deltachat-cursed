@@ -72,7 +72,7 @@ class ComposerWidget(urwid.Filler):
             subtitle = shorten_text(get_subtitle(self.client.rpc, chat[0], info), 40)
             text = f" {verified}[ {name} ]{muted} -- {subtitle}"
         else:
-            text = f" Cursed Delta {__version__}"
+            text = f" ArcaneChat {__version__}"
 
         self.status_bar.set_text(text)
 

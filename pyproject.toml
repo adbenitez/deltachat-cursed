@@ -3,12 +3,12 @@ requires = ["setuptools>=69", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "deltachat-cursed"
-description = "Delta Chat client for the command line"
+name = "arcanechat-tui"
+description = "ArcaneChat client for the command line"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.8"
-keywords = ["deltachat", "ncurses", "tui"]
+keywords = ["deltachat", "ncurses", "tui", "arcanechat"]
 authors = [
   {name = "adbenitez", email = "adb@merlinux.eu"},
 ]
@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/adbenitez/deltachat-cursed"
-Issues = "https://github.com/adbenitez/deltachat-cursed/issues"
+Homepage = "https://github.com/ArcaneChat/arcanechat-tui"
+Issues = "https://github.com/ArcaneChat/arcanechat-tui/issues"
 
 [project.optional-dependencies]
 full = [
@@ -45,15 +45,15 @@ dev = [
 ]
 
 [project.scripts]
-curseddelta = "deltachat_cursed.main:main"
-delta = "deltachat_cursed.main:main"
+arcanechat-tui = "arcanechat_tui.main:main"
+arcanechat = "arcanechat_tui.main:main"
 
 [tool.setuptools]
-packages = ["deltachat_cursed"]
+packages = ["arcanechat_tui"]
 
 [tool.setuptools_scm]
 # can be empty if no extra settings are needed, presence enables setuptools_scm
-version_file = "deltachat_cursed/_version.py"
+version_file = "arcanechat_tui/_version.py"
 
 [tool.black]
 line-length = 100

@@ -2,27 +2,27 @@
 
 ## Installation
 
-Install Cursed Delta with pip:
+Install ArcaneChat TUI with pip:
 
 ```
-$ pip install -U deltachat-cursed
+$ pip install -U arcanechat-tui
 ```
 
 ## Usage
 
-After installation the command `delta` should be available, or you can use
-`python3 -m deltachat-cursed`. You can check if it is installed running the command
-`delta --version` or `delta --help` to see all the options
+After installation the command `arcanechat` should be available, or you can use
+`python3 -m arcanechat-tui`. You can check if it is installed running the command
+`arcanechat --version` or `arcanechat --help` to see all the options
 
 ### Creating new account
 
-The first time you use Cursed Delta you need to configure your account:
+The first time you use ArcaneChat TUI you need to configure your account:
 
 ```
-$ delta init me@example.com MyPassword
+$ arcanechat init me@example.com MyPassword
 ```
 
-Then run `delta` command to start the application with your configured account.
+Then run `arcanechat` command to start the application with your configured account.
 
 ### Opening accounts from other Delta Chat clients
 
@@ -30,7 +30,7 @@ If you want to use an already existent account, for example to open an account f
 the official Delta Chat client:
 
 ```
-$ delta -f ~/.config/DeltaChat/
+$ arcanechat -f ~/.config/DeltaChat/
 ```
 
 ## Tips
