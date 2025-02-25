@@ -1,7 +1,6 @@
 # ArcaneChat TUI
 
 [![Latest Release](https://img.shields.io/pypi/v/arcanechat-tui.svg)](https://pypi.org/project/arcanechat-tui)
-[![Downloads](https://pepy.tech/badge/arcanechat-tui)](https://pepy.tech/project/arcanechat-tui)
 [![License](https://img.shields.io/pypi/l/arcanechat-tui.svg)](https://pypi.org/project/arcanechat-tui)
 [![CI](https://github.com/ArcaneChat/arcanechat-tui/actions/workflows/python-ci.yml/badge.svg)](https://github.com/ArcaneChat/arcanechat-tui/actions/workflows/python-ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
